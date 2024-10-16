@@ -3,7 +3,7 @@ body {
     background-color:black;
  }
  
- #container {
+ #daysContainer {
     margin: auto;
     padding: 10px;
     width: 760px;
@@ -14,7 +14,7 @@ body {
     grid-gap: 10px;
  }
  
- #container > .day {
+ #daysContainer > .day {
     color: rgb(221, 255, 0);
     font-weight: bold;
     border: 2px solid rgb(255, 153, 0);
@@ -23,6 +23,6 @@ body {
     line-height: 100px;
  }
  
- #container > .information-visible {
+ #daysContainer > .information-visible {
     color: rgb(221, 255, 0);
  }

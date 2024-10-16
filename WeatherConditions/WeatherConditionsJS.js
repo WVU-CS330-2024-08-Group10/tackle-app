@@ -45,7 +45,7 @@ function constructor(){
 $(function(){
    constructor(); //get updated values
 
-   let $container = $("#container");   //container div from WeatherConditionsHTML
+   let $container = $("#daysContainer");   //container div from WeatherConditionsHTML
 
    for(let i = 0; i < days.length; i++){
       let $day = $("<div>"+days[i].name+"</div>");
