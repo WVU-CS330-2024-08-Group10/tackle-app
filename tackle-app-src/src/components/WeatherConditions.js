@@ -2,14 +2,14 @@
 let $dayDivs = [];   //array containing all days of the week divs
 const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 
-function click(){
-    console.log("clicked");
+function click(index){
+    console.log(days[index] + " clicked");
 }
 
 function WeatherConditions(){
     return(
-        <div>
-            {days.map((day, index) => ( <li onClick={click} key={index}>{day}</li>))}
+        <div id="daysContainer">
+            {days.map((day, index) => ( <div id="day" onClick={() => click(index)} key={index}>{day}</div>))}
         </div>
     );
 }
