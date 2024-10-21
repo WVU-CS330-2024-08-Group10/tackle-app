@@ -1,0 +1,16 @@
+#navbutton-grid {
+	display: grid;
+	gap: 5px;
+	grid-template-columns: auto auto auto auto;
+}
+
+#navbutton-grid > a {
+	background: yellow;
+	padding: 14px 25px;
+	border: 1px solid green;
+	text-align: center;
+}
+
+#navbutton-grid > a:hover, a:active {
+  background-color: red;
+}
