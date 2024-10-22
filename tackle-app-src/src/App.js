@@ -9,6 +9,7 @@ import PageNotFound from "./pages/PageNotFound";
 function App() {
   return (
 	<>
+		<h1 id="title">Tackle</h1>
 		<div>
 		  <BrowserRouter>
 			<NavBar />

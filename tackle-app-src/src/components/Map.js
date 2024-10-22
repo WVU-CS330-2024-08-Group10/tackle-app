@@ -34,6 +34,6 @@
 
 export default function Map(){
     return(
-        <div>Map Component</div>
+        <div id="map">Map Component</div>
     );
 }
