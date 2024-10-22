@@ -50,3 +50,10 @@ body {
  #daysContainer > #day:hover, #day:active {
     background-color:rgb(11, 248, 129);
  }
+
+ #map {
+	padding: 0;
+    margin: auto;
+    height: 60vh;
+    width: 70vw;
+ }

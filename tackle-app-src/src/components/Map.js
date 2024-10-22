@@ -32,8 +32,10 @@
 * @function refreshMap; Refreshes map view container whenever loadMap is called or user refreshes.
 */
 
-export default function Map(){
+function Map(){
     return(
-        <div id="map">Map Component</div>
+        <div id="map"></div>
     );
 }
+
+export default Map;
