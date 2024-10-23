@@ -20,9 +20,20 @@ export default function NavBar(){
 
 function NavButton(props) {
 	function color(num) {
+		//initializes a variable for storing the url of the clicked nav option
+		let url;
 		var navButtons = document.getElementById("navbutton-grid").children;
 		for (let item of navButtons) item.className = "navbutton";
-		navButtons[num].classList.add("navbutton-selected");
+			navButtons[num].classList.add("navbutton-selected");
+			//sets the url variable to the clicked nav button
+			url = navButtons[num].href;
+		
+		if(url == "http://localhost:3000/") {
+			//refreshes the page to trigger a map reload 
+			window.location.reload();
+			//updates the url location so that the reload does not result in aways going home
+			window.location.href = url;
+		}
 	}
 
 	let num = parseInt(props.num);

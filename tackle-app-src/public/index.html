@@ -11,7 +11,7 @@
     <link rel="manifest" href="assets/site.webmanifest">                                  <!--This makes the favicon actually work-->
    <script src="https://js.arcgis.com/4.30/"></script>
     <script>
-        window.onload = (event) => {
+        function refreshMap() {
             require(["esri/config", "esri/Map", "esri/views/MapView"], function(esriConfig, Map, MapView) {
 
                 esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurKFmiu31x1rwdL4Xh3kwiIs26oBYOQ0tjaRfbpNAk7gFvgfVhM1o8yW_n9ylIAzeZAjHAzXfEKVmEcPHRpjH0jyYTWB-5cwIxnxA-W-EN_0lV-BP9CaIq6kkpQ8NvP1mq2uATareyRdNeZHL8RU08z4J8CKb6ZUggf7aoOn4daM69dlzaIsknlzwhjxsvq6lmQWoWxkEyveOldM5fEagywPczJsY6Sjm2I8NlbYTqvm1AT1_zCiChz0F";
@@ -27,6 +27,10 @@
                 container: "map" // Div element
                 });
             });
+        }
+    
+        window.onload = (event) => {
+            refreshMap();
         };
     </script>
 </head>
