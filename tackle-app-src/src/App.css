@@ -11,7 +11,7 @@ body {
 	grid-template-columns: auto auto auto auto;
 }
 
-#navbutton-grid > a {
+.navbutton {
 	text-decoration: none;	/*removes line underneath link*/
 	background-color: rgb(12, 224, 244);
 	border: 1px solid black;
@@ -25,11 +25,19 @@ body {
 	justify-content: center;
 }
 
-#navbutton-grid > a:hover, a:active {
+.navbutton-selected {
+	background-color: rgb(232, 248, 11);
+	font-style: italic;
+}
+
+.navbutton:hover {
   	background-color: rgb(11, 248, 129);
 }
 
-#navbutton-grid > a > .material-icons {
+.navbutton:active {
+	background-color: rgb(3, 202, 103);
+
+.navbutton > .material-icons {
 	margin-right: 8px;	/* Icon and text spacing */
 }
 

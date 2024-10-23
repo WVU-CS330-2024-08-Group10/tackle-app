@@ -1,12 +1,34 @@
 import { Link } from 'react-router-dom';
 
+const pages = ["Home", "Information", "Personal", "About"];
+
 export default function NavBar(){
+	let url = window.location.href.split("/");
+	let page = url[url.length - 1];
+	let selected = pages.indexOf(page);
+	if (selected == -1) selected = 0;
+
     return(
         <div id="navbutton-grid">
-		<Link to="/"><span class="material-icons">home</span>Home</Link>
-			<Link to="/Information"><span class="material-icons">info</span>Information</Link>
-			<Link to="/Personal"><span class="material-icons">account_circle</span>Personal</Link>
-			<Link to="/About"><span class="material-icons">groups</span>About</Link>
+			{pages.map((page, i) => { 
+				if (i == 0) return (<NavButton num={i} selected={selected} linkTo="" display={page} key={page} />);
+				return (<NavButton num={i} selected={selected} linkTo={page} display={page} key={page} />);
+			})}
 		</div>
     );
+}
+
+function NavButton(props) {
+	function color(num) {
+		var navButtons = document.getElementById("navbutton-grid").children;
+		for (let item of navButtons) item.className = "navbutton";
+		navButtons[num].classList.add("navbutton-selected");
+	}
+
+	let num = parseInt(props.num);
+	let selected = parseInt(props.selected)
+	let linkTo = props.linkTo;
+	let display = props.display;
+
+	return <Link id={`navbutton-${num}`} className={"navbutton" + (selected == num ? " navbutton-selected" : "")} to={`/${linkTo}`} onClick={() => color(num)}>{display}</Link>
 }
