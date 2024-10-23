@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
+
 //Variables
 let $dayDivs = [];   //array containing all days of the week divs
 const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-
-
-
 const weatherData = [
     { windspeed: '10 mph', temp: '20°F', sunrise: '6:00 AM', sunset: '6:30 PM',  humidity: '50%' },
     { windspeed: '12 mph', temp: '22°F', sunrise: '6:01 AM', sunset: '6:31 PM', humidity:  '55%' },
@@ -14,12 +12,6 @@ const weatherData = [
     { windspeed: '11 mph', temp: '18°F', sunrise: '6:05 AM', sunset: '6:35 PM',   humidity: '75%' },
     { windspeed: '14 mph', temp: '24°F', sunrise: '6:06 AM', sunset: '6:36 PM',   humidity: '80%' },
 ];
-
-
-
-function click(index){
-    console.log(days[index] + " clicked");
-}
 
 function WeatherConditions() {
     const [popupVisible, setPopupVisible] = useState(false);
@@ -41,8 +33,7 @@ function WeatherConditions() {
     return (
         <div>
             <div id="daysContainer">
-                {days.map((day, index) => ( <div id="day" onClick={() => click(index)} key={index}>{day}</div>
-                ))}
+                {days.map((day, index) => ( <div id="day" onClick={() => click(index)} key={index}>{day}</div>))}
             </div>
 
             {popupVisible && (
