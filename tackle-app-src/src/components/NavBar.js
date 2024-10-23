@@ -1,12 +1,34 @@
 import { Link } from 'react-router-dom';
 
+const pages = ["Home", "Information", "Personal", "About"];
+
 export default function NavBar(){
+	let url = window.location.href.split("/");
+	let page = url[url.length - 1];
+	let selected = pages.indexOf(page);
+	if (selected == -1) selected = 0;
+
     return(
         <div id="navbutton-grid">
-			<Link to="/">Home</Link>
-			<Link to="/Personal">Personal</Link>
-			<Link to="/Info">Infromation</Link>
-			<Link to="/About">About</Link>
+			{pages.map((page, i) => { 
+				if (i == 0) return (<NavButton num={i} selected={selected} linkTo="" display={page} key={page} />);
+				return (<NavButton num={i} selected={selected} linkTo={page} display={page} key={page} />);
+			})}
 		</div>
     );
+}
+
+function NavButton(props) {
+	function color(num) {
+		var navButtons = document.getElementById("navbutton-grid").children;
+		for (let item of navButtons) item.className = "navbutton";
+		navButtons[num].classList.add("navbutton-selected");
+	}
+
+	let num = parseInt(props.num);
+	let selected = parseInt(props.selected)
+	let linkTo = props.linkTo;
+	let display = props.display;
+
+	return <Link id={`navbutton-${num}`} className={"navbutton" + (selected == num ? " navbutton-selected" : "")} to={`/${linkTo}`} onClick={() => color(num)}>{display}</Link>
 }
