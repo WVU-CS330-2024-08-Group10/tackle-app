@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 const pages = ["Home", "Information", "Personal", "About"];
+const icons = ["home", "info", "account_circle", "groups"];
 
 export default function NavBar(){
 	let url = window.location.href.split("/");
@@ -11,8 +12,8 @@ export default function NavBar(){
     return(
         <div id="navbutton-grid">
 			{pages.map((page, i) => { 
-				if (i == 0) return (<NavButton num={i} selected={selected} linkTo="" display={page} key={page} />);
-				return (<NavButton num={i} selected={selected} linkTo={page} display={page} key={page} />);
+				if (i == 0) return (<NavButton num={i} selected={selected} linkTo="" display={page} icon={icons[i]} key={page} />);
+				return (<NavButton num={i} selected={selected} linkTo={page} display={page} icon={icons[i]} key={page} />);
 			})}
 		</div>
     );
@@ -40,6 +41,7 @@ function NavButton(props) {
 	let selected = parseInt(props.selected)
 	let linkTo = props.linkTo;
 	let display = props.display;
+	let icon = props.icon;
 
-	return <Link id={`navbutton-${num}`} className={"navbutton" + (selected == num ? " navbutton-selected" : "")} to={`/${linkTo}`} onClick={() => color(num)}>{display}</Link>
+	return <Link id={`navbutton-${num}`} className={"navbutton" + (selected == num ? " navbutton-selected" : "")} to={`/${linkTo}`} onClick={() => color(num)}><span class="material-icons">{icon}</span>{display}</Link>
 }
