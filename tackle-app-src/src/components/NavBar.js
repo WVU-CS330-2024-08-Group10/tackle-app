@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 
+// perhaps it would be better to an array of 4 objects with this info in them? 
 const pages = ["", "Information", "Personal", "About"];
 const display = ["Home", "Information", "Personal", "About"];
 const icons = ["home", "info", "account_circle", "groups"];
+
+const classesDefault = Array(pages.length).fill("navbutton");
 
 export default function NavBar(){
 	let url = window.location.href.split("/");
@@ -11,7 +14,7 @@ export default function NavBar(){
 	let selected = pages.indexOf(page);
 	if (selected === -1) selected = 0;
 
-	let classesInit = ["navbutton", "navbutton", "navbutton", "navbutton"];
+	let classesInit = [...classesDefault]; // makes a copy of classesDefault
 	classesInit[selected] += " navbutton-selected";
 	const [classes, setClasses] = useState(classesInit);
 
@@ -19,7 +22,7 @@ export default function NavBar(){
 		if (selected !== num) {
 			selected = num;
 
-			let classesInit = ["navbutton", "navbutton", "navbutton", "navbutton"];
+			let classesInit = [...classesDefault];
 			classesInit[num] += " navbutton-selected";
 			setClasses(classesInit);
 	
