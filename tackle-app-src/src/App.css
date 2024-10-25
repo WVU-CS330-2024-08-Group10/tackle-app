@@ -76,6 +76,17 @@ body {
     background-color:rgb(3, 202, 103);
  }
 
+ #popup {
+	display: grid;
+    margin: auto;
+	text-align: center;
+    padding: 10px;
+    width: 70%;
+    border: 4px solid rgb(12, 224, 244);
+    border-radius: 15px;	/*rounded border*/
+ }
+
+ /*Map styles*/
  #map {
 	padding: 0;
     margin: auto;

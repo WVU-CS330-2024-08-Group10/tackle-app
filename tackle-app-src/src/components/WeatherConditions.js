@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 //Variables
-let $dayDivs = [];   //array containing all days of the week divs
 const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const weatherData = [
     { windspeed: '10 mph', temp: '20°F', sunrise: '6:00 AM', sunset: '6:30 PM',  humidity: '50%' },
