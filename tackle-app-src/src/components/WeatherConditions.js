@@ -12,28 +12,38 @@ const weatherData = [
     { windspeed: '11 mph', temp: '18°F', sunrise: '6:05 AM', sunset: '6:35 PM',   humidity: '75%' },
     { windspeed: '14 mph', temp: '24°F', sunrise: '6:06 AM', sunset: '6:36 PM',   humidity: '80%' },
 ];
+const classesDefault = Array(days.length).fill("daybutton");
 
 function WeatherConditions() {
     const [popupVisible, setPopupVisible] = useState(false);
     const [selectedWeather, setSelectedWeather] = useState({});
     const [buttonColor, setButtonColor] = useState('');
+    const [classes, setClasses] = useState(classesDefault);
 
     function click(index) {
         console.log(days[index] + " clicked");
         setSelectedWeather(weatherData[index]);
         setPopupVisible(true);
         setButtonColor('red');
+
+        // color switching stuff
+        let classesInit = [...classesDefault]; // makes a copy of classesDefault
+        classesInit[index] += " daybutton-selected";
+        setClasses(classesInit);
     }
 
     function closePopup() {
         setPopupVisible(false);
         setButtonColor('');
+
+        // color switching stuff
+        setClasses(classesDefault);
     }
 
     return (
         <div>
             <div id="daysContainer">
-                {days.map((day, index) => ( <div id="day" onClick={() => click(index)} key={index}>{day}</div>))}
+                {days.map((day, index) => ( <div id={`day-${index}`} onClick={() => click(index)} className={classes[index]} key={index}>{day}</div>))}
             </div>
 
             {popupVisible && (

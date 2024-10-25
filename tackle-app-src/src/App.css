@@ -54,7 +54,7 @@ body {
     border-radius: 15px;	/*rounded border*/
  }
  
- #daysContainer > #day {
+ .daybutton {
 	background-color:rgb(12, 224, 244);
     color: black;
     font-weight: bold;
@@ -63,8 +63,17 @@ body {
     line-height: 40px;
  }
 
- #daysContainer > #day:hover, #day:active {
+ .daybutton-selected {
+	background-color: rgb(232, 248, 11);
+	font-style: italic;
+ }
+
+.daybutton:hover {
     background-color:rgb(11, 248, 129);
+ }
+
+.daybutton:active {
+    background-color:rgb(3, 202, 103);
  }
 
  #map {
