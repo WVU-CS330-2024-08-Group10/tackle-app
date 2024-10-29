@@ -9,28 +9,30 @@
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
     <link rel="manifest" href="assets/site.webmanifest">                                  <!--This makes the favicon actually work-->
-   <script src="https://js.arcgis.com/4.30/"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+    <script src="https://unpkg.com/esri-leaflet@3.0.5/dist/esri-leaflet.js"></script>
     <script>
         function refreshMap() {
-            require(["esri/config", "esri/Map", "esri/views/MapView"], function(esriConfig, Map, MapView) {
+            var map = L.map('map').setView([38.5976, -80.4549], 7);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
 
-                esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurKFmiu31x1rwdL4Xh3kwiIs26oBYOQ0tjaRfbpNAk7gFvgfVhM1o8yW_n9ylIAzeZAjHAzXfEKVmEcPHRpjH0jyYTWB-5cwIxnxA-W-EN_0lV-BP9CaIq6kkpQ8NvP1mq2uATareyRdNeZHL8RU08z4J8CKb6ZUggf7aoOn4daM69dlzaIsknlzwhjxsvq6lmQWoWxkEyveOldM5fEagywPczJsY6Sjm2I8NlbYTqvm1AT1_zCiChz0F";
-
-                const map = new Map({
-                basemap: "arcgis/topographic" // basemap styles service
-                });
-
-                const view = new MapView({
-                map: map,
-                center: [-80.4549, 38.5976], // Longitude, latitude
-                zoom: 7, // Zoom level
-                container: "map" // Div element
-                });
-            });
+            //testing for adding a layer over the map 
+            /*var imageLayer = L.esri.imageMapLayer({
+                url: 'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/',
+                opacity: 0.75 // Adjust the transparency for better visibility
+            }).addTo(map);*/
         }
-    
+
         window.onload = (event) => {
-            refreshMap();
+           refreshMap();
         };
     </script>
 </head>
