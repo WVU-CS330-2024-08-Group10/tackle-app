@@ -18,20 +18,30 @@ function WeatherConditions() {
     const [selectedWeather, setSelectedWeather] = useState({});
     const [buttonColor, setButtonColor] = useState('');
     const [classes, setClasses] = useState(classesDefault);
+    
+    // i don't know why, but this has to use states. basically the same thing in NavBar can just use a normal variable...whatever
+    const [selectedDay, setSelectedDay] = useState(-1); 
 
     function click(index) {
-        console.log(days[index] + " clicked");
-        setSelectedWeather(weatherData[index]);
-        setPopupVisible(true);
-        setButtonColor('red');
+        if (selectedDay != index) {
+            setSelectedDay(index);
 
-        // color switching stuff
-        let classesInit = [...classesDefault]; // makes a copy of classesDefault
-        classesInit[index] += " daybutton-selected";
-        setClasses(classesInit);
+            console.log(days[index] + " clicked");
+            setSelectedWeather(weatherData[index]);
+            setPopupVisible(true);
+            setButtonColor('red');
+    
+            // color switching stuff
+            let classesInit = [...classesDefault]; // makes a copy of classesDefault
+            classesInit[index] += " daybutton-selected";
+            setClasses(classesInit);
+        } else {
+            closePopup();
+        }
     }
 
     function closePopup() {
+        setSelectedDay(-1);
         setPopupVisible(false);
         setButtonColor('');
 
