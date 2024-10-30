@@ -25,10 +25,10 @@
             }).addTo(map);
 
             //testing for adding a layer over the map 
-            /*var imageLayer = L.esri.imageMapLayer({
-                url: 'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/',
+            var imageLayer = L.esri.imageMapLayer({
+                url: 'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/export?bbox=-9547278.100794544,4301756.437231193,-8304037.7189094,5119111.70559859',
                 opacity: 0.75 // Adjust the transparency for better visibility
-            }).addTo(map);*/
+            }).addTo(map);
         }
 
         window.onload = (event) => {
