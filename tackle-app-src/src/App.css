@@ -90,6 +90,34 @@ body {
     border-radius: 15px;	/*rounded border*/
  }
 
+ /*Profile styles*/
+ #profile {
+	margin-top: 10px;
+ }
+
+ #profile-left {
+	padding: 20px;
+	width: 25%;
+	float: left;
+ }
+
+ #profile-right {
+	padding: 20px;
+	width: 65%;
+	float: right;
+	border-left: 1px solid #ffffff; 
+ }
+
+#profile-right > h1 {
+	text-align: center;
+}
+
+#profile-fishlist {
+	height: 50vh;
+  	overflow: auto;
+	border: 1px solid #ffffff;
+}
+
  /*Map styles*/
  #map {
 	padding: 0;
