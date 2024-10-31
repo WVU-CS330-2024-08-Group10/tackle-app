@@ -12,10 +12,10 @@ export default function About(){
 			<ul>
 				<li>Luke Hare</li>
 				<li>Chase Horne</li>
-				<li>Colton Turner</li>
+				<li>Colton Turner :D</li>
 				<li>Spencer "Spanky" Vida</li>
 				<li>Brendan Walsh</li>
-				<li>Christian Williams</li>
+				<li>Christian Williams 【=◈︿◈=】</li>
 				<li>Luke Withrow</li>
 			</ul>
 		</>
