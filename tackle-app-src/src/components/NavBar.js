@@ -39,7 +39,7 @@ export default function NavBar(){
     return(
         <div id="navbutton-grid">
 			{pages.map((page, i) => { 
-				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={classes[i]} to={`/${page}`} onClick={() => color(i)}><span class="material-icons">{icons[i]}</span>{display[i]}</Link>
+				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={classes[i]} to={`/${page}`} onClick={() => color(i)}><span className="material-icons">{icons[i]}</span>{display[i]}</Link>
 			})}
 		</div>
     );

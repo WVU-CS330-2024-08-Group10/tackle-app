@@ -101,6 +101,10 @@ body {
 	float: left;
  }
 
+ #profile-left > p {
+	text-align: center;
+}
+
  #profile-right {
 	padding: 20px;
 	width: 65%;
@@ -116,6 +120,10 @@ body {
 	height: 50vh;
   	overflow: auto;
 	border: 1px solid #ffffff;
+}
+
+#profile-picture {
+	width: 100%;
 }
 
  /*Map styles*/
