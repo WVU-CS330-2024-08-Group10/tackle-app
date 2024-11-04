@@ -38,7 +38,7 @@ export default function NavBar(){
 
     return(
 		<header id="navbutton-grid">
-			<div id="navbutton-grid-title">Tackle</div>
+			<img id="navbutton-grid-title" src={require('../assets/TackleLogo.jpg')} alt="Your profile picture"/>
 			{pages.map((page, i) => { 
 				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={classes[i]} to={`/${page}`} onClick={() => color(i)}><span className="material-icons">{icons[i]}</span>{display[i]}</Link>
 			})}
