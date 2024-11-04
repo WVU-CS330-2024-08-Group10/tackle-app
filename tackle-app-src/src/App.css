@@ -1,37 +1,52 @@
 /*Entire webpage styles*/
 body {
 	font-family: Arial, Helvetica, sans-serif;
-	background-color: black;
-	color: white;
+	background-color: rgb(244, 229, 229);
+	color: black;
+	padding: 0;
+	margin: 0;
   }
 
 /*Navigation styles*/
 #navbutton-grid {
-	display: grid;
-	grid-template-columns: auto auto auto auto;
+	display: flex;
+	top: 0%;
+	width: 100%;
+	height: 50px;
+	padding: 0px;
+	background-color: rgb(21, 156, 19);
+	box-shadow: 0px 0px 3px 0px;
+	border-width: 0px 0px 1px 0px;
+	border-style: solid;
+	border-color: black;
+	color: black;
+}
+
+#navbutton-grid-title {
+	font-weight: bolder;
+	font-size: larger;
+	align-items: center;
+	padding: 14px 25px;
 }
 
 .navbutton {
 	text-decoration: none;	/*removes line underneath link*/
-	background-color: rgb(12, 224, 244);
-	border: 1px solid black;
 	color: black;
 	font-weight: bolder;
 	font-size: larger;
-	padding: 14px 25px;
-	text-align: center;
 	display: flex;		/* Centers content on navbar */
 	align-items: center;
-	justify-content: center;
+	padding: 14px 25px;
 }
 
 .navbutton-selected {
-	background-color: rgb(232, 248, 11);
-	font-style: italic;
+	border-width: 0px 0px 4px 0px;
+	border-style: solid;
+	border-color: rgb(232, 248, 11);
 }
 
 .navbutton:hover {
-  	background-color: rgb(11, 248, 129);
+    background-color: rgb(11, 248, 129);
 }
 
 .navbutton:active {
@@ -50,12 +65,12 @@ body {
     margin: auto;
     padding: 10px;
     width: 70%;
-    border: 4px solid rgb(12, 224, 244);
+    border: 4px solid black;
     border-radius: 15px;	/*rounded border*/
  }
  
  .daybutton {
-	background-color:rgb(12, 224, 244);
+	background-color:rgb(21, 156, 19);
     color: black;
     font-weight: bold;
 	text-align: center;
@@ -69,7 +84,6 @@ body {
 
  .daybutton-selected {
 	background-color: rgb(232, 248, 11);
-	font-style: italic;
  }
 
 .daybutton:hover {
@@ -77,7 +91,7 @@ body {
  }
 
 .daybutton:active {
-    background-color:rgb(3, 202, 103);
+    background-color:rgb(11, 248, 129);
  }
 
  #popup {
@@ -86,8 +100,18 @@ body {
 	text-align: center;
     padding: 10px;
     width: 70%;
-    border: 4px solid rgb(12, 224, 244);
+    border: 4px solid black;
     border-radius: 15px;	/*rounded border*/
+ }
+
+ #popupExit {
+	font-weight: bold;
+	background-color: rgb(232, 248, 11);
+	border-radius: 15px;
+ }
+
+ #popupExit:hover {
+	background-color: rgb(246, 255, 113);
  }
 
  /*Profile styles*/
@@ -109,7 +133,7 @@ body {
 	padding: 20px;
 	width: 65%;
 	float: right;
-	border-left: 1px solid #ffffff; 
+	border-left: 1px solid #000000;
  }
 
 #profile-right > h1 {
@@ -119,7 +143,7 @@ body {
 #profile-fishlist {
 	height: 50vh;
   	overflow: auto;
-	border: 1px solid #ffffff;
+	border: 1px solid #000000;
 }
 
 #profile-picture {
@@ -129,8 +153,10 @@ body {
  /*Map styles*/
  #map {
 	margin: auto;
-	margin-top: 10px;
-	margin-bottom: 15px;
+	margin-top: 15px;
     height: 60vh;
     width: 70vw;
+	border-width: 3px;
+	border-style: solid;
+	border-color: black;
  }
