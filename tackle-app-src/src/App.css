@@ -108,6 +108,8 @@ body {
 	font-weight: bold;
 	background-color: rgb(232, 248, 11);
 	border-radius: 15px;
+	margin: auto;
+	width: 10%;
  }
 
  #popupExit:hover {
