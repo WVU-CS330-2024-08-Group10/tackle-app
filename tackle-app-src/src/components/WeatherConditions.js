@@ -66,8 +66,8 @@ function WeatherConditions() {
             <div id="daysContainer">
                 {days.map((day, index) => ( <div id={`day-${index}`} onClick={() => click(index)} className={classes[index]} key={index}>{day}</div>))}
             </div>
-
-             {popupVisible &&  selectedWeather &&(
+    
+            {popupVisible &&  selectedWeather &&(
                 <div id="popup">
                     <h2>Weather Information for {days[selectedDay]}</h2>
                     <p>Temperature: {selectedWeather?.temp}</p>
