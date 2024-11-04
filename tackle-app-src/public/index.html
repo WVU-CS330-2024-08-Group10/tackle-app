@@ -38,9 +38,11 @@
             }).addTo(map);
         }
 
-        window.onload = (event) => {
-           refreshMap();
-        };
+        window.addEventListener('load', function() {
+        setTimeout(function() {
+        refreshMap();
+    }, 40); 
+    });
     </script>
 </head>
 <body>

@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 
 // perhaps it would be better to an array of 4 objects with this info in them? 
-const pages = ["", "Information", "Personal", "About"];
-const display = ["Home", "Information", "Personal", "About"];
+const pages = ["", "Weather", "Personal", "About"];
+const display = ["Home", "Weather", "Personal", "About"];
 const icons = ["home", "info", "account_circle", "groups"];
 
 const classesDefault = Array(pages.length).fill("navbutton");
@@ -37,10 +37,11 @@ export default function NavBar(){
 	}
 
     return(
-        <div id="navbutton-grid">
+		<header id="navbutton-grid">
+			<div id="navbutton-grid-title">Tackle</div>
 			{pages.map((page, i) => { 
 				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={classes[i]} to={`/${page}`} onClick={() => color(i)}><span className="material-icons">{icons[i]}</span>{display[i]}</Link>
 			})}
-		</div>
+		</header>
     );
 }

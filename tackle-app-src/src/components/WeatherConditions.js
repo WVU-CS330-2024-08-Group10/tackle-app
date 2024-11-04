@@ -16,20 +16,18 @@ const classesDefault = Array(days.length).fill("daybutton");
 function WeatherConditions() {
     const [popupVisible, setPopupVisible] = useState(false);
     const [selectedWeather, setSelectedWeather] = useState({});
-    const [buttonColor, setButtonColor] = useState('');
     const [classes, setClasses] = useState(classesDefault);
     
     // i don't know why, but this has to use states. basically the same thing in NavBar can just use a normal variable...whatever
     const [selectedDay, setSelectedDay] = useState(-1); 
 
     function click(index) {
-        if (selectedDay != index) {
+        if (selectedDay !== index) {
             setSelectedDay(index);
 
             console.log(days[index] + " clicked");
             setSelectedWeather(weatherData[index]);
             setPopupVisible(true);
-            setButtonColor('red');
     
             // color switching stuff
             let classesInit = [...classesDefault]; // makes a copy of classesDefault
@@ -43,7 +41,6 @@ function WeatherConditions() {
     function closePopup() {
         setSelectedDay(-1);
         setPopupVisible(false);
-        setButtonColor('');
 
         // color switching stuff
         setClasses(classesDefault);
@@ -63,7 +60,7 @@ function WeatherConditions() {
                     <p>Sunrise: {selectedWeather.sunrise}</p>
                     <p>Sunset: {selectedWeather.sunset}</p>
                     <p>Humidity:  {selectedWeather.humidity}</p>
-                    <button style={{ backgroundColor: buttonColor}} onClick={closePopup}>Close</button >
+                    <button id="popupExit" onClick={closePopup}>Close</button >
                 </div>
             )}
         </div>
