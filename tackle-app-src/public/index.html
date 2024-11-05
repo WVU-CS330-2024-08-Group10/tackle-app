@@ -31,11 +31,42 @@
                 opacity: 0.7
             }).addTo(map);
 
-            // Add interactive feature layer for water bodies
-            var waterBodiesLayer = L.esri.featureLayer({
-                url: 'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/7',
-                opacity: 1.0
-            }).addTo(map);
+            const nonLakeUrls = [
+                'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/4',
+                'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/5',
+                'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/13',
+                'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/14'
+            ];
+
+            const lakeUrls = [
+                'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/7',
+                'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/8',
+                'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer/9'
+            ];
+
+            const combinedLayer = L.featureGroup();
+
+            lakeUrls.forEach(url => {
+            L.esri.featureLayer({
+                url: url,
+                onEachFeature: (feature, layer) => {
+                layer.bindPopup(feature.properties.LakeName);
+                },
+                opacity: 0.0
+            }).addTo(combinedLayer);
+            });
+
+            nonLakeUrls.forEach(url => {
+            L.esri.featureLayer({
+                url: url,
+                onEachFeature: (feature, layer) => {
+                layer.bindPopup(feature.properties.Name);
+                },
+                opacity: 0.0
+            }).addTo(combinedLayer);
+            });
+
+            combinedLayer.addTo(map);
         }
 
         window.addEventListener('load', function() {
