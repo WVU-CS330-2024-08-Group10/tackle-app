@@ -49,6 +49,10 @@ body {
 	color: black;
 }
 
+#logo-container {
+	display: flex;
+}
+
 .navbutton {
 	text-decoration: none;	/*removes line underneath link*/
 	color: black;
@@ -211,8 +215,4 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	padding: 0 20px; 
-}
-
-
-
-	
+}	

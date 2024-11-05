@@ -43,7 +43,7 @@ export default function NavBar(){
 
     return(
 		<header id="navbar-container">
-			<img id="navbutton-container-logo" src={require('../assets/TackleLogo.jpg')} alt="Tackle logo"/>
+			<Link id={`logo-container`} key={`logo-container`} to={`/`} onClick={() => color(0)}><img id="logo" src={require('../assets/TackleLogo.jpg')} alt="Tackle logo"/></Link>
 			
 			{pages.map((page, i) => { 
 				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={classes[i]} to={`/${page}`} onClick={() => color(i)}><span className="material-icons">{icons[i]}</span>{display[i]}</Link>
