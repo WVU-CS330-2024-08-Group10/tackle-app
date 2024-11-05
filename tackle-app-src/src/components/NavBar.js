@@ -49,7 +49,7 @@ export default function NavBar(){
 				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={classes[i]} to={`/${page}`} onClick={() => color(i)}><span className="material-icons">{icons[i]}</span>{display[i]}</Link>
 			})}
 
-			<Link id={`navbutton-login`} key={`navbutton-login`} to={`/Login`}><button class="btnLogin-popup">Login</button></Link>
+			<Link id={`navbutton-login`} key={`navbutton-login`} to={`/Login`} onClick={() => color(-1)}><button class="btnLogin-popup">Login</button></Link>
 			
 			<div id="toggle-container">
 				<header id="toggle-header">Light/Dark</header>
