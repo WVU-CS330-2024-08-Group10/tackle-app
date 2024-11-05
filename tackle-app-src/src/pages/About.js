@@ -14,7 +14,7 @@ export default function About(){
 				<li>Chase Horne</li>
 				<li>Colton Turner :D</li>
 				<li>Spencer "Spanky" Vida</li>
-				<li>Brendan Walsh</li>
+				<li>Brendan Walsh 𓆝 𓆟 𓆞</li>
 				<li>Christian Williams 【=◈︿◈=】</li>
 				<li>Luke Withrow</li>
 			</ul>

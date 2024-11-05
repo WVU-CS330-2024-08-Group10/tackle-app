@@ -47,6 +47,9 @@ export default function NavBar(){
 			{pages.map((page, i) => { 
 				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={classes[i]} to={`/${page}`} onClick={() => color(i)}><span className="material-icons">{icons[i]}</span>{display[i]}</Link>
 			})}
+
+			<button class="btnLogin-popup">Login</button>
+
 			<div id="toggle-container">
 				<header id="toggle-header">Light/Dark</header>
 				<button id="toggle-button" onClick={toggleMode}>Toggle</button>

@@ -6,6 +6,9 @@ import About from "./pages/About";
 import NavBar from "./components/NavBar";
 import PageNotFound from "./pages/PageNotFound";
 
+// Not sure if this is correct
+import Login from "./pages/Login"; 
+
 function App() {
   return (
 	<>
@@ -18,6 +21,10 @@ function App() {
 			  <Route path="/Personal" element={<Personal />} />
 			  <Route path="/About" element={<About />} />
 			  <Route path="*" element={<PageNotFound />} />
+
+			  
+			  <Route path="/Login" element={<Login />}/>
+
 			</Routes>
 		  </BrowserRouter>
 		</div>

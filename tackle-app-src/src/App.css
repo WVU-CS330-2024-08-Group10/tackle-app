@@ -184,3 +184,35 @@ body {
 	border-style: solid;
 	border-color: black;
 }
+
+/* Login Button */
+.btnLogin-popup {
+	background-color: rgb(27, 195, 25);
+	font-size: 1em; 
+	font-weight: bold; 
+	width: 70px;
+	height: 30px; 
+	border: 2px solid black;
+	border-radius: 6px; 
+	cursor: pointer;
+	transition: .2s;
+	position: absolute; 
+	right: 150px; 
+	top: 10px;
+}
+
+.btnLogin-popup:hover {
+	background: rgb(11, 248, 129);
+}
+
+/* Aligning text and login button */
+.home_header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 20px; 
+}
+
+
+
+	
