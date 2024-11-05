@@ -44,12 +44,13 @@ export default function NavBar(){
     return(
 		<header id="navbar-container">
 			<img id="navbutton-container-logo" src={require('../assets/TackleLogo.jpg')} alt="Tackle logo"/>
+			
 			{pages.map((page, i) => { 
 				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={classes[i]} to={`/${page}`} onClick={() => color(i)}><span className="material-icons">{icons[i]}</span>{display[i]}</Link>
 			})}
 
-			<button class="btnLogin-popup">Login</button>
-
+			<Link id={`navbutton-login`} key={`navbutton-login`} to={`/Login`}><button class="btnLogin-popup">Login</button></Link>
+			
 			<div id="toggle-container">
 				<header id="toggle-header">Light/Dark</header>
 				<button id="toggle-button" onClick={toggleMode}>Toggle</button>

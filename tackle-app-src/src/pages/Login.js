@@ -1,5 +1,5 @@
 export default function Login(){
     return(
-    <h1>Hello</h1>
+        <h1 className="page-header">Login Page</h1>
     );
 }

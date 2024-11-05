@@ -1,7 +1,7 @@
 export default function About(){
     return(
 		<>
-			<h1>About Page</h1>
+			<h1 className="page-header">About Page</h1>
 
 			<p>Why: Here at Tackle-Box, we all enjoy fishing. We wanted to make an app to aid in the fishing experience. </p>
 
@@ -10,7 +10,7 @@ export default function About(){
 
 			<p>Our team: </p>
 			<ul>
-				<li>Luke Hare</li>
+				<li>Luke Hare :3</li>
 				<li>Chase Horne</li>
 				<li>Colton Turner :D</li>
 				<li>Spencer "Spanky" Vida</li>
