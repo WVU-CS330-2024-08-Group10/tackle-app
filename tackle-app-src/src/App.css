@@ -7,8 +7,35 @@ body {
 	margin: 0;
   }
 
+
+/*Toggle light/dark mode styles*/
+#toggle-container{
+	display: flex;
+	flex-direction: column;
+  	align-items: center;
+  	justify-content: center;
+	position: absolute;
+	right: 0px;
+	padding-right: 30px;
+}
+
+#toggle-header{
+	color: black;
+	font-weight: bolder;
+	font-size: larger;
+}
+
+#toggle-button{
+	font-weight: bolder;
+}
+
+.dark-mode{
+	background-color: rgb(0, 0, 0);
+	color: rgb(244, 229, 229);;
+}
+
 /*Navigation styles*/
-#navbutton-grid {
+#navbar-container {
 	display: flex;
 	top: 0%;
 	width: 100%;
@@ -20,10 +47,6 @@ body {
 	border-style: solid;
 	border-color: black;
 	color: black;
-}
-
-#navbutton-grid-title {
-	align-items: center;
 }
 
 .navbutton {
@@ -54,8 +77,9 @@ body {
 	margin-right: 8px;	/* Icon and text spacing */
 }
 
+
 /*Days of the week styles*/
-#daysContainer {
+#days-container {
 	display: grid;
     grid-template-columns: auto auto auto auto auto auto auto;
     grid-gap: 10px;
@@ -64,9 +88,9 @@ body {
     width: 70%;
     border: 4px solid black;
     border-radius: 15px;	/*rounded border*/
- }
+}
  
- .daybutton {
+.daybutton {
 	background-color:rgb(21, 156, 19);
     color: black;
     font-weight: bold;
@@ -77,21 +101,21 @@ body {
 	-webkit-user-select: none; /* Safari */
 	-ms-user-select: none; /* IE 10 and IE 11 */
 	user-select: none; /* Standard syntax */
- }
+}
 
  .daybutton-selected {
 	background-color: rgb(232, 248, 11);
- }
+}
 
 .daybutton:hover {
     background-color:rgb(11, 248, 129);
- }
+}
 
 .daybutton:active {
     background-color:rgb(11, 248, 129);
- }
+}
 
- #popup {
+#popup {
 	display: grid;
     margin: auto;
 	text-align: center;
@@ -99,41 +123,42 @@ body {
     width: 70%;
     border: 4px solid black;
     border-radius: 15px;	/*rounded border*/
- }
+}
 
- #popupExit {
+#popup-exit {
 	font-weight: bold;
 	background-color: rgb(232, 248, 11);
 	border-radius: 15px;
 	margin: auto;
 	width: 10%;
- }
+}
 
- #popupExit:hover {
+#popup-exit:hover {
 	background-color: rgb(246, 255, 113);
- }
+}
 
- /*Profile styles*/
- #profile {
+
+/*Profile styles*/
+#profile {
 	margin-top: 10px;
- }
+}
 
- #profile-left {
+#profile-left {
 	padding: 20px;
 	width: 25%;
 	float: left;
- }
+}
 
  #profile-left > p {
 	text-align: center;
 }
 
- #profile-right {
+#profile-right {
 	padding: 20px;
 	width: 65%;
 	float: right;
 	border-left: 1px solid #000000;
- }
+}
 
 #profile-right > h1 {
 	text-align: center;
@@ -149,8 +174,8 @@ body {
 	width: 100%;
 }
 
- /*Map styles*/
- #map {
+/*Map styles*/
+#map {
 	margin: auto;
 	margin-top: 15px;
     height: 60vh;
@@ -158,4 +183,4 @@ body {
 	border-width: 3px;
 	border-style: solid;
 	border-color: black;
- }
+}

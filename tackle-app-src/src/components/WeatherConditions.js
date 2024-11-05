@@ -63,7 +63,7 @@ function WeatherConditions() {
     return (
 
         <div>
-            <div id="daysContainer">
+            <div id="days-container">
                 {days.map((day, index) => ( <div id={`day-${index}`} onClick={() => click(index)} className={classes[index]} key={index}>{day}</div>))}
             </div>
     
@@ -76,7 +76,7 @@ function WeatherConditions() {
                     <p>Sunrise: {selectedWeather?.sunrise}</p>
                     <p>Sunset: {selectedWeather?.sunset}</p>
                     <p>Humidity:  {selectedWeather?.humidity}</p>
-                    <button id="popupExit" onClick={closePopup}>Close</button >
+                    <button id="popup-exit" onClick={closePopup}>Close</button >
                 </div>
             )}
         </div>
