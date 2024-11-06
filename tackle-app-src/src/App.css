@@ -51,6 +51,7 @@ body {
 
 #logo-container {
 	display: flex;
+	width: 8.8%;
 }
 
 .navbutton {
