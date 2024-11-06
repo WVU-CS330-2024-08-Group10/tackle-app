@@ -12,7 +12,6 @@ export default function NavBar(){
 	let url = window.location.href.split("/");
 	let page = url[url.length - 1];
 	let selected = pages.indexOf(page);
-	if (selected === -1) selected = 0;
 
 	let classesInit = [...classesDefault]; // makes a copy of classesDefault
 	classesInit[selected] += " navbutton-selected";
