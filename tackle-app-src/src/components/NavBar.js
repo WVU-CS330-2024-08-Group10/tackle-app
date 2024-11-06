@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 // perhaps it would be better to an array of 4 objects with this info in them? 
 const pages = ["", "Weather", "Personal", "About"];
 const display = ["Home", "Weather", "Personal", "About"];
-const icons = ["home", "info", "account_circle", "groups"];
+const icons = ["home", "sunny", "account_circle", "groups"];
 
 const classesDefault = Array(pages.length).fill("navbutton");
 
