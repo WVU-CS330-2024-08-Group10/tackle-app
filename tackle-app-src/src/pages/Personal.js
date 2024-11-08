@@ -172,6 +172,8 @@ export default function Personal() {
                         </p>
                     </div>
                 </form>
+
+                <button onClick={() => setRenderFishform(!renderFishform)}>Close :3</button>
             </ ReactModal>
 
         </div>

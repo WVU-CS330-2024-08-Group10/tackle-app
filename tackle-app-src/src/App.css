@@ -216,10 +216,11 @@ body {
 }
 
 #fishform-sex-label {
-	float: left;
+	display: inline-block;
+	vertical-align: top;
 }
 #fishform-sex-radio {
-	float: left;
+	display: inline-block;
 }
 
 /*Map styles*/
