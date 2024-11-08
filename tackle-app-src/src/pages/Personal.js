@@ -72,23 +72,33 @@ const genericProfile = {
 
 export default function Personal() {
     const [username, setUsername] = useState(genericProfile.username);
-    const [fishList, setFishList] = useState(genericProfile.fishList);
+    const [fishlist, setFishlist] = useState(genericProfile.fishList);
     const [nickname, setNickname] = useState(genericProfile.nickname);
     const [gender, setGender] = useState(genericProfile.gender);
     const [fishEditing, setFishEditing] = useState(-1); 
     const [renderFishform, setRenderFishform] = useState(false);
-
+    const [isFishformEditing, setIsFishformEditing] = useState(false);
 
     function swapFish(index1, index2) {
-        if (index1 < 0 || index2 < 0 || index1 > fishList.length - 1 || index2 > fishList.length - 1) return;
-        let fishListTemp = fishList;
+        if (index1 < 0 || index2 < 0 || index1 > fishlist.length - 1 || index2 > fishlist.length - 1) return;
+        let fishlistTemp = fishlist;
         
-        let fishTemp = fishListTemp[index1];
-        fishListTemp[index1] = fishListTemp[index2];
-        fishListTemp[index2] = fishTemp;
+        let fishTemp = fishlistTemp[index1];
+        fishlistTemp[index1] = fishlistTemp[index2];
+        fishlistTemp[index2] = fishTemp;
 
         // for some reason, you have to make a new array
-        setFishList([...fishListTemp]);
+        setFishlist([...fishlistTemp]);
+    }
+
+    function openFish(index, editing = true) {
+        setRenderFishform(true);
+        if (editing != isFishformEditing) setIsFishformEditing(editing);
+        setFishEditing(index);
+    }
+
+    function submitTheFish() {
+        setRenderFishform(false);
     }
 
     return(
@@ -101,10 +111,10 @@ export default function Personal() {
             
             <div id="profile-right">
                 <h1>Welcome back, {username}!</h1>
-                <h3>Fish List ({fishList.length}):</h3>
+                <h3>Fish List ({fishlist.length}):</h3>
 
                 <div id="profile-fishlist">
-                    {fishList.map((fish, i) => (<div id="profile-fish" key={`fish-${i}`}>
+                    {fishlist.map((fish, i) => (<div id="profile-fish" key={`fish-${i}`}>
                         <div className="profile-fish-info">
                             <div className="profile-fish-content">{fish.nickname}</div> 
                             <div className="profile-fish-seperator">--</div> 
@@ -116,47 +126,47 @@ export default function Personal() {
                         </div>
                         <button onClick={() => swapFish(i, i - 1)}>^</button>
                         <button onClick={() => swapFish(i, i + 1)}>v</button>
-                        <button onClick={() => setRenderFishform(!renderFishform)}>Edit</button>
+                        <button onClick={() => openFish(i)}>Edit</button>
                     </div>))}
                 </div>
             </div>
             
             <ReactModal isOpen={renderFishform}>
                 <form id="fishform">
-                    <h1> Congrats On Your New Catch! </h1>
+                    <h1>{isFishformEditing ? `Editing \"${fishlist[fishEditing].nickname}\"` : "Congrats On Your New Catch!"}</h1>
                     <div>
                         <p>
                             <label htmlFor="nickname">Nickname: </label>
-                            <input id="nickname" name="nickname"/>
+                            <input id="nickname" name="nickname" placeholder="Big John" defaultValue={(typeof fishlist[fishEditing] !== 'undefined') ? fishlist[fishEditing].nickname : ""}/>
                         </p>
                     </div>
 
                     <div>
                         <p>
                             <label htmlFor="timeCaught">Time Caught: </label>
-                            <input type="datetime-local" id="timeCaught" name="timeCaught"/>
+                            <input type="datetime-local" id="timeCaught" name="timeCaught" defaultValue={(typeof fishlist[fishEditing] !== 'undefined') ? fishlist[fishEditing].timeCaught : ""}/>
                         </p>
 
                         <p>
                             <label htmlFor="bodyCaught">Body Caught: </label>
-                            <input id="bodyCaught" name="bodyCaught"/>
+                            <input id="bodyCaught" name="bodyCaught" defaultValue={(typeof fishlist[fishEditing] !== 'undefined') ? fishlist[fishEditing].bodyCaught : ""}/>
                         </p>
                     </div>
 
                     <div>
                         <p>
-                            <label htmlFor="weight">Weight: </label>
-                            <input id="weight" name="weight"/>
+                            <label htmlFor="weight">Weight (lbs): </label>
+                            <input id="weight" name="weight" defaultValue={(typeof fishlist[fishEditing] !== 'undefined') ? fishlist[fishEditing].weight : ""}/>
                         </p>
 
                         <p>
-                            <label htmlFor="length">Length: </label>
-                            <input id="length" name="length"/>
+                            <label htmlFor="length">Length (in): </label>
+                            <input id="length" name="length" defaultValue={(typeof fishlist[fishEditing] !== 'undefined') ? fishlist[fishEditing].length : ""}/>
                         </p>
 
                         <p>
                             <label htmlFor="tackled">Tackled: </label>
-                            <input id="tackled" name="tackled"/>
+                            <input id="tackled" name="tackled" defaultValue={(typeof fishlist[fishEditing] !== 'undefined') ? fishlist[fishEditing].tackled : ""}/>
                         </p>
 
                         <p>
@@ -173,7 +183,7 @@ export default function Personal() {
                     </div>
                 </form>
 
-                <button onClick={() => setRenderFishform(!renderFishform)}>Close :3</button>
+                <button onClick={submitTheFish}>Submit :3 XP</button>
             </ ReactModal>
 
         </div>
