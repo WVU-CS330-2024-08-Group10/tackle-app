@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactModal from 'react-modal';
 
 const genericFish = {
     species: {
@@ -74,6 +75,9 @@ export default function Personal() {
     const [fishList, setFishList] = useState(genericProfile.fishList);
     const [nickname, setNickname] = useState(genericProfile.nickname);
     const [gender, setGender] = useState(genericProfile.gender);
+    const [fishEditing, setFishEditing] = useState(-1); 
+    const [renderFishform, setRenderFishform] = useState(false);
+
 
     function swapFish(index1, index2) {
         if (index1 < 0 || index2 < 0 || index1 > fishList.length - 1 || index2 > fishList.length - 1) return;
@@ -112,11 +116,64 @@ export default function Personal() {
                         </div>
                         <button onClick={() => swapFish(i, i - 1)}>^</button>
                         <button onClick={() => swapFish(i, i + 1)}>v</button>
-                        <button>Edit</button>
+                        <button onClick={() => setRenderFishform(!renderFishform)}>Edit</button>
                     </div>))}
                 </div>
             </div>
             
+            <ReactModal isOpen={renderFishform}>
+                <form id="fishform">
+                    <h1> Congrats On Your New Catch! </h1>
+                    <div>
+                        <p>
+                            <label htmlFor="nickname">Nickname: </label>
+                            <input id="nickname" name="nickname"/>
+                        </p>
+                    </div>
+
+                    <div>
+                        <p>
+                            <label htmlFor="timeCaught">Time Caught: </label>
+                            <input type="datetime-local" id="timeCaught" name="timeCaught"/>
+                        </p>
+
+                        <p>
+                            <label htmlFor="bodyCaught">Body Caught: </label>
+                            <input id="bodyCaught" name="bodyCaught"/>
+                        </p>
+                    </div>
+
+                    <div>
+                        <p>
+                            <label htmlFor="weight">Weight: </label>
+                            <input id="weight" name="weight"/>
+                        </p>
+
+                        <p>
+                            <label htmlFor="length">Length: </label>
+                            <input id="length" name="length"/>
+                        </p>
+
+                        <p>
+                            <label htmlFor="tackled">Tackled: </label>
+                            <input id="tackled" name="tackled"/>
+                        </p>
+
+                        <p>
+                            <div id="fishform-sex-label">Sex:</div>
+                            <div id="fishform-sex-radio">
+                                <input type="radio" id="male" name="sex" value="male" />
+                                <label htmlFor="male">Male</label><br />
+                                <input type="radio" id="female" name="sex" value="female" />
+                                <label htmlFor="female">Female</label><br />
+                                <input type="radio" id="indeterminate" name="sex" value="indeterminate" />
+                                <label htmlFor="indeterminate">Indeterminate</label>
+                            </div>
+                        </p>
+                    </div>
+                </form>
+            </ ReactModal>
+
         </div>
     );
 }

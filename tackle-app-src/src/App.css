@@ -155,7 +155,7 @@ body {
 	float: left;
 }
 
- #profile-left > p {
+#profile-left > p {
 	text-align: center;
 }
 
@@ -213,6 +213,13 @@ body {
 #profile-picture {
 	width: 100%;
 	border-radius: 50%;
+}
+
+#fishform-sex-label {
+	float: left;
+}
+#fishform-sex-radio {
+	float: left;
 }
 
 /*Map styles*/
