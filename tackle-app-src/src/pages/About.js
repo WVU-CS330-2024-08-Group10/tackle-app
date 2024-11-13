@@ -10,13 +10,13 @@ export default function About(){
 
 			<p>Our team: </p>
 			<ul>
-				<li>Luke Hare :3</li>
+				<li>Luke Hare</li>
 				<li>Chase Horne ♪┏(・o･)┛♪</li>
 				<li>Colton Turner :D</li>
 				<li>Spencer "Spanky" Vida</li>
 				<li>Brendan Walsh 𓆝 𓆟 𓆞</li>
 				<li>Christian Williams 【=◈︿◈=】</li>
-				<li>Luke Withrow</li>
+				<li>Luke Withrow :3</li>
 			</ul>
 		</>
 	);

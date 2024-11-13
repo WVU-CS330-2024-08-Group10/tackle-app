@@ -156,8 +156,8 @@ export default function Personal() {
                             <div className="profile-fish-seperator">--</div> 
                             <div className="profile-fish-content">{fish.timeCaught.toLocaleString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'})}</div>
                         </div>
-                        <button onClick={() => swapFish(i, i - 1)}>^</button>
-                        <button onClick={() => swapFish(i, i + 1)}>v</button>
+                        <button onClick={() => swapFish(i, i - 1)}>↑</button>
+                        <button onClick={() => swapFish(i, i + 1)}>↓</button>
                         <button onClick={() => openFish(i)}>Edit</button>
                     </div>))}
                     {profile.fishlist.length < 1 ? <p>It's... empty. Something fishy is going on here</p>: null}
