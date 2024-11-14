@@ -17,6 +17,7 @@ const genericProfile = {
     id: 1,
     username: "JeremyWade_Official",
     nickname: "Jeremy Wade",
+    pfpUrl: require('../assets/jeremyPfp.jpg'),
     gender: "male",
     favSpots: [],
     fishlist: [
@@ -64,13 +65,11 @@ export default function Personal() {
 
     const [profile, setProfile] = useState(genericProfile);
 
+    // FISH FORM STUFF
     const [fishIndex, setFishIndex] = useState(-1); // index in fishlist of fish being edited
     const [renderFishform, setRenderFishform] = useState(false); 
     const [isFishformEditing, setIsFishformEditing] = useState(false); // indicates whether a fish is being edited (true) or added (false)
     const [fishEdit, setFishEdit] = useState(emptyFish); // fish in fishform being edited
-
-    // TODO: make profile editing stuff
-    const [renderProfileform, setRenderProfileform] = useState(false);
 
     function swapFish(index1, index2) {
         if (index1 < 0 || index2 < 0 || index1 > profile.fishlist.length - 1 || index2 > profile.fishlist.length - 1) return;
@@ -129,6 +128,22 @@ export default function Personal() {
         setProfile({...profile, fishlist: fishlistTemp});
     }
 
+    // PROFILE FORM STUFF
+    const [renderProfileform, setRenderProfileform] = useState(false);
+    const [profileEdit, setProfileEdit] = useState(genericProfile);
+
+    function openProfile() {
+        setProfileEdit(profile);
+        setRenderProfileform(true);
+    }
+    function submitProfile() {
+        setRenderProfileform(false);
+        setProfile(profileEdit);
+    }
+    function cancelProfile() {
+        setRenderProfileform(false);
+    }
+
     // Format date object to the appropriate string for the value of an HTML local-datetime input 
     function dateToLocalDatetimeString(date) {
         return new Date(date.getTime() + new Date().getTimezoneOffset() * -60 * 1000).toISOString().substring(0, 16);
@@ -138,12 +153,12 @@ export default function Personal() {
     return(
         <div id="profile"> 
             <div id="profile-left">
-                <img id="profile-picture" src={require('../assets/jeremyPfp.jpg')} alt="Your profile picture"/>
+                <img id="profile-pfp" src={profile.pfpUrl} alt="Your profile picture"/>
                 <p><b>Username:</b> {profile.username}</p>
                 <p><b>Nickname:</b> {profile.nickname}</p>
                 <p><b>Gender:</b> {profile.gender}</p>
 
-                <button onClick={() => setRenderProfileform(true)}>Edit profile</button>
+                <button onClick={openProfile}>Edit profile</button>
             </div>
             
             <div id="profile-right">
@@ -171,6 +186,8 @@ export default function Personal() {
                 <button onClick={addFish}>Add Fish</button>
             </div>
             
+            {/* TODO: make the fish form and profile form actually look nice! */}
+
             <ReactModal className="modal fishform-modal" overlayClassName="modal-overlay" isOpen={renderFishform}>
                 <form id="fishform">
                     <h1>{isFishformEditing ? `Editing \"${profile.fishlist[fishIndex] !== undefined ? profile.fishlist[fishIndex].nickname : "Null"}\"` : "Congrats On Your New Catch!"}</h1>
@@ -237,8 +254,25 @@ export default function Personal() {
             <ReactModal className="modal fishform-modal" overlayClassName="modal-overlay" isOpen={renderProfileform}>
                 <form id="profileform">
                     <h1>Editing Profile</h1>
-                    <p>x.x</p>
-                    <button onClick={() => setRenderProfileform(false)}>Close</button>
+                    <div>
+                        <p>
+                            <img id="profileform-pfp-display" src={profileEdit.pfpUrl} alt="Uploaded profile picture"/>
+                            <input id="profileform-pfp-input" name="pfp" type="file" onChange={(e) => setProfileEdit({...profileEdit, pfpUrl: URL.createObjectURL(e.target.files[0])})}></input>
+                        </p>
+
+                        <p>
+                            <label htmlFor="profileNickname">Nickname: </label>
+                            <input id="profileNickname" name="profileNickname" value={profileEdit.nickname} onChange={(e) => setProfileEdit({...profileEdit, nickname: e.target.value}) } />
+                        </p>
+                        <p>
+                            <label htmlFor="profileGender">Gender: </label>
+                            <input id="profileGender" name="profileGender" value={profileEdit.gender} onChange={(e) => setProfileEdit({...profileEdit, gender: e.target.value}) } />
+                        </p>
+                    </div>
+                    <p>
+                        <button onClick={submitProfile}>Submit</button>
+                        <button onClick={cancelProfile}>Cancel</button>
+                    </p>
                 </form>
             </ReactModal>
 
