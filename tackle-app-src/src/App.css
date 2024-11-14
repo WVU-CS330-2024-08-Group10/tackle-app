@@ -5,8 +5,25 @@ body {
 	color: black;
 	padding: 0;
 	margin: 0;
-  }
+}
 
+.modal-overlay {
+	position: fixed;
+    inset: 0;
+	height: 100%;
+    background-color: rgba(255, 255, 255, 0.75);
+}
+.modal {
+	position: absolute;
+	inset: 40px;
+	border: 1px solid #ccc;
+	background: #fff;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	border-radius: 4px;
+	outline: none;
+	padding: 20px;
+}
 
 /*Toggle light/dark mode styles*/
 #toggle-container{
@@ -213,6 +230,18 @@ body {
 #profile-picture {
 	width: 100%;
 	border-radius: 50%;
+}
+
+.fishform-modal {
+	margin: 0 auto;
+	inset: 10px;
+
+	max-width: 500px;
+	max-height: 600px;
+}
+
+#fishform {
+	text-align: center;
 }
 
 #fishform-sex-label {

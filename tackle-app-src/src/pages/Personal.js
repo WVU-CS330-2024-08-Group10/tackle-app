@@ -69,6 +69,9 @@ export default function Personal() {
     const [isFishformEditing, setIsFishformEditing] = useState(false); // indicates whether a fish is being edited (true) or added (false)
     const [fishEdit, setFishEdit] = useState(emptyFish); // fish in fishform being edited
 
+    // TODO: make profile editing stuff
+    const [renderProfileform, setRenderProfileform] = useState(false);
+
     function swapFish(index1, index2) {
         if (index1 < 0 || index2 < 0 || index1 > profile.fishlist.length - 1 || index2 > profile.fishlist.length - 1) return;
         let fishlistTemp = [...profile.fishlist];
@@ -139,6 +142,8 @@ export default function Personal() {
                 <p><b>Username:</b> {profile.username}</p>
                 <p><b>Nickname:</b> {profile.nickname}</p>
                 <p><b>Gender:</b> {profile.gender}</p>
+
+                <button onClick={() => setRenderProfileform(true)}>Edit profile</button>
             </div>
             
             <div id="profile-right">
@@ -166,7 +171,7 @@ export default function Personal() {
                 <button onClick={addFish}>Add Fish</button>
             </div>
             
-            <ReactModal isOpen={renderFishform}>
+            <ReactModal className="modal fishform-modal" overlayClassName="modal-overlay" isOpen={renderFishform}>
                 <form id="fishform">
                     <h1>{isFishformEditing ? `Editing \"${profile.fishlist[fishIndex] !== undefined ? profile.fishlist[fishIndex].nickname : "Null"}\"` : "Congrats On Your New Catch!"}</h1>
                     <div>
@@ -228,6 +233,14 @@ export default function Personal() {
                     </p>
                 </form>
             </ ReactModal>
+
+            <ReactModal className="modal fishform-modal" overlayClassName="modal-overlay" isOpen={renderProfileform}>
+                <form id="profileform">
+                    <h1>Editing Profile</h1>
+                    <p>x.x</p>
+                    <button onClick={() => setRenderProfileform(false)}>Close</button>
+                </form>
+            </ReactModal>
 
         </div>
     );
