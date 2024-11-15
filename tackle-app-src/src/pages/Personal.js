@@ -111,8 +111,6 @@ export default function Personal() {
 
         let fishTemp = {...fishEdit};
         if (fishTemp.nickname === "") fishTemp.nickname = `Fish #${fishIndex + 1}`;
-        if (fishTemp.species.name === "") fishTemp.species = {name: "Catfish"};
-        if (fishTemp.bodyCaught === "") fishTemp.bodyCaught = "Kanawha River, WV";
 
         let fishlistTemp = [...profile.fishlist];
         fishlistTemp[fishIndex] = fishTemp;
@@ -132,6 +130,20 @@ export default function Personal() {
 
         setProfile({...profile, fishlist: fishlistTemp});
     }
+
+    // Returns obj with property set to val IF val is a number. Otherwise, returns obj unchanged
+    function getPropIfPositiveNum(val, obj, property) {
+        val = val.trim();
+        let objTemp = {...obj};
+
+        if (!isNaN(val) && parseFloat(val) >= 0) {
+            objTemp[property] = val;
+        } else if (val.length === 0) {
+            objTemp[property] = null;
+        }
+        return objTemp;
+    }
+
 
     // PROFILE FORM STUFF
     const [renderProfileform, setRenderProfileform] = useState(false);
@@ -170,9 +182,9 @@ export default function Personal() {
                         <div className="profile-fish-info">
                             <div className="profile-fish-content">{fish.nickname}</div> 
                             <div className="profile-fish-seperator">--</div> 
-                            <div className="profile-fish-content">{fish.species.name}</div> 
+                            <div className="profile-fish-content">{fish.species.name.trim().length !== 0 ? fish.species.name : <em>Unknown</em>}</div> 
                             <div className="profile-fish-seperator">--</div> 
-                            <div className="profile-fish-content">{fish.bodyCaught}</div> 
+                            <div className="profile-fish-content">{fish.bodyCaught.trim().length !== 0 ? fish.bodyCaught : <em>Unknown, ST</em>}</div> 
                             <div className="profile-fish-seperator">--</div> 
                             <div className="profile-fish-content">{new Date(fish.timeCaught).toLocaleString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'})}</div>
                         </div>
@@ -193,10 +205,12 @@ export default function Personal() {
                     <h1>{isFishformEditing ? `Editing \"${profile.fishlist[fishIndex] !== undefined ? profile.fishlist[fishIndex].nickname : "Null"}\"` : "Congrats On Your New Catch!"}</h1>
                     <div>
                         <p>
+                            {/* TODO: make length limit for fish nickname */}
                             <label htmlFor="nickname">Nickname: </label>
                             <input id="nickname" name="nickname" placeholder={`Fish #${fishIndex + 1}`} value={fishEdit.nickname} onChange={(e) => setFishEdit({...fishEdit, nickname: e.target.value}) } />
                         </p>
                         <p>
+                            {/* TODO: make species input dropdown of species in location */}
                             <label htmlFor="species">Species: </label>
                             <input id="species" name="species" placeholder="Catfish" value={fishEdit.species.name} onChange={(e) => setFishEdit({...fishEdit, species: {name: e.target.value}}) } />
                         </p>
@@ -217,12 +231,12 @@ export default function Personal() {
                     <div>
                         <p>
                             <label htmlFor="weight">Weight (lbs): </label>
-                            <input id="weight" name="weight" value={(fishEdit.weight === null) ? "" : fishEdit.weight} onChange={(e) => setFishEdit({...fishEdit, weight: e.target.value}) }/>
+                            <input id="weight" name="weight" value={(fishEdit.weight === null) ? "" : fishEdit.weight} onChange={(e) => setFishEdit(getPropIfPositiveNum(e.target.value, fishEdit, "weight")) }/>
                         </p>
 
                         <p>
                             <label htmlFor="length">Length (in): </label>
-                            <input id="length" name="length" value={(fishEdit.length === null) ? "" : fishEdit.length} onChange={(e) => setFishEdit({...fishEdit, length: e.target.value}) }/>
+                            <input id="length" name="length" value={(fishEdit.length === null) ? "" : fishEdit.length} onChange={(e) => setFishEdit(getPropIfPositiveNum(e.target.value, fishEdit, "length")) }/>
                         </p>
 
                         <p>
