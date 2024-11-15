@@ -6,7 +6,7 @@ const emptyFish = {
         name: ""
     },
     nickname: "",
-    timeCaught: new Date(0),
+    timeCaught: 0,
     bodyCaught: "",
     weight: null,
     length: null,
@@ -26,7 +26,7 @@ const genericProfile = {
                 name: "Catfish"
             },
             nickname: "Big John",
-            timeCaught: new Date(),
+            timeCaught: new Date().getTime(),
             bodyCaught: "Poca River, WV", // REPLACE WITH some sort of location object later
             weight: 51, // lbs?
             length: 22, // inches?
@@ -38,7 +38,7 @@ const genericProfile = {
                 name: "Catfinch"
             },
             nickname: "Little John",
-            timeCaught: new Date(),
+            timeCaught: new Date().getTime(),
             bodyCaught: "Kanawha River, WV", // REPLACE WITH some sort of location object later
             weight: 51, // lbs?
             length: 22, // inches?
@@ -50,7 +50,7 @@ const genericProfile = {
                 name: "A trout"
             },
             nickname: "slipper",
-            timeCaught: new Date(),
+            timeCaught: new Date().getTime(),
             bodyCaught: "Coal River, WV", // REPLACE WITH some sort of location object later
             weight: 51, // lbs?
             length: 22, // inches?
@@ -59,6 +59,11 @@ const genericProfile = {
         }
     ]
 };
+
+// Format date object to the appropriate string for the value of an HTML local-datetime input 
+function dateToLocalDatetimeString(date) {
+    return new Date(date.getTime() + new Date().getTimezoneOffset() * -60 * 1000).toISOString().substring(0, 16);
+}
 
 export default function Personal() {
     ReactModal.setAppElement('body');
@@ -95,7 +100,7 @@ export default function Personal() {
         setFishIndex(profile.fishlist.length);
 
         let fishTemp = {...emptyFish};
-        fishTemp.timeCaught = new Date();
+        fishTemp.timeCaught = new Date().getTime();
 
         setFishEdit(fishTemp);
         setRenderFishform(true);
@@ -144,11 +149,6 @@ export default function Personal() {
         setRenderProfileform(false);
     }
 
-    // Format date object to the appropriate string for the value of an HTML local-datetime input 
-    function dateToLocalDatetimeString(date) {
-        return new Date(date.getTime() + new Date().getTimezoneOffset() * -60 * 1000).toISOString().substring(0, 16);
-    }
-
 
     return(
         <div id="profile"> 
@@ -174,7 +174,7 @@ export default function Personal() {
                             <div className="profile-fish-seperator">--</div> 
                             <div className="profile-fish-content">{fish.bodyCaught}</div> 
                             <div className="profile-fish-seperator">--</div> 
-                            <div className="profile-fish-content">{fish.timeCaught.toLocaleString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'})}</div>
+                            <div className="profile-fish-content">{new Date(fish.timeCaught).toLocaleString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'})}</div>
                         </div>
                         <button onClick={() => swapFish(i, i - 1)}>↑</button>
                         <button onClick={() => swapFish(i, i + 1)}>↓</button>
@@ -205,7 +205,7 @@ export default function Personal() {
                     <div>
                         <p>
                             <label htmlFor="timeCaught">Time Caught: </label>
-                            <input type="datetime-local" id="timeCaught" name="timeCaught" value={dateToLocalDatetimeString(fishEdit.timeCaught)} onChange={(e) => setFishEdit({...fishEdit, timeCaught: new Date(e.target.value)}) }/>
+                            <input type="datetime-local" id="timeCaught" name="timeCaught" value={dateToLocalDatetimeString(new Date(fishEdit.timeCaught))} onChange={(e) => setFishEdit({...fishEdit, timeCaught: new Date(e.target.value).getTime()}) }/>
                         </p>
 
                         <p>
