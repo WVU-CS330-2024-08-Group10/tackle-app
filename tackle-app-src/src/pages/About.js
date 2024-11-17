@@ -16,7 +16,7 @@ export default function About(){
 				<li>Spencer "Spanky" Vida</li>
 				<li>Brendan Walsh 𓆝 𓆟 𓆞</li>
 				<li>Christian Williams 【=◈︿◈=】</li>
-				<li>Luke Withrow</li>
+				<li>Luke Withrow ^__^</li>
 			</ul>
 		</>
 	);
