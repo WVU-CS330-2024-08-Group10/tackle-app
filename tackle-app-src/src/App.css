@@ -226,9 +226,23 @@ body {
 /*Map styles*/
 #map {
 	margin: auto;
+	position: relative;
+	left: 425px;
 	margin-top: 15px;
     height: 60vh;
-    width: 70vw;
+    width: 40vw;
+	border-width: 3px;
+	border-style: solid;
+	border-color: black;
+	display: inline-block;
+}
+
+#fish {
+	text-align: right;
+	display: inline-block;
+	scale: 0.6;
+	position: relative;
+	left: 550px;
 	border-width: 3px;
 	border-style: solid;
 	border-color: black;
