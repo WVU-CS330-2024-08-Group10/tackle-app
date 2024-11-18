@@ -146,7 +146,7 @@ async function checkForUsername(username) {
         
         //Check for username
         console.error(`${username} usernames in database: ` + result.recordset.length);
-        if(result.recordset.length === 1){
+        if(result.recordset.length > 0){
             console.log("Username is already in use", "\n");
             return true;
         }
