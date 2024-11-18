@@ -6,7 +6,7 @@ const emptyFish = {
         name: ""
     },
     nickname: "",
-    timeCaught: new Date(0),
+    timeCaught: 0,
     bodyCaught: "",
     weight: null,
     length: null,
@@ -17,6 +17,7 @@ const genericProfile = {
     id: 1,
     username: "JeremyWade_Official",
     nickname: "Jeremy Wade",
+    pfpUrl: require('../assets/jeremyPfp.jpg'),
     gender: "male",
     favSpots: [],
     fishlist: [
@@ -25,7 +26,7 @@ const genericProfile = {
                 name: "Catfish"
             },
             nickname: "Big John",
-            timeCaught: new Date(),
+            timeCaught: new Date().getTime(),
             bodyCaught: "Poca River, WV", // REPLACE WITH some sort of location object later
             weight: 51, // lbs?
             length: 22, // inches?
@@ -37,7 +38,7 @@ const genericProfile = {
                 name: "Catfinch"
             },
             nickname: "Little John",
-            timeCaught: new Date(),
+            timeCaught: new Date().getTime(),
             bodyCaught: "Kanawha River, WV", // REPLACE WITH some sort of location object later
             weight: 51, // lbs?
             length: 22, // inches?
@@ -49,7 +50,7 @@ const genericProfile = {
                 name: "A trout"
             },
             nickname: "slipper",
-            timeCaught: new Date(),
+            timeCaught: new Date().getTime(),
             bodyCaught: "Coal River, WV", // REPLACE WITH some sort of location object later
             weight: 51, // lbs?
             length: 22, // inches?
@@ -59,11 +60,17 @@ const genericProfile = {
     ]
 };
 
+// Format date object to the appropriate string for the value of an HTML local-datetime input 
+function dateToLocalDatetimeString(date) {
+    return new Date(date.getTime() + new Date().getTimezoneOffset() * -60 * 1000).toISOString().substring(0, 16);
+}
+
 export default function Personal() {
     ReactModal.setAppElement('body');
 
     const [profile, setProfile] = useState(genericProfile);
 
+    // FISH FORM STUFF
     const [fishIndex, setFishIndex] = useState(-1); // index in fishlist of fish being edited
     const [renderFishform, setRenderFishform] = useState(false); 
     const [isFishformEditing, setIsFishformEditing] = useState(false); // indicates whether a fish is being edited (true) or added (false)
@@ -93,7 +100,7 @@ export default function Personal() {
         setFishIndex(profile.fishlist.length);
 
         let fishTemp = {...emptyFish};
-        fishTemp.timeCaught = new Date();
+        fishTemp.timeCaught = new Date().getTime();
 
         setFishEdit(fishTemp);
         setRenderFishform(true);
@@ -104,8 +111,6 @@ export default function Personal() {
 
         let fishTemp = {...fishEdit};
         if (fishTemp.nickname === "") fishTemp.nickname = `Fish #${fishIndex + 1}`;
-        if (fishTemp.species.name === "") fishTemp.species = {name: "Catfish"};
-        if (fishTemp.bodyCaught === "") fishTemp.bodyCaught = "Kanawha River, WV";
 
         let fishlistTemp = [...profile.fishlist];
         fishlistTemp[fishIndex] = fishTemp;
@@ -126,19 +131,46 @@ export default function Personal() {
         setProfile({...profile, fishlist: fishlistTemp});
     }
 
-    // Format date object to the appropriate string for the value of an HTML local-datetime input 
-    function dateToLocalDatetimeString(date) {
-        return new Date(date.getTime() + new Date().getTimezoneOffset() * -60 * 1000).toISOString().substring(0, 16);
+    // Returns obj with property set to val IF val is a number. Otherwise, returns obj unchanged
+    function getPropIfPositiveNum(val, obj, property) {
+        val = val.trim();
+        let objTemp = {...obj};
+
+        if (!isNaN(val) && parseFloat(val) >= 0) {
+            objTemp[property] = val;
+        } else if (val.length === 0) {
+            objTemp[property] = null;
+        }
+        return objTemp;
+    }
+
+
+    // PROFILE FORM STUFF
+    const [renderProfileform, setRenderProfileform] = useState(false);
+    const [profileEdit, setProfileEdit] = useState(genericProfile);
+
+    function openProfile() {
+        setProfileEdit(profile);
+        setRenderProfileform(true);
+    }
+    function submitProfile() {
+        setRenderProfileform(false);
+        setProfile(profileEdit);
+    }
+    function cancelProfile() {
+        setRenderProfileform(false);
     }
 
 
     return(
         <div id="profile"> 
             <div id="profile-left">
-                <img id="profile-picture" src={require('../assets/jeremyPfp.jpg')} alt="Your profile picture"/>
+                <img id="profile-pfp" src={profile.pfpUrl} alt="Your profile picture"/>
                 <p><b>Username:</b> {profile.username}</p>
                 <p><b>Nickname:</b> {profile.nickname}</p>
                 <p><b>Gender:</b> {profile.gender}</p>
+
+                <button onClick={openProfile}>Edit profile</button>
             </div>
             
             <div id="profile-right">
@@ -150,11 +182,11 @@ export default function Personal() {
                         <div className="profile-fish-info">
                             <div className="profile-fish-content">{fish.nickname}</div> 
                             <div className="profile-fish-seperator">--</div> 
-                            <div className="profile-fish-content">{fish.species.name}</div> 
+                            <div className="profile-fish-content">{fish.species.name.trim().length !== 0 ? fish.species.name : <em>Unknown</em>}</div> 
                             <div className="profile-fish-seperator">--</div> 
-                            <div className="profile-fish-content">{fish.bodyCaught}</div> 
+                            <div className="profile-fish-content">{fish.bodyCaught.trim().length !== 0 ? fish.bodyCaught : <em>Unknown, ST</em>}</div> 
                             <div className="profile-fish-seperator">--</div> 
-                            <div className="profile-fish-content">{fish.timeCaught.toLocaleString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'})}</div>
+                            <div className="profile-fish-content">{new Date(fish.timeCaught).toLocaleString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'})}</div>
                         </div>
                         <button onClick={() => swapFish(i, i - 1)}>↑</button>
                         <button onClick={() => swapFish(i, i + 1)}>↓</button>
@@ -166,15 +198,19 @@ export default function Personal() {
                 <button onClick={addFish}>Add Fish</button>
             </div>
             
-            <ReactModal isOpen={renderFishform}>
+            {/* TODO: make the fish form and profile form actually look nice! */}
+
+            <ReactModal className="modal fishform-modal" overlayClassName="modal-overlay" isOpen={renderFishform}>
                 <form id="fishform">
                     <h1>{isFishformEditing ? `Editing \"${profile.fishlist[fishIndex] !== undefined ? profile.fishlist[fishIndex].nickname : "Null"}\"` : "Congrats On Your New Catch!"}</h1>
                     <div>
                         <p>
+                            {/* TODO: make length limit for fish nickname */}
                             <label htmlFor="nickname">Nickname: </label>
                             <input id="nickname" name="nickname" placeholder={`Fish #${fishIndex + 1}`} value={fishEdit.nickname} onChange={(e) => setFishEdit({...fishEdit, nickname: e.target.value}) } />
                         </p>
                         <p>
+                            {/* TODO: make species input dropdown of species in location */}
                             <label htmlFor="species">Species: </label>
                             <input id="species" name="species" placeholder="Catfish" value={fishEdit.species.name} onChange={(e) => setFishEdit({...fishEdit, species: {name: e.target.value}}) } />
                         </p>
@@ -183,7 +219,7 @@ export default function Personal() {
                     <div>
                         <p>
                             <label htmlFor="timeCaught">Time Caught: </label>
-                            <input type="datetime-local" id="timeCaught" name="timeCaught" value={dateToLocalDatetimeString(fishEdit.timeCaught)} onChange={(e) => setFishEdit({...fishEdit, timeCaught: new Date(e.target.value)}) }/>
+                            <input type="datetime-local" id="timeCaught" name="timeCaught" value={dateToLocalDatetimeString(new Date(fishEdit.timeCaught))} onChange={(e) => setFishEdit({...fishEdit, timeCaught: new Date(e.target.value).getTime()}) }/>
                         </p>
 
                         <p>
@@ -195,12 +231,12 @@ export default function Personal() {
                     <div>
                         <p>
                             <label htmlFor="weight">Weight (lbs): </label>
-                            <input id="weight" name="weight" value={(fishEdit.weight === null) ? "" : fishEdit.weight} onChange={(e) => setFishEdit({...fishEdit, weight: e.target.value}) }/>
+                            <input id="weight" name="weight" value={(fishEdit.weight === null) ? "" : fishEdit.weight} onChange={(e) => setFishEdit(getPropIfPositiveNum(e.target.value, fishEdit, "weight")) }/>
                         </p>
 
                         <p>
                             <label htmlFor="length">Length (in): </label>
-                            <input id="length" name="length" value={(fishEdit.length === null) ? "" : fishEdit.length} onChange={(e) => setFishEdit({...fishEdit, length: e.target.value}) }/>
+                            <input id="length" name="length" value={(fishEdit.length === null) ? "" : fishEdit.length} onChange={(e) => setFishEdit(getPropIfPositiveNum(e.target.value, fishEdit, "length")) }/>
                         </p>
 
                         <p>
@@ -228,6 +264,31 @@ export default function Personal() {
                     </p>
                 </form>
             </ ReactModal>
+
+            <ReactModal className="modal fishform-modal" overlayClassName="modal-overlay" isOpen={renderProfileform}>
+                <form id="profileform">
+                    <h1>Editing Profile</h1>
+                    <div>
+                        <p>
+                            <img id="profileform-pfp-display" src={profileEdit.pfpUrl} alt="Uploaded profile picture"/>
+                            <input id="profileform-pfp-input" name="pfp" type="file" onChange={(e) => setProfileEdit({...profileEdit, pfpUrl: URL.createObjectURL(e.target.files[0])})}></input>
+                        </p>
+
+                        <p>
+                            <label htmlFor="profileNickname">Nickname: </label>
+                            <input id="profileNickname" name="profileNickname" value={profileEdit.nickname} onChange={(e) => setProfileEdit({...profileEdit, nickname: e.target.value}) } />
+                        </p>
+                        <p>
+                            <label htmlFor="profileGender">Gender: </label>
+                            <input id="profileGender" name="profileGender" value={profileEdit.gender} onChange={(e) => setProfileEdit({...profileEdit, gender: e.target.value}) } />
+                        </p>
+                    </div>
+                    <p>
+                        <button onClick={submitProfile}>Submit</button>
+                        <button onClick={cancelProfile}>Cancel</button>
+                    </p>
+                </form>
+            </ReactModal>
 
         </div>
     );

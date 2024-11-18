@@ -5,8 +5,25 @@ body {
 	color: black;
 	padding: 0;
 	margin: 0;
-  }
+}
 
+.modal-overlay {
+	position: fixed;
+    inset: 0;
+	height: 100%;
+    background-color: rgba(255, 255, 255, 0.75);
+}
+.modal {
+	position: absolute;
+	inset: 40px;
+	border: 1px solid #ccc;
+	background: #fff;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	border-radius: 4px;
+	outline: none;
+	padding: 20px;
+}
 
 /*Toggle light/dark mode styles*/
 #toggle-container{
@@ -210,9 +227,23 @@ body {
 	float: right;
 }
 
-#profile-picture {
+#profile-pfp {
 	width: 100%;
 	border-radius: 50%;
+	object-fit: cover;
+	aspect-ratio: 1 / 1;
+}
+
+.fishform-modal {
+	margin: 0 auto;
+	inset: 10px;
+
+	max-width: 500px;
+	max-height: 600px;
+}
+
+#fishform {
+	color: black;
 }
 
 #fishform-sex-label {
@@ -221,6 +252,14 @@ body {
 }
 #fishform-sex-radio {
 	display: inline-block;
+}
+
+#profileform-pfp-display {
+	width: 10%;
+	border-radius: 50%;
+	object-fit: cover;
+	aspect-ratio: 1 / 1;
+	vertical-align: middle;
 }
 
 /*Map styles*/
@@ -274,4 +313,4 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	padding: 0 20px; 
-}	
+}
