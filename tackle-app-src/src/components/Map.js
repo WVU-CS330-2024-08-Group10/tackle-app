@@ -74,7 +74,7 @@ const Map = () => {
 }
 
 function setFish(properties, fishBox, urlType) {
-    let fishTypes = ["ChanCatFish", "Crappie", "StripBass", "LrgmthBass", "Musky", "WhtBass", "Walleye"];
+    let fishTypes = ["ChanCatfish", "Crappie", "StripBass", "LrgmthBass", "Musky", "WhtBass", "Walleye"];
     var fishString = "";
 
     if(urlType == "Lake") {
