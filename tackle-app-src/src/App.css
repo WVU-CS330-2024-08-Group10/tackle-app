@@ -190,7 +190,7 @@ body {
 	white-space: nowrap;
 }
 
-#profile-fishlist {
+.profile-fishlist {
 	height: 50vh;
   	overflow: auto;
 	border: 1px solid #000000;
