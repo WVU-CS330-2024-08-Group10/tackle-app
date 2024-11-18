@@ -24,14 +24,6 @@ export default function NavBar(){
 			let classesInit = [...classesDefault];
 			classesInit[num] += " navbutton-selected";
 			setClasses(classesInit);
-	
-			// temporary map fix stuff
-			if (num === 0) {
-				let url = window.location.href;
-				url = url.substring(0, url.lastIndexOf("/"));
-				window.location.reload();
-				window.location.href = url;
-			}
 		}
 	}
 
