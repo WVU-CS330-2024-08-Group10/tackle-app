@@ -9,6 +9,26 @@ const config = {
     database: "CS_330_0"
 };
 
+//Hashing variables
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+saltString = "";
+hashedPassword = "";
+
+
+//Function to hash password
+function hash(password) {
+
+    //Hash password
+    bcrypt.genSalt(saltRounds, function(err, salt) {
+        bcrypt.hash(password, salt, function(err, hash) {
+            hashedPassword = hash;
+            saltString = salt;
+        });
+    });
+}
+
+
 //Function to fetch table data
 async function getTableData() {
     try {
@@ -38,23 +58,12 @@ async function getTableData() {
 async function insertTableData(username, password) {
 
     //Check to see if username is already in use
-    if(await checkForUsername(username) === true){
+    if(await checkForUsername(username)){
         return;
     }
 
     //Hash user information//
-    const bcrypt = require("bcrypt");
-    const saltRounds = 10;
-    saltString = "";
-    hashedPassword = "";
-
-    //Hash password
-    bcrypt.genSalt(saltRounds, function(err, salt) {
-        bcrypt.hash(password, salt, function(err, hash) {
-            hashedPassword = hash;
-            saltString = salt;
-        });
-    });
+    await hash(password);
 
     try {
         //Connect to the database
@@ -139,7 +148,6 @@ async function checkForUsername(username) {
         console.error(`${username} usernames in database: ` + result.recordset.length);
         if(result.recordset.length === 1){
             console.log("Username is already in use", "\n");
-            sql.close();
             return true;
         }
 
@@ -153,37 +161,35 @@ async function checkForUsername(username) {
 }
 
 
-//Function to check for password in database
-async function checkForPassword(username, salt) {
+//Function to authenticate user
+async function authenticateUser(username, password) {
+
+    if(await !checkForUsername(username)){
+        console.log("Username does not exist.", "\n");
+        return false;
+    }
+
     try {
         //Connect to the database
         const pool = await sql.connect(config);
 
         //Create query
-        const saltQuery = `SELECT Salt FROM UserInfo WHERE Salt='${salt}'`;
+        const userQuery = `SELECT * FROM UserInfo WHERE Username='${username}'`;
 
         //Execute query
-        const saltResult = await pool.request().query(saltQuery);
+        const userResult = await pool.request().query(userQuery);
         
-        //Check if salt exists in database
-        if(saltResult.recordset.length === 1){
-            console.log("Salt was found in database", "\n");
-            
-            //Create query
-            const userQuery = `SELECT * FROM UserInfo WHERE Username='${username}'`;
-
-            //Execute query
-            const userResult = await pool.request().query(userQuery);
-
-            //Check if username and salt belong both belong to same record
-            if(userResult.recordset[0].Username.trim() === username && userResult.recordset[0].Salt.trim() === salt){
-                console.log("Username and salt belong to the same record. Person authenticated!", "\n");
-                sql.close();
-                return true;
-            }else{
-                console.log("Username and salt do not belong to the same record", "\n");
+        //Hash password
+        bcrypt.hash(password, userResult.recordset[0].Salt.trim(), function(err, hash) {
+            console.log("Hashed: ", hash, "\n");
+            console.log("Record Password: ", userResult.recordset[0].Password.trim(), "\n");
+            if(userResult.recordset[0].Password.trim() === hash){
+                console.log("Username and password belong to the same record. Person authenticated!", "\n");
             }
-        }
+            else{
+                console.log("Username and password do not belong to the same record.", "\n");
+            }
+        });
 
     } catch (error) {
         console.error("Error checking for password:", error, "\n");
@@ -199,9 +205,10 @@ async function checkForPassword(username, salt) {
 async function sequence() {
     try {
         //await removeAllTableData();
-        await insertTableData("TyCraft", "password");
-        await insertTableData("LukeDuke", "password");
-        await checkForPassword("LukeDuke", "$2b$10$KVn5BDhJqSpMISxKfj8jdO");
+        await insertTableData("TyCraft", "password1");
+        await insertTableData("LukeDuke", "password2");
+        await insertTableData("LukeDuke", "sfsdf");
+        await authenticateUser("LukeDuke", "password2");
         await getTableData();
 
     } catch (error) {
