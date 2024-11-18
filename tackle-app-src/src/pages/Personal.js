@@ -25,10 +25,6 @@ export default function Personal() {
 
                 <Fishlist profile={profile} setProfile={setProfile}/>
             </div>
-            
-            {/* TODO: make the fish form and profile form actually look nice! */}
-
-
         </div>
     );
 }
