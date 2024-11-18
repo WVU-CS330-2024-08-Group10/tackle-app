@@ -9,10 +9,9 @@ import NavBar from "./components/NavBar";
 import PageNotFound from "./pages/PageNotFound";
 
 function App() {
-	ReactModal.setAppElement('body');
+	ReactModal.setAppElement("#root");
   	return (
 		<>
-			<div>
 			<BrowserRouter>
 				<NavBar />
 				<Routes>
@@ -24,7 +23,6 @@ function App() {
 				<Route path="*" element={<PageNotFound />} />
 				</Routes>
 			</BrowserRouter>
-			</div>
 		</>
   	);
 }
