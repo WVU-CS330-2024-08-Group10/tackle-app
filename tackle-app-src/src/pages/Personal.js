@@ -65,6 +65,9 @@ function dateToLocalDatetimeString(date) {
     return new Date(date.getTime() + new Date().getTimezoneOffset() * -60 * 1000).toISOString().substring(0, 16);
 }
 
+// Returns true only if all obj's properties are 0
+function objAllZero(obj) {Object.values(obj).every(value => value === 0);}
+
 export default function Personal() {
     ReactModal.setAppElement('body');
 
@@ -148,6 +151,9 @@ export default function Personal() {
     // PROFILE FORM STUFF
     const [renderProfileform, setRenderProfileform] = useState(false);
     const [profileEdit, setProfileEdit] = useState(genericProfile);
+    const [profileError, setProfileError] = useState({
+        pfp: false,
+    });
 
     function openProfile() {
         setProfileEdit(profile);
@@ -160,7 +166,26 @@ export default function Personal() {
     function cancelProfile() {
         setRenderProfileform(false);
     }
+    const checkPfp = (e) => {
+        let error = 0;
 
+        let file = e.target.files[0];
+        const maxSize = 1 * 1024 * 1024;
+        const allowedTypes = ["png", "jpeg", "gif"];
+        let fileType = file.type.substring(file.type.indexOf('/') + 1);
+
+        if (!allowedTypes.includes(fileType)) {
+            error |= 1;
+        }
+        if (file.size > maxSize) {
+            error |= 2;
+        }
+
+        if (error === 0) {
+            setProfileEdit({...profileEdit, pfpUrl: URL.createObjectURL(file)});
+        }
+        setProfileError({...profileError, pfp: error});
+    };
 
     return(
         <div id="profile"> 
@@ -271,8 +296,10 @@ export default function Personal() {
                     <div>
                         <p>
                             <img id="profileform-pfp-display" src={profileEdit.pfpUrl} alt="Uploaded profile picture"/>
-                            <input id="profileform-pfp-input" name="pfp" type="file" onChange={(e) => setProfileEdit({...profileEdit, pfpUrl: URL.createObjectURL(e.target.files[0])})}></input>
+                            <input id="profileform-pfp-input" name="pfp" type="file" onChange={checkPfp}></input>
                         </p>
+                        {(profileError.pfp & 1) !== 0 && <p className="error">File type must be png, jpg, or gif.</p>}
+                        {(profileError.pfp & 2) !== 0 && <p className="error">File size must be under 2 MB.</p>}
 
                         <p>
                             <label htmlFor="profileNickname">Nickname: </label>

@@ -262,6 +262,11 @@ body {
 	vertical-align: middle;
 }
 
+.error {
+	color: red;
+	font-size: 10pt;
+}
+
 /*Map styles*/
 #map {
 	margin: auto;
