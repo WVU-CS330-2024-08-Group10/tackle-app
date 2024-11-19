@@ -1,4 +1,5 @@
 //SQL Database variables
+const express = require("express");
 const sql = require("mssql");
 const config = {
 user: "cs330admin",
@@ -6,6 +7,8 @@ password: "Gr9-3O-2!pU-0dYwa?",
 server: "cs3300.database.windows.net",
 database: "CS_330_0"
 };
+const app = express();
+app.use(express.json());
 
 //Hashing variables
 const bcrypt = require("bcrypt");
@@ -42,20 +45,18 @@ async function getTableData() {
 //Function to insert table data
 async function insertTableData(username, password) {
 
-    //Hash password
-    bcrypt.genSalt(saltRounds, function(err, salt) {
-        bcrypt.hash(password, salt, function(err, hash) {
-            hashedPassword = hash;
-            saltString = salt;
-        });
-    });
-
-    //Check to see if username is already in use
-    if(await checkForUsername(username)){
-        return false;
-    }
-
     try {
+        //Check to see if username is already in use
+        if(await checkForUsername(username)){
+            return false;
+        }
+
+        //Hash password
+        const genSalt = await bcrypt.genSalt(saltRounds);
+        const hash = await bcrypt.hash(password, genSalt);
+        hashedPassword = hash;
+        saltString = genSalt;
+
         //Connect to the database
         const pool = await sql.connect(config);
 
@@ -157,12 +158,13 @@ async function checkForUsername(username) {
 //Function to authenticate user
 async function authenticateUser(username, password) {
 
-    if(await !checkForUsername(username)){
-        console.log("Username does not exist.", "\n");
-        return false;
-    }
-
     try {
+        //Check if username even exists
+        if(await !checkForUsername(username)){
+            console.log("Username does not exist.", "\n");
+            return false;
+        }
+
         //Connect to the database
         const pool = await sql.connect(config);
 
@@ -171,18 +173,14 @@ async function authenticateUser(username, password) {
 
         //Execute query
         const userResult = await pool.request().query(userQuery);
-        
-        //Hash password
-        bcrypt.hash(password, userResult.recordset[0].Salt.trim(), function(err, hash) {
-            console.log("Hashed: ", hash, "\n");
-            console.log("Record Password: ", userResult.recordset[0].Password.trim(), "\n");
-            if(userResult.recordset[0].Password.trim() === hash){
-                console.log("Username and password belong to the same record. Person authenticated!", "\n");
-            }
-            else{
-                console.log("Username and password do not belong to the same record.", "\n");
-            }
-        });
+
+        //Check given password with password in record
+        if(await bcrypt.compare(password, userResult.recordset[0].Salt.trim())){
+            console.log("Username and password belong to the same record. Person authenticated!", "\n");
+        }
+        else{
+            console.log("Username and password do not belong to the same record.", "\n");
+        }
 
     } catch (error) {
         console.error("Error checking for password:", error, "\n");
@@ -210,5 +208,4 @@ async function sequence() {
     }
 }
 
-export {getTableData, insertTableData, removeTableData, removeAllTableData, checkForUsername, authenticateUser, sequence};
 //sequence();
