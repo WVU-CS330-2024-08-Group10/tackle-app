@@ -55,7 +55,7 @@ app.post("/api/insert", async (req, res) => {
     try {
         //Check to see if username is already in use
         if(await checkForUsername(username)){
-            res.status(401).send("Username already exists");
+            return res.status(401).send("Username already exists");
         }
 
         //Hash password
@@ -206,9 +206,8 @@ async function sequence() {
         //await removeAllTableData();
         //TyCraft, password1
         //LukeDuke, password2
-        //LukeDuke, sfsdf
+        //FishFred, password3
         //user, pass
-        //await authenticateUser("user", "pass");
         await getTableData();
 
     } catch (error) {

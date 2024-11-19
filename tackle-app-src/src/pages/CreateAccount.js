@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Link } from 'react-router-dom';
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -11,26 +10,23 @@ export default function Login() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         
-        //Authenticate user (Username: user, Password: pass)
+        //Create account for user
         try {
-            const response = await axios.post("http://localhost:5000/api/authenticate", {username, password});
+            const response = await axios.post("http://localhost:5000/api/insert", {username, password});
             if (response.status === 200) {
-                console.log("User authenticated!");
+                console.log("Account created!");
                 //remove Login button from navbar
-                //load user preferences (dark/light mode, fish list, profile pic, etc.)
                 navigate("/");
             }
         } catch (error) {
-            console.error("Authentication failed:", error.response?.data || error.message);
+            console.error("Account creation failed:", error.response?.data || error.message);
             //Display error to user
         }
 
     };
     return (
-        <>
         <div>
-            <h2>Login</h2>
-
+            <h2>Create Account</h2>
             <form onSubmit = {handleSubmit}>
                 <input
                 type="text"
@@ -51,9 +47,6 @@ export default function Login() {
             <br />
             <button type="submit">Login</button>
             </form>
-
-            <Link id={`createaccount-button`} key={`createaccount-button`} to={`/CreateAccount`}><button>Create Account</button></Link>
         </div>
-        </>
     );
 };
