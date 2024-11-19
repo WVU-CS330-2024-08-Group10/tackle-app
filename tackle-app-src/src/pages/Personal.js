@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import ReactModal from 'react-modal';
 import Profile, { genericProfile } from '../components/Profile';
 import Fishlist from '../components/Fishlist.js';
 
 export default function Personal() {
-    ReactModal.setAppElement('body');
-
     const [profile, setProfile] = useState(genericProfile);
 
     return(
@@ -25,10 +22,6 @@ export default function Personal() {
 
                 <Fishlist profile={profile} setProfile={setProfile}/>
             </div>
-            
-            {/* TODO: make the fish form and profile form actually look nice! */}
-
-
         </div>
     );
 }

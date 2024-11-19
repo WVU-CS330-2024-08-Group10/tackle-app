@@ -234,37 +234,77 @@ body {
 	aspect-ratio: 1 / 1;
 }
 
-.fishform-modal {
+.form-modal {
 	margin: 0 auto;
 	inset: 10px;
+	text-align: center;
 
-	max-width: 500px;
-	max-height: 600px;
+	width: fit-content;
+	min-width: min(500px, 80vw);
+	height: fit-content;
+	padding-bottom: 60px;
+}
+.form-modal > div {
+	border-bottom: 1px solid #cccccc;
+}
+.form-modal > div > p > label {
+	display: inline-block;
+	text-align: right;
+	min-width: 100px;
+	margin-right: 5px;
+}
+.form-modal > div > p > input {
+	min-width: 200px;
+}
+.form-modal > button {
+	padding: 10px;
 }
 
-#fishform {
-	color: black;
+.formbutton-submit {
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+}
+.formbutton-cancel {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+}
+.formbutton-delete {
+	position: absolute;
+	bottom: 10px;
+	right: 80px;
 }
 
+#fishform-sex {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
 #fishform-sex-label {
 	display: inline-block;
 	vertical-align: top;
+	text-align: right;
+	min-width: 100px;
 }
 #fishform-sex-radio {
 	display: inline-block;
+	text-align: left;
+	min-width: 200px;
 }
 
 #profileform-pfp-display {
-	width: 10%;
+	width: 50px;
 	border-radius: 50%;
 	object-fit: cover;
 	aspect-ratio: 1 / 1;
 	vertical-align: middle;
+	margin-right: 5px;
 }
 
 .error {
 	color: red;
 	font-size: 10pt;
+	line-height: 0.2;
 }
 
 /*Map styles*/

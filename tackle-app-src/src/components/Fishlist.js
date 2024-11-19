@@ -116,73 +116,70 @@ export default function Fishlist(props) {
                 <button onClick={() => swapFish(i, i + 1)}>↓</button>
                 <button onClick={() => openFish(i)}>Edit</button>
             </div>))}
-            {profile.fishlist.length < 1 ? <p>It's... empty. Something fishy is going on here</p>: null}
+            {profile.fishlist.length < 1 && <p>It's... empty. Something fishy is going on here</p>}
         </div>
         <button onClick={addFish}>Add Fish</button>
 
-        <ReactModal className="modal fishform-modal" overlayClassName="modal-overlay" isOpen={renderFishform}>
-            <form id="fishform">
-                <h1>{isFishformEditing ? `Editing \"${profile.fishlist[fishIndex] !== undefined ? profile.fishlist[fishIndex].nickname : "Null"}\"` : "Congrats On Your New Catch!"}</h1>
+        <ReactModal className="modal form-modal" overlayClassName="modal-overlay" isOpen={renderFishform}>
+
+                <h1>{isFishformEditing ? `Editing \"${profile.fishlist[fishIndex] !== undefined ? profile.fishlist[fishIndex].nickname : "Null"}\"` : "🏆 Congrats On Your New Catch! 🏆"}</h1>
                 <div>
                     <p>
-                        {/* TODO: make length limit for fish nickname */}
                         <label htmlFor="nickname">Nickname: </label>
-                        <input id="nickname" name="nickname" placeholder={`Fish #${fishIndex + 1}`} value={fishEdit.nickname} onChange={(e) => setFishEdit({...fishEdit, nickname: e.target.value}) } />
+                        <input id="fishform-nickname" name="nickname" placeholder={`Fish #${fishIndex + 1}`} value={fishEdit.nickname} onChange={(e) => setFishEdit({...fishEdit, nickname: e.target.value}) } />
                     </p>
                     <p>
                         {/* TODO: make species input dropdown of species in location */}
                         <label htmlFor="species">Species: </label>
-                        <input id="species" name="species" placeholder="Catfish" value={fishEdit.species.name} onChange={(e) => setFishEdit({...fishEdit, species: {name: e.target.value}}) } />
+                        <input id="fishform-species" name="species" placeholder="Catfish" value={fishEdit.species.name} onChange={(e) => setFishEdit({...fishEdit, species: {name: e.target.value}}) } />
                     </p>
                 </div>
 
                 <div>
                     <p>
                         <label htmlFor="timeCaught">Time Caught: </label>
-                        <input type="datetime-local" id="timeCaught" name="timeCaught" value={dateToLocalDatetimeString(new Date(fishEdit.timeCaught))} onChange={(e) => setFishEdit({...fishEdit, timeCaught: new Date(e.target.value).getTime()}) }/>
+                        <input type="datetime-local" id="fishform-timeCaught" name="timeCaught" value={dateToLocalDatetimeString(new Date(fishEdit.timeCaught))} onChange={(e) => setFishEdit({...fishEdit, timeCaught: new Date(e.target.value).getTime()}) }/>
                     </p>
 
                     <p>
                         <label htmlFor="bodyCaught">Body Caught: </label>
-                        <input id="bodyCaught" name="bodyCaught" placeholder="Kanawha River, WV" value={fishEdit.bodyCaught} onChange={(e) => setFishEdit({...fishEdit, bodyCaught: e.target.value}) }/>
+                        <input id="fishform-bodyCaught" name="bodyCaught" placeholder="Kanawha River, WV" value={fishEdit.bodyCaught} onChange={(e) => setFishEdit({...fishEdit, bodyCaught: e.target.value}) }/>
                     </p>
                 </div>
 
                 <div>
                     <p>
                         <label htmlFor="weight">Weight (lbs): </label>
-                        <input id="weight" name="weight" value={(fishEdit.weight === null) ? "" : fishEdit.weight} onChange={(e) => setFishEdit(getPropIfPositiveNum(e.target.value, fishEdit, "weight")) }/>
+                        <input id="fishform-weight" name="weight" value={(fishEdit.weight === null) ? "" : fishEdit.weight} onChange={(e) => setFishEdit(getPropIfPositiveNum(e.target.value, fishEdit, "weight")) }/>
                     </p>
 
                     <p>
                         <label htmlFor="length">Length (in): </label>
-                        <input id="length" name="length" value={(fishEdit.length === null) ? "" : fishEdit.length} onChange={(e) => setFishEdit(getPropIfPositiveNum(e.target.value, fishEdit, "length")) }/>
+                        <input id="fishform-length" name="length" value={(fishEdit.length === null) ? "" : fishEdit.length} onChange={(e) => setFishEdit(getPropIfPositiveNum(e.target.value, fishEdit, "length")) }/>
                     </p>
 
                     <p>
                         <label htmlFor="tackled">Tackled: </label>
-                        <input id="tackled" name="tackled" placeholder="Very Good Bait" value={fishEdit.tackled} onChange={(e) => setFishEdit({...fishEdit, tackled: e.target.value}) }/>
+                        <input id="fishform-tackled" name="tackled" placeholder="Very Good Bait" value={fishEdit.tackled} onChange={(e) => setFishEdit({...fishEdit, tackled: e.target.value}) }/>
                     </p>
                 </div>
                 
-                <div>
+                <div id="fishform-sex">
                     <div id="fishform-sex-label">Sex:</div>
                     <div id="fishform-sex-radio">
-                        <input type="radio" id="male" name="sex" value="0" checked={fishEdit.sex === 0} onChange={(e) => setFishEdit({...fishEdit, sex: parseInt(e.target.value)}) }/>
+                        <input type="radio" id="fishform-male" name="sex" value="0" checked={fishEdit.sex === 0} onChange={(e) => setFishEdit({...fishEdit, sex: parseInt(e.target.value)}) }/>
                         <label htmlFor="male">Male</label><br />
-                        <input type="radio" id="female" name="sex" value="1" checked={fishEdit.sex === 1} onChange={(e) => setFishEdit({...fishEdit, sex: parseInt(e.target.value)}) }/>
+                        <input type="radio" id="fishform-female" name="sex" value="1" checked={fishEdit.sex === 1} onChange={(e) => setFishEdit({...fishEdit, sex: parseInt(e.target.value)}) }/>
                         <label htmlFor="female">Female</label><br />
-                        <input type="radio" id="indeterminate" name="sex" value="-1" checked={fishEdit.sex === -1} onChange={(e) => setFishEdit({...fishEdit, sex: parseInt(e.target.value)}) }/>
+                        <input type="radio" id="fishform-indeterminate" name="sex" value="-1" checked={fishEdit.sex === -1} onChange={(e) => setFishEdit({...fishEdit, sex: parseInt(e.target.value)}) }/>
                         <label htmlFor="indeterminate">Indeterminate</label>
                     </div>
                 </div>
 
-                <p>
-                    <button onClick={submitFish}>Submit :3 XP</button>
-                    <button onClick={cancelFish}>Cancel</button>
-                    {isFishformEditing ? <button onClick={removeFish}>REMOVE this fish</button> : null}
-                </p>
-            </form>
+                <button className="formbutton-submit" onClick={submitFish}>Submit :3 XP</button>
+                {isFishformEditing && <button className="formbutton-delete" onClick={removeFish}>REMOVE this fish</button>}
+                <button className="formbutton-cancel" onClick={cancelFish}>Cancel</button>
+            
         </ ReactModal>
     </> 
 }
