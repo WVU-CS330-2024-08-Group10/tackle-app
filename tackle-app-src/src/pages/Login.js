@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+//import {getTableData, insertTableData, removeTableData, removeAllTableData, checkForUsername, authenticateUser, sequence} from "../components/Server.js";
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -15,10 +16,22 @@ export default function Login() {
             localStorage.setItem('isLogged', 'true');
             localStorage.setItem('username', username);
             
-            navigate("/")
+            navigate("/");
         } else {
             alert("Invalid credentials, please try again. For temp, its user and pass.");
         }
+        
+        //Authenticate users
+        // (async () => {
+        //     if (authenticateUser(username, password) != false) {
+        //         console.log("User was authenticated!");
+        //         //Load preferences saved for user
+        //         navigate("/");
+        //     } 
+        //     else {
+        //         alert("Invalid credentials, please try again. For temp, its user and pass.");
+        //     }
+        // })();
 
     };
     return (

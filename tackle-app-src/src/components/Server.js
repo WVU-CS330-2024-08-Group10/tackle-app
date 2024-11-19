@@ -1,36 +1,21 @@
-//Get user information//
-
 //SQL Database variables
 const sql = require("mssql");
 const config = {
-    user: "cs330admin",
-    password: "Gr9-3O-2!pU-0dYwa?",
-    server: "cs3300.database.windows.net",
-    database: "CS_330_0"
+user: "cs330admin",
+password: "Gr9-3O-2!pU-0dYwa?",
+server: "cs3300.database.windows.net",
+database: "CS_330_0"
 };
 
 //Hashing variables
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
-saltString = "";
-hashedPassword = "";
-
-
-//Function to hash password
-function hash(password) {
-
-    //Hash password
-    bcrypt.genSalt(saltRounds, function(err, salt) {
-        bcrypt.hash(password, salt, function(err, hash) {
-            hashedPassword = hash;
-            saltString = salt;
-        });
-    });
-}
-
+let saltString = "";
+let hashedPassword = "";
 
 //Function to fetch table data
 async function getTableData() {
+    
     try {
         //Connect to database
         const pool = await sql.connect(config);
@@ -57,13 +42,18 @@ async function getTableData() {
 //Function to insert table data
 async function insertTableData(username, password) {
 
+    //Hash password
+    bcrypt.genSalt(saltRounds, function(err, salt) {
+        bcrypt.hash(password, salt, function(err, hash) {
+            hashedPassword = hash;
+            saltString = salt;
+        });
+    });
+
     //Check to see if username is already in use
     if(await checkForUsername(username)){
-        return;
+        return false;
     }
-
-    //Hash user information//
-    await hash(password);
 
     try {
         //Connect to the database
@@ -88,6 +78,7 @@ async function insertTableData(username, password) {
 
 //Function to remove table data
 async function removeTableData(username) {
+
     try {
         //Connect to database
         const pool = await sql.connect(config);
@@ -111,6 +102,7 @@ async function removeTableData(username) {
 
 //Function to remove table data
 async function removeAllTableData() {
+
     try {
         //Connect to database
         const pool = await sql.connect(config);
@@ -134,6 +126,7 @@ async function removeAllTableData() {
 
 //Function to check for username in database
 async function checkForUsername(username) {
+
     try {
         //Connect to the database
         const pool = await sql.connect(config);
@@ -201,13 +194,14 @@ async function authenticateUser(username, password) {
 }
 
 
-//Execute functions in a sequence
+//Execute functions in a sequence (just for testing Server.js)
 async function sequence() {
     try {
         //await removeAllTableData();
         await insertTableData("TyCraft", "password1");
         await insertTableData("LukeDuke", "password2");
         await insertTableData("LukeDuke", "sfsdf");
+        await insertTableData("user", "pass");
         await authenticateUser("LukeDuke", "password2");
         await getTableData();
 
@@ -216,4 +210,5 @@ async function sequence() {
     }
 }
 
-sequence();
+export {getTableData, insertTableData, removeTableData, removeAllTableData, checkForUsername, authenticateUser, sequence};
+//sequence();
