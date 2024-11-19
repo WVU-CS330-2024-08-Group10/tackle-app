@@ -1,37 +1,28 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import {getTableData, insertTableData, removeTableData, removeAllTableData, checkForUsername, authenticateUser, sequence} from "../components/Server.js";
+import axios from "axios";
 
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-
-        /*This portion needs actual authentication stuffs*/
-        if (username === "user" && password === "pass") {
-
-            localStorage.setItem('isLogged', 'true');
-            localStorage.setItem('username', username);
-            
-            navigate("/");
-        } else {
-            alert("Invalid credentials, please try again. For temp, its user and pass.");
-        }
         
-        //Authenticate users
-        // (async () => {
-        //     if (authenticateUser(username, password) != false) {
-        //         console.log("User was authenticated!");
-        //         //Load preferences saved for user
-        //         navigate("/");
-        //     } 
-        //     else {
-        //         alert("Invalid credentials, please try again. For temp, its user and pass.");
-        //     }
-        // })();
+        //Authenticate user (Username: user, Password: pass)
+        try {
+            const response = await axios.post("http://localhost:5000/api/authenticate", {username, password});
+            if (response.status === 200) {
+                console.log("User authenticated!");
+                //remove Login button from navbar
+                //load user preferences (dark/light mode, fish list, profile pic, etc.)
+                navigate("/");
+            }
+        } catch (error) {
+            console.error("Authentication failed:", error.response?.data || error.message);
+            //Display error to user
+        }
 
     };
     return (

@@ -1,5 +1,4 @@
 //SQL Database variables
-const express = require("express");
 const sql = require("mssql");
 const config = {
 user: "cs330admin",
@@ -7,8 +6,14 @@ password: "Gr9-3O-2!pU-0dYwa?",
 server: "cs3300.database.windows.net",
 database: "CS_330_0"
 };
+
+//Express variables
+const express = require("express");
+const cors = require('cors');
 const app = express();
 app.use(express.json());
+app.use(cors());
+
 
 //Hashing variables
 const bcrypt = require("bcrypt");
@@ -42,13 +47,15 @@ async function getTableData() {
 }
 
 
-//Function to insert table data
-async function insertTableData(username, password) {
+//Creating route to insert user
+app.post("/api/insert", async (req, res) => {
+
+    const { username, password } = req.body;
 
     try {
         //Check to see if username is already in use
         if(await checkForUsername(username)){
-            return false;
+            res.status(401).send("Username already exists");
         }
 
         //Hash password
@@ -65,16 +72,16 @@ async function insertTableData(username, password) {
 
         //Execute query
         const result = await pool.request().query(query);
-        console.log("Data inserted successfully:", result, "\n");
+        res.status(200).send("Account Created!");
 
     } catch (error) {
-        console.error("Error inserting data:", error, "\n");
+        res.status(500).send("Server Error");
 
     } finally {
         //Close the connection
         sql.close();
     }
-}
+});
 
 
 //Function to remove table data
@@ -155,14 +162,15 @@ async function checkForUsername(username) {
 }
 
 
-//Function to authenticate user
-async function authenticateUser(username, password) {
+//Creating route to authenticate user
+app.post("/api/authenticate", async (req, res) => {
+
+    const { username, password } = req.body;
 
     try {
         //Check if username even exists
         if(await !checkForUsername(username)){
-            console.log("Username does not exist.", "\n");
-            return false;
+            res.status(401).send("Username already exists");
         }
 
         //Connect to the database
@@ -175,37 +183,41 @@ async function authenticateUser(username, password) {
         const userResult = await pool.request().query(userQuery);
 
         //Check given password with password in record
-        if(await bcrypt.compare(password, userResult.recordset[0].Salt.trim())){
-            console.log("Username and password belong to the same record. Person authenticated!", "\n");
+        await console.log(bcrypt.compare(password, userResult.recordset[0].Password.trim()));
+        if(await bcrypt.compare(password, userResult.recordset[0].Password.trim())){
+            res.status(200).send("Authenticated");
         }
         else{
-            console.log("Username and password do not belong to the same record.", "\n");
+            res.status(401).send("Invalid username/password");
         }
 
     } catch (error) {
-        console.error("Error checking for password:", error, "\n");
+        res.status(500).send("Server Error");
 
     } finally {
         //Close the connection
         sql.close();
     }
-}
-
+});
 
 //Execute functions in a sequence (just for testing Server.js)
 async function sequence() {
     try {
         //await removeAllTableData();
-        await insertTableData("TyCraft", "password1");
-        await insertTableData("LukeDuke", "password2");
-        await insertTableData("LukeDuke", "sfsdf");
-        await insertTableData("user", "pass");
-        await authenticateUser("LukeDuke", "password2");
+        //TyCraft, password1
+        //LukeDuke, password2
+        //LukeDuke, sfsdf
+        //user, pass
+        //await authenticateUser("user", "pass");
         await getTableData();
 
     } catch (error) {
-        console.error('Error:', error);
+        console.error("Error: ", error);
     }
 }
 
-//sequence();
+//Start the server
+const PORT = 5000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
