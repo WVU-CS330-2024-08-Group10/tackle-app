@@ -8,7 +8,7 @@ export default function Personal() {
     return(
         <div id="profile"> 
             <div id="profile-left">
-                <img id="profile-pfp" src={profile.pfpUrl} alt="Your profile picture"/>
+                <img id="profile-pfp" src={profile.pfpUrl} alt="Your profile pic"/>
                 <p><b>Username:</b> {profile.username}</p>
                 <p><b>Nickname:</b> {profile.nickname}</p>
                 <p><b>Gender:</b> {profile.gender}</p>

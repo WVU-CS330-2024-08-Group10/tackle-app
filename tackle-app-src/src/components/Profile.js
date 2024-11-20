@@ -128,7 +128,7 @@ export default function Profile(props) {
                 <h1>Editing Profile</h1>
                 <div>
                     <p>
-                        <img id="profileform-pfp-display" src={profileEdit.pfpUrl} alt="Uploaded profile picture"/>
+                        <img id="profileform-pfp-display" src={profileEdit.pfpUrl} alt="Uploaded profile pic"/>
                         <input id="profileform-pfp-input" name="pfp" type="file" onChange={checkPfp}></input>
                     </p>
                     {(errors.pfp & 1) !== 0 && <p className="error">*File type must be {pfpReqs.allowedTypes.slice(0,-1).map((str) => `${str}, `)} or {pfpReqs.allowedTypes.slice(-1)[0]}.</p>}

@@ -46,7 +46,7 @@ export default function CreateAccount() {
         // check if no spaces
         if (!passwordReqs.regExNoSpaces.test(input)) error |= 8;
         // check if matches confirm password
-        if (input != passwordConfirm) errorConfirm |= 1;
+        if (input !== passwordConfirm) errorConfirm |= 1;
 
         setPassword(input);
         setErrors({...errors, password: error, passwordConfirm: errorConfirm});
@@ -57,7 +57,7 @@ export default function CreateAccount() {
         let input = e.target.value;
 
         // check if matches password
-        if (input != password) error |= 1;
+        if (input !== password) error |= 1;
 
         setPasswordConfirm(input);
         setErrors({...errors, passwordConfirm: error, showPasswordConfirm: true});
