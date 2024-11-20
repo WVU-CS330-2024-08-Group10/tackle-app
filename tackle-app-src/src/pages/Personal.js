@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import Profile, { genericProfile } from '../components/Profile';
 import Fishlist from '../components/Fishlist.js';
-import { Link } from 'react-router-dom';
-
 
 export default function Personal() {
     const [profile, setProfile] = useState(genericProfile);
@@ -23,8 +21,6 @@ export default function Personal() {
                 <h3>Fish List ({profile.fishlist.length}):</h3>
 
                 <Fishlist profile={profile} setProfile={setProfile}/>
-
-                <Link id={`removeaccount-button`} key={`removeaccount-button`} to={`/RemoveAccount`}><button>Remove Account</button></Link>
             </div>
         </div>
     );

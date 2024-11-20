@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
-import {usernameReqs} from './AccountReqs';
+import { Link } from 'react-router-dom';
+import { usernameReqs, pfpReqs } from './AccountReqs';
 
 export const genericProfile = {
     id: 1,
@@ -49,7 +50,7 @@ export const genericProfile = {
     ]
 };
 
-const profileErrorInit = {
+const errorsInit = {
     username: 0,
     showUsername: false,
     pfp: 0,
@@ -62,15 +63,15 @@ export default function Profile(props) {
 
     const [renderProfileform, setRenderProfileform] = useState(false);
     const [profileEdit, setProfileEdit] = useState(genericProfile);
-    const [profileError, setProfileError] = useState({...profileErrorInit});
+    const [errors, setErrors] = useState({...errorsInit});
 
     function openProfile() {
         setProfileEdit(profile);
-        setProfileError({...profileErrorInit});
+        setErrors({...errorsInit});
         setRenderProfileform(true);
     }
     function submitProfile() {
-        if (profileError.username > 0) {
+        if (errors.username > 0) {
             return;
         }
 
@@ -83,23 +84,23 @@ export default function Profile(props) {
 
     const checkUsername = (e) => {
         let error = 0;
-        let username = e.target.value;
+        let input = e.target.value;
 
         // check if meets minimum length
-        if (username.length < usernameReqs.minLength) error |= 1;
+        if (input.length < usernameReqs.minLength) error |= 1;
         // check if meets maximum length
-        if (username.length > usernameReqs.maxLength) error |= 2;
+        if (input.length > usernameReqs.maxLength) error |= 2;
         // check if is alphanumeric, underscore, or dash
-        if (!usernameReqs.regEx.test(username)) error |= 4;
+        if (!usernameReqs.regEx.test(input)) error |= 4;
 
-        setProfileEdit({...profileEdit, username: username});
-        setProfileError({...profileError, username: error});
+        setProfileEdit({...profileEdit, username: input});
+        setErrors({...errors, username: error});
     }
     function onDeselectUsername() {
-        if (profileError.username > 0) {
-            setProfileError({...profileError, showUsername: true});
+        if (errors.username > 0) {
+            setErrors({...errors, showUsername: true});
         } else {
-            setProfileError({...profileError, showUsername: false});
+            setErrors({...errors, showUsername: false});
         }
     }
 
@@ -107,19 +108,17 @@ export default function Profile(props) {
         let error = 0;
 
         let file = e.target.files[0];
-        const maxSize = 1 * 1024 * 1024;
-        const allowedTypes = ["png", "jpeg", "gif"];
         let fileType = file.type.substring(file.type.indexOf('/') + 1);
 
         // check if file is of valid type (image file only)
-        if (!allowedTypes.includes(fileType)) error |= 1;
+        if (!pfpReqs.allowedTypes.includes(fileType)) error |= 1;
         // check if file is of valid size
-        if (file.size > maxSize) error |= 2;
+        if (file.size > pfpReqs.maxSizeMB * 1024 * 1024) error |= 2;
 
         if (error === 0) {
             setProfileEdit({...profileEdit, pfpUrl: URL.createObjectURL(file)});
         }
-        setProfileError({...profileError, pfp: error});
+        setErrors({...errors, pfp: error});
     };
 
     return <>
@@ -132,8 +131,8 @@ export default function Profile(props) {
                         <img id="profileform-pfp-display" src={profileEdit.pfpUrl} alt="Uploaded profile picture"/>
                         <input id="profileform-pfp-input" name="pfp" type="file" onChange={checkPfp}></input>
                     </p>
-                    {(profileError.pfp & 1) !== 0 && <p className="error">*File type must be png, jpg, or gif.</p>}
-                    {(profileError.pfp & 2) !== 0 && <p className="error">*File size must be under 2 MB.</p>}
+                    {(errors.pfp & 1) !== 0 && <p className="error">*File type must be {pfpReqs.allowedTypes.slice(0,-1).map((str) => `${str}, `)} or {pfpReqs.allowedTypes.slice(-1)[0]}.</p>}
+                    {(errors.pfp & 2) !== 0 && <p className="error">*File size must be under {pfpReqs.maxSizeMB} MB.</p>}
                 </div>
                 <div>
                     <p>
@@ -141,10 +140,10 @@ export default function Profile(props) {
                         <input id="profileform-username" name="profileUsername" value={profileEdit.username} onBlur={onDeselectUsername} onChange={checkUsername} />
                     </p>
                     
-                    {profileError.showUsername && <>
-                        {(profileError.username & 1) !== 0 && <p className="error">*Username must be at least 4 characters long.</p>}
-                        {(profileError.username & 2) !== 0 && <p className="error">*Username must be at most 20 characters long.</p>}
-                        {(profileError.username & 4) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
+                    {errors.showUsername && <>
+                        {(errors.username & 1) !== 0 && <p className="error">*Username must be at least {usernameReqs.minLength} characters long.</p>}
+                        {(errors.username & 2) !== 0 && <p className="error">*Username must be at most {usernameReqs.maxLength} characters long.</p>}
+                        {(errors.username & 4) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
                     </>}
 
 
@@ -159,6 +158,7 @@ export default function Profile(props) {
                 </div>
 
                 <button className="formbutton-submit" onClick={submitProfile}>Submit</button>
+                <Link className="formbutton-delete" id={`removeaccount-button`} key={`removeaccount-button`} to={`/RemoveAccount`}><button>Remove Account</button></Link>
                 <button className="formbutton-cancel" onClick={cancelProfile}>Cancel</button>
 
         </ReactModal>

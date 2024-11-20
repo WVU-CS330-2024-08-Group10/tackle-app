@@ -1,75 +1,78 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import {usernameReqs, passwordReqs} from "../components/AccountReqs";
+import { usernameReqs, passwordReqs } from "../components/AccountReqs";
 
-const profileErrorInit = {
+const errorsInit = {
     username: 0,
     password: 0,
-    passwordConfirm: 0
+    passwordConfirm: 0,
+    showPasswordConfirm: false
 }
 
-export default function Login() {
+export default function CreateAccount() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
-    const [profileError, setProfileError] = useState({...profileErrorInit});
+    const [errors, setErrors] = useState({...errorsInit});
     const navigate = useNavigate();
 
-    function checkUsername(usernameTest) {
+    const checkUsername = (e) => {
         let error = 0;
+        let input = e.target.value;
 
         // check if meets minimum length
-        if (usernameTest.length < usernameReqs.minLength) error |= 1;
+        if (input.length < usernameReqs.minLength) error |= 1;
         // check if meets maximum length
-        if (usernameTest.length > usernameReqs.maxLength) error |= 2;
+        if (input.length > usernameReqs.maxLength) error |= 2;
         // check if is alphanumeric, underscore, or dash
-        if (!usernameReqs.regEx.test(usernameTest)) error |= 4;
+        if (!usernameReqs.regEx.test(input)) error |= 4;
 
-        setUsername(usernameTest);
-        setProfileError({...profileError, username: error});
+        setUsername(input);
+        setErrors({...errors, username: error});
     }
 
-    function checkPassword(passwordTest) {
+    const checkPassword = (e) => {
         let error = 0;
+        let errorConfirm = 0;
+        let input = e.target.value;
 
         // check if meets minimum length
-        if (passwordTest.length < passwordReqs.minLength) error |= 1;
+        if (input.length < passwordReqs.minLength) error |= 1;
         // check if meets maximum length
-        if (passwordTest.length > passwordReqs.maxLength) error |= 2;
+        if (input.length > passwordReqs.maxLength) error |= 2;
         // check if only ASCII
-        if (!passwordReqs.regExOnlyASCII.test(passwordTest)) error |= 4;
+        if (!passwordReqs.regExOnlyASCII.test(input)) error |= 4;
         // check if no spaces
-        if (!passwordReqs.regExNoSpaces.test(passwordTest)) error |= 8;
+        if (!passwordReqs.regExNoSpaces.test(input)) error |= 8;
+        // check if matches confirm password
+        if (input != passwordConfirm) errorConfirm |= 1;
 
-        setPassword(passwordTest);
-        setProfileError({...profileError, password: error});
+        setPassword(input);
+        setErrors({...errors, password: error, passwordConfirm: errorConfirm});
     }
 
-    function checkPasswordConfirm(passwordTest) {
+    const checkPasswordConfirm = (e) => {
         let error = 0;
+        let input = e.target.value;
 
         // check if matches password
-        if (passwordTest != password) error |= 1;
+        if (input != password) error |= 1;
 
-        setPasswordConfirm(passwordTest);
-        setProfileError({...profileError, passwordConfirm: error});
+        setPasswordConfirm(input);
+        setErrors({...errors, passwordConfirm: error, showPasswordConfirm: true});
     }   
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        
-        checkUsername(username);
-        checkPassword(password);
-        checkPasswordConfirm(passwordConfirm);
 
-        if (profileError.username > 0) {
+        if (errors.username > 0) {
             console.error("Invalid username!");
             return;
-        } else if (profileError.password > 0) {
+        } else if (errors.password > 0) {
             console.error("Invalid password!");
             return;
-        } else if (profileError.passwordConfirm > 0) {
+        } else if (errors.passwordConfirm > 0) {
             console.error("Passwords don't match!");
             return;
         }
@@ -99,35 +102,35 @@ export default function Login() {
                 type="text"
                 placeholder="Username"
                 value={username}
-                onChange={(e) => checkUsername(e.target.value)}
+                onChange={checkUsername}
                 required
             />
-            {(profileError.username & 1) !== 0 && <p className="error">*Username must be at least {usernameReqs.minLength} characters long.</p>}
-            {(profileError.username & 2) !== 0 && <p className="error">*Username must be at most {usernameReqs.maxLength} characters long.</p>}
-            {(profileError.username & 4) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
+            {(errors.username & 1) !== 0 && <p className="error">*Username must be at least {usernameReqs.minLength} characters long.</p>}
+            {(errors.username & 2) !== 0 && <p className="error">*Username must be at most {usernameReqs.maxLength} characters long.</p>}
+            {(errors.username & 4) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
             <br />
 
             <input
                 type="password"
                 placeholder="Password"
                 value={password}
-                onChange={(e) => checkPassword(e.target.value)}
+                onChange={checkPassword}
                 required
             />
-            {(profileError.password & 1) !== 0 && <p className="error">*Password must be at least {passwordReqs.minLength} characters long.</p>}
-            {(profileError.password & 2) !== 0 && <p className="error">*Password must be at most {passwordReqs.maxLength} characters long.</p>}
-            {(profileError.password & 4) !== 0 && <p className="error">*Password must consist only of ASCII characters.</p>}
-            {(profileError.password & 8) !== 0 && <p className="error">*Username must contain no spaces.</p>}
+            {(errors.password & 1) !== 0 && <p className="error">*Password must be at least {passwordReqs.minLength} characters long.</p>}
+            {(errors.password & 2) !== 0 && <p className="error">*Password must be at most {passwordReqs.maxLength} characters long.</p>}
+            {(errors.password & 4) !== 0 && <p className="error">*Password must consist only of ASCII characters.</p>}
+            {(errors.password & 8) !== 0 && <p className="error">*Password must contain no spaces.</p>}
             <br />
 
             <input
                 type="password"
                 placeholder="Confirm Password"
                 value={passwordConfirm}
-                onChange={(e) => checkPasswordConfirm(e.target.value)}
+                onChange={checkPasswordConfirm}
                 required
             />
-            {(profileError.passwordConfirm & 1) !== 0 && <p className="error">*Passwords must match.</p>}
+            {errors.showPasswordConfirm && (errors.passwordConfirm & 1) !== 0 && <p className="error">*Passwords must match.</p>}
             <br />
 
             <button type="submit">Create Account</button>

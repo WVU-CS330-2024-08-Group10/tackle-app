@@ -10,3 +10,8 @@ export const passwordReqs = {
     regExOnlyASCII: /^[ -~]*$/,
     regExNoSpaces: /^\S*$/
 }
+
+export const pfpReqs = {
+    allowedTypes: ["png", "jpeg", "gif", "webp"],
+    maxSizeMB: 2 
+}

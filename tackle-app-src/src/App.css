@@ -256,7 +256,7 @@ body {
 .form-modal > div > p > input {
 	min-width: 200px;
 }
-.form-modal > button {
+.form-modal > button, .form-modal > a > button {
 	padding: 10px;
 }
 
