@@ -35,7 +35,7 @@ export default function Login() {
 
     };
     return (
-           <div class = "login_container">
+        <div class = "login_container">
             <div class = "login_box">
                 <h2>Login</h2>
 
