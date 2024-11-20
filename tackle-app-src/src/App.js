@@ -7,6 +7,8 @@ import Personal from "./pages/Personal";
 import About from "./pages/About";
 import NavBar from "./components/NavBar";
 import PageNotFound from "./pages/PageNotFound";
+import CreateAccount from "./pages/CreateAccount";
+import RemoveAccount from "./pages/RemoveAccount";
 
 function App() {
 	ReactModal.setAppElement("#root");
@@ -17,6 +19,8 @@ function App() {
 				<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/Login" element={<Login />} />
+				<Route path="/CreateAccount" element={<CreateAccount />} />
+				<Route path="/RemoveAccount" element={<RemoveAccount />} />
 				<Route path="/Weather" element={<Weather />} />
 				<Route path="/Personal" element={<Personal />} />
 				<Route path="/About" element={<About />} />
