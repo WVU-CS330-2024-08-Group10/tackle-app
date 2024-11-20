@@ -12,24 +12,28 @@ export default function Login() {
         
         //Create account for user
         try {
-            const response = await axios.post("http://localhost:5000/api/insert", {username, password});
+            const response = await axios.post("http://localhost:5000/api/authenticate", {username, password});
             if (response.status === 200) {
-                console.log("Account created!");
-                //remove Login button from navbar
-                navigate("/");
-            }
-            else if(response.status === 401){
-                console.error("Account creation failed: Username already exists");
+
+                const response = await axios.post("http://localhost:5000/api/remove", {username});
+                if (response.status === 200) {
+                    console.log("Account deleted!");
+                    //Display to user that account deletion was successful
+                    navigate("/");
+                }
+                else if(response.status === 401){
+                    console.error("Account deletion failed: Username doesn't exist");
+                }
             }
         } catch (error) {
-            console.error("Account creation failed:", error.response?.data || error.message);
+            console.error("Account deletion failed:", error.response?.data || error.message);
             //Display error to user
         }
 
     };
     return (
         <div>
-            <h2>Create Account</h2>
+            <h2>Remove Account</h2>
             <form onSubmit = {handleSubmit}>
                 <input
                 type="text"
@@ -48,7 +52,7 @@ export default function Login() {
                 required
             />
             <br />
-            <button type="submit">Create Account</button>
+            <button type="submit">Confirm Deletion</button>
             </form>
         </div>
     );

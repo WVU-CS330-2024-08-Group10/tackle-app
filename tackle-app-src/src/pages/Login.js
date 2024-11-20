@@ -14,11 +14,15 @@ export default function Login() {
         //Authenticate user (Username: user, Password: pass)
         try {
             const response = await axios.post("http://localhost:5000/api/authenticate", {username, password});
+            console.log(response);
             if (response.status === 200) {
                 console.log("User authenticated!");
                 //remove Login button from navbar
                 //load user preferences (dark/light mode, fish list, profile pic, etc.)
                 navigate("/");
+            }
+            else if(response.status === 401){
+                console.error("Authentication failed: Username already exists");
             }
         } catch (error) {
             console.error("Authentication failed:", error.response?.data || error.message);
