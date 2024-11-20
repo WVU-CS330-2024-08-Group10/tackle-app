@@ -359,3 +359,64 @@ body {
 	align-items: center;
 	padding: 0 20px; 
 }
+
+/* More login page stuff */ 
+.login_container {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    min-height: 100vh;
+    /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/ 
+    /* margin: 10px; */  
+    font-family: 'Arial', sans-serif;
+}
+
+.login_container .login_box {
+    width: 350px;
+    padding: 40px;
+    background: rgb(198, 199, 185);
+    border-radius: 15px;
+	border: 3px solid black; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+	
+	position: relative; 
+}
+
+.login_box h2 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2em;
+}
+
+.login_box input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.login_box input:focus {
+    border-color: rgb(21, 156, 19);
+}
+
+.login_box button {
+    width: 100%;
+    padding: 12px;
+    background-color: rgb(21, 156, 19);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+
+.login_box button:hover {
+    background-color: rgb(11, 248, 129);
+}

@@ -31,33 +31,34 @@ export default function Login() {
 
     };
     return (
-        <>
-        <div>
-            <h2>Login</h2>
+        <div class = "login_container">
+            <div class = "login_box">
+                <h2>Login</h2>
 
-            <form onSubmit = {handleSubmit}>
-                <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-            />
-            <br />
+                <form onSubmit = {handleSubmit}>
+                    <input
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    />
+                <br />
 
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-            />
-            <br />
-            <button type="submit">Login</button>
-            </form>
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                <br />
+                
+                <button type="submit">Login</button>
+                </form>
 
+            </div>
             <Link id={`createaccount-button`} key={`createaccount-button`} to={`/CreateAccount`}><button>Create Account</button></Link>
         </div>
-        </>
     );
 };
