@@ -8,6 +8,7 @@
 # testing
 /coverage
 start.cmd
+startServer.cmd
 
 # production
 /build
