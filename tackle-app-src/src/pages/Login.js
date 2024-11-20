@@ -58,6 +58,7 @@ export default function Login() {
                 </form>
 
             </div>
+            <Link id={`createaccount-button`} key={`createaccount-button`} to={`/CreateAccount`}><button>Create Account</button></Link>
         </div>
     );
 };
