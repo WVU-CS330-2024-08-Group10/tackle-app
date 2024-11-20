@@ -224,19 +224,6 @@ app.post("/api/authenticate", async (req, res) => {
     }
 });
 
-//Execute functions in a sequence (just for testing Server.js)
-//async function sequence() {
-    //try {
-        //TyCraft, password1
-        //LukeDuke, password2
-        //user, pass
-        //await getTableData();
-
-    //} catch (error) {
-        //console.error("Error: ", error);
-    //}
-//}
-
 //Start the server
 const PORT = 5000;
 app.listen(PORT, () => {
