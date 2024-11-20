@@ -384,10 +384,6 @@ body {
 	position: relative; 
 }
 
-.login_box:hover {
-    transform: scale(1.05);
-}
-
 .login_box h2 {
     color: #333;
     margin-bottom: 30px;
