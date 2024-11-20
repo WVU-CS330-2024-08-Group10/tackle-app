@@ -85,11 +85,11 @@ function setFish(properties, fishBox, urlType) {
 
     fishTypes.forEach(fish => {
         if(properties[fish] == 1) {
-            fishString += ("\n" + fish);
+            fishString = fishString + "\n" + fish;
         }
     });
 
-    fishBox.innerHTML = fishString;
+    fishBox.innerText = fishString;
 }
 
 export default Map;
