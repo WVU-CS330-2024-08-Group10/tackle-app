@@ -1,3 +1,5 @@
+const reqs = require("./AccountReqs.json");
+
 //SQL Database variables
 const sql = require("mssql");
 const config = {
@@ -108,6 +110,30 @@ async function checkForUsername(username) {
 app.post("/api/insert", async (req, res) => {
 
     const { username, password } = req.body;
+
+    let error = 0;
+
+    // check if meets minimum length
+    if (username.length < reqs.username.minLength) error |= 1;
+    // check if meets maximum length
+    if (username.length > reqs.username.maxLength) error |= 2;
+    // check if is alphanumeric, underscore, or dash
+    if (!username.match(reqs.username.regEx)) error |= 4;
+
+    // check if meets minimum length
+    if (password.length < reqs.password.minLength) error |= 1;
+    // check if meets maximum length
+    if (password.length > reqs.password.maxLength) error |= 2;
+    // check if only ASCII
+    if (!password.match(reqs.password.regExOnlyASCII)) error |= 4;
+    // check if no spaces
+    if (!password.match(reqs.password.regExNoSpaces)) error |= 8;
+
+    if (error > 0) {
+        console.log("Account can't be created. Username/password doesn't meet minimum requirements.");
+        res.status(401).send("Username/password doesn't meet minimum requirements");
+        return true;
+    }
 
     try {
         //Check to see if username is already in use

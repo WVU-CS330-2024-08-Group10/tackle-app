@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from 'react-router-dom';
-import { passwordReqs } from "../components/AccountReqs";
+import reqs from "../components/AccountReqs.json";
 
 const errorsInit = {
     password: 0,
@@ -20,13 +20,13 @@ export default function Login() {
         let input = e.target.value;
 
         // check if meets minimum length
-        if (input.length < passwordReqs.minLength) error |= 1;
+        if (input.length < reqs.password.minLength) error |= 1;
         // check if meets maximum length
-        if (input.length > passwordReqs.maxLength) error |= 2;
+        if (input.length > reqs.password.maxLength) error |= 2;
         // check if only ASCII
-        if (!passwordReqs.regExOnlyASCII.test(input)) error |= 4;
+        if (!input.match(reqs.password.regExOnlyASCII)) error |= 4;
         // check if no spaces
-        if (!passwordReqs.regExNoSpaces.test(input)) error |= 8;
+        if (!input.match(reqs.password.regExNoSpaces)) error |= 8;
 
         setPassword(input);
         setErrors({...errors, password: error});
@@ -90,8 +90,8 @@ export default function Login() {
                         required
                     />
                     {errors.showPassword && <>
-                        {(errors.password & 1) !== 0 && <p className="error">*Password must be at least {passwordReqs.minLength} characters long.</p>}
-                        {(errors.password & 2) !== 0 && <p className="error">*Password must be at most {passwordReqs.maxLength} characters long.</p>}
+                        {(errors.password & 1) !== 0 && <p className="error">*Password must be at least {reqs.password.minLength} characters long.</p>}
+                        {(errors.password & 2) !== 0 && <p className="error">*Password must be at most {reqs.password.maxLength} characters long.</p>}
                         {(errors.password & 4) !== 0 && <p className="error">*Password must consist only of ASCII characters.</p>}
                         {(errors.password & 8) !== 0 && <p className="error">*Password must contain no spaces.</p>}
                     </>}

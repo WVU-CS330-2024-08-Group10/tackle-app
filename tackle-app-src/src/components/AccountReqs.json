@@ -1,0 +1,17 @@
+{
+    "username": {
+        "minLength": 4,
+        "maxLength": 20,
+        "regEx": "^[a-zA-Z0-9-_]*$"
+    },
+    "password": {
+        "minLength": 4,
+        "maxLength": 32,
+        "regExOnlyASCII": "^[ -~]*$",
+        "regExNoSpaces": "^\\S*$"
+    },
+    "pfp": {
+        "allowedTypes": ["png", "jpeg", "gif", "webp"],
+        "maxSizeMB": 2 
+    }
+}

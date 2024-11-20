@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { usernameReqs, passwordReqs } from "../components/AccountReqs";
+import reqs from "../components/AccountReqs.json";
 
 const errorsInit = {
     username: 0,
@@ -22,11 +22,11 @@ export default function CreateAccount() {
         let input = e.target.value;
 
         // check if meets minimum length
-        if (input.length < usernameReqs.minLength) error |= 1;
+        if (input.length < reqs.username.minLength) error |= 1;
         // check if meets maximum length
-        if (input.length > usernameReqs.maxLength) error |= 2;
+        if (input.length > reqs.username.maxLength) error |= 2;
         // check if is alphanumeric, underscore, or dash
-        if (!usernameReqs.regEx.test(input)) error |= 4;
+        if (!input.match(reqs.username.regEx)) error |= 4;
 
         setUsername(input);
         setErrors({...errors, username: error});
@@ -38,13 +38,13 @@ export default function CreateAccount() {
         let input = e.target.value;
 
         // check if meets minimum length
-        if (input.length < passwordReqs.minLength) error |= 1;
+        if (input.length < reqs.password.minLength) error |= 1;
         // check if meets maximum length
-        if (input.length > passwordReqs.maxLength) error |= 2;
+        if (input.length > reqs.password.maxLength) error |= 2;
         // check if only ASCII
-        if (!passwordReqs.regExOnlyASCII.test(input)) error |= 4;
+        if (!input.match(reqs.password.regExOnlyASCII)) error |= 4;
         // check if no spaces
-        if (!passwordReqs.regExNoSpaces.test(input)) error |= 8;
+        if (!input.match(reqs.password.regExNoSpaces)) error |= 8;
         // check if matches confirm password
         if (input !== passwordConfirm) errorConfirm |= 1;
 
@@ -105,8 +105,8 @@ export default function CreateAccount() {
                 onChange={checkUsername}
                 required
             />
-            {(errors.username & 1) !== 0 && <p className="error">*Username must be at least {usernameReqs.minLength} characters long.</p>}
-            {(errors.username & 2) !== 0 && <p className="error">*Username must be at most {usernameReqs.maxLength} characters long.</p>}
+            {(errors.username & 1) !== 0 && <p className="error">*Username must be at least {reqs.username.minLength} characters long.</p>}
+            {(errors.username & 2) !== 0 && <p className="error">*Username must be at most {reqs.username.maxLength} characters long.</p>}
             {(errors.username & 4) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
             <br />
 
@@ -117,8 +117,8 @@ export default function CreateAccount() {
                 onChange={checkPassword}
                 required
             />
-            {(errors.password & 1) !== 0 && <p className="error">*Password must be at least {passwordReqs.minLength} characters long.</p>}
-            {(errors.password & 2) !== 0 && <p className="error">*Password must be at most {passwordReqs.maxLength} characters long.</p>}
+            {(errors.password & 1) !== 0 && <p className="error">*Password must be at least {reqs.password.minLength} characters long.</p>}
+            {(errors.password & 2) !== 0 && <p className="error">*Password must be at most {reqs.password.maxLength} characters long.</p>}
             {(errors.password & 4) !== 0 && <p className="error">*Password must consist only of ASCII characters.</p>}
             {(errors.password & 8) !== 0 && <p className="error">*Password must contain no spaces.</p>}
             <br />
