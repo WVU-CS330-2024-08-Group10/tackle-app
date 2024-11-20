@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
+import {usernameReqs} from './AccountReqs';
 
 export const genericProfile = {
     id: 1,
@@ -85,11 +86,11 @@ export default function Profile(props) {
         let username = e.target.value;
 
         // check if meets minimum length
-        if (username.length < 4) error |= 1;
+        if (username.length < usernameReqs.minLength) error |= 1;
         // check if meets maximum length
-        if (username.length > 20) error |= 2;
+        if (username.length > usernameReqs.maxLength) error |= 2;
         // check if is alphanumeric, underscore, or dash
-        if (!/^[a-zA-Z0-9-_]*$/.test(username)) error |= 4;
+        if (!usernameReqs.regEx.test(username)) error |= 4;
 
         setProfileEdit({...profileEdit, username: username});
         setProfileError({...profileError, username: error});
