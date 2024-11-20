@@ -34,7 +34,7 @@ export default function Login() {
     return (
         <div className = "login_container">
             <div className = "login_box">
-                <h2>Remove Account</h2>
+                <h2>Delete Account</h2>
                 <form onSubmit = {handleSubmit}>
                     <input
                     type="text"

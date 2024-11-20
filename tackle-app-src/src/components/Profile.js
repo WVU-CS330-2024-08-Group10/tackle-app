@@ -158,7 +158,7 @@ export default function Profile(props) {
                 </div>
 
                 <button className="formbutton-submit" onClick={submitProfile}>Submit</button>
-                <Link className="formbutton-delete" id={`removeaccount-button`} key={`removeaccount-button`} to={`/RemoveAccount`}><button>Remove Account</button></Link>
+                <Link className="formbutton-delete" id={`deleteaccount-button`} key={`deleteaccount-button`} to={`/DeleteAccount`}><button>Delete Account</button></Link>
                 <button className="formbutton-cancel" onClick={cancelProfile}>Cancel</button>
 
         </ReactModal>
