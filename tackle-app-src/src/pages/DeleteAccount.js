@@ -32,28 +32,30 @@ export default function Login() {
 
     };
     return (
-        <div>
-            <h2>Remove Account</h2>
-            <form onSubmit = {handleSubmit}>
-                <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-            />
-            <br />
+        <div className = "login_container">
+            <div className = "login_box">
+                <h2>Remove Account</h2>
+                <form onSubmit = {handleSubmit}>
+                    <input
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                />
+                <br />
 
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-            />
-            <br />
-            <button type="submit">Confirm Deletion</button>
-            </form>
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <br />
+                <button type="submit">Confirm Deletion</button>
+                </form>
+            </div>
         </div>
     );
 };

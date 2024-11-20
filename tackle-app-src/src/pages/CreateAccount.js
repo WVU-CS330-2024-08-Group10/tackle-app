@@ -95,46 +95,48 @@ export default function CreateAccount() {
 
     };
     return (
-        <div>
-            <h2>Create Account</h2>
-            <form onSubmit = {handleSubmit}>
+        <div className = "login_container">
+            <div className = "login_box">
+                <h2>Create Account</h2>
+                <form onSubmit = {handleSubmit}>
+                    <input
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={checkUsername}
+                    required
+                />
+                {(errors.username & 1) !== 0 && <p className="error">*Username must be at least {reqs.username.minLength} characters long.</p>}
+                {(errors.username & 2) !== 0 && <p className="error">*Username must be at most {reqs.username.maxLength} characters long.</p>}
+                {(errors.username & 4) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
+                <br />
+
                 <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={checkUsername}
-                required
-            />
-            {(errors.username & 1) !== 0 && <p className="error">*Username must be at least {reqs.username.minLength} characters long.</p>}
-            {(errors.username & 2) !== 0 && <p className="error">*Username must be at most {reqs.username.maxLength} characters long.</p>}
-            {(errors.username & 4) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
-            <br />
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={checkPassword}
+                    required
+                />
+                {(errors.password & 1) !== 0 && <p className="error">*Password must be at least {reqs.password.minLength} characters long.</p>}
+                {(errors.password & 2) !== 0 && <p className="error">*Password must be at most {reqs.password.maxLength} characters long.</p>}
+                {(errors.password & 4) !== 0 && <p className="error">*Password must consist only of ASCII characters.</p>}
+                {(errors.password & 8) !== 0 && <p className="error">*Password must contain no spaces.</p>}
+                <br />
 
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={checkPassword}
-                required
-            />
-            {(errors.password & 1) !== 0 && <p className="error">*Password must be at least {reqs.password.minLength} characters long.</p>}
-            {(errors.password & 2) !== 0 && <p className="error">*Password must be at most {reqs.password.maxLength} characters long.</p>}
-            {(errors.password & 4) !== 0 && <p className="error">*Password must consist only of ASCII characters.</p>}
-            {(errors.password & 8) !== 0 && <p className="error">*Password must contain no spaces.</p>}
-            <br />
+                <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    value={passwordConfirm}
+                    onChange={checkPasswordConfirm}
+                    required
+                />
+                {errors.showPasswordConfirm && (errors.passwordConfirm & 1) !== 0 && <p className="error">*Passwords must match.</p>}
+                <br />
 
-            <input
-                type="password"
-                placeholder="Confirm Password"
-                value={passwordConfirm}
-                onChange={checkPasswordConfirm}
-                required
-            />
-            {errors.showPasswordConfirm && (errors.passwordConfirm & 1) !== 0 && <p className="error">*Passwords must match.</p>}
-            <br />
-
-            <button type="submit">Create Account</button>
-            </form>
+                <button type="submit">Create Account</button>
+                </form>
+            </div>
         </div>
     );
 };

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Profile, { genericProfile } from '../components/Profile';
 import Fishlist from '../components/Fishlist.js';
 
@@ -21,6 +22,7 @@ export default function Personal() {
                 <h3>Fish List ({profile.fishlist.length}):</h3>
 
                 <Fishlist profile={profile} setProfile={setProfile}/>
+                <Link id={`deleteaccount-button`} to={`/DeleteAccount`}><button>Delete Account</button></Link>
             </div>
         </div>
     );

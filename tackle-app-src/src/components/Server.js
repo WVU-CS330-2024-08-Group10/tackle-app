@@ -2,16 +2,17 @@ const reqs = require("./AccountReqs.json");
 
 //SQL Database variables
 const sql = require("mssql");
+require("dotenv").config({ path: "../../DatabaseConfig.env" }); //Loading variables from .env file
 const config = {
-user: "cs330admin",
-password: "Gr9-3O-2!pU-0dYwa?",
-server: "cs3300.database.windows.net",
-database: "CS_330_0"
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    server: process.env.SERVERNAME,
+    database: process.env.DATABASENAME
 };
 
 //Express variables
 const express = require("express");
-const cors = require('cors');
+const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -132,7 +133,7 @@ app.post("/api/insert", async (req, res) => {
     if (error > 0) {
         console.log("Account can't be created. Username/password doesn't meet minimum requirements.");
         res.status(401).send("Username/password doesn't meet minimum requirements");
-        return true;
+        return false;
     }
 
     try {
@@ -140,7 +141,7 @@ app.post("/api/insert", async (req, res) => {
         if(await checkForUsername(username)){
             console.log("Account can't be created. Username already exists.");
             res.status(401).send("Username already exists");
-            return true;
+            return false;
         }
         else{
             //Hash password
@@ -162,7 +163,7 @@ app.post("/api/insert", async (req, res) => {
 
             //Close connection
             sql.close();
-            return false;
+            return true;
         }
 
     } catch (error) {
@@ -182,7 +183,7 @@ app.post("/api/remove", async (req, res) => {
         if(await checkForUsername(username) === false){
             console.log("Account can't be deleted. Username doesn't exist.");
             res.status(401).send("Username doesn't exist");
-            return true;
+            return false;
         }
         else{
             //Connect to database
@@ -198,7 +199,7 @@ app.post("/api/remove", async (req, res) => {
 
             //Close connection
             sql.close();
-            return false;
+            return true;
         }
 
     } catch (error) {
@@ -217,7 +218,7 @@ app.post("/api/authenticate", async (req, res) => {
         if(await checkForUsername(username) === false){
             console.log("Authentication failed. Username doesn't exist.");
             res.status(401).send("Username doesn't exist");
-            return true;
+            return false;
         }
         else{
             //Connect to the database
