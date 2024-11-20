@@ -5,11 +5,17 @@ import axios from "axios";
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [passwordConfirm, setPasswordConfirm] = useState("");
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         
+        if (password != passwordConfirm) {
+            console.error("Passwords don't match!");
+            return;
+        }
+
         //Create account for user
         try {
             const response = await axios.post("http://localhost:5000/api/insert", {username, password});
@@ -48,6 +54,16 @@ export default function Login() {
                 required
             />
             <br />
+
+            <input
+                type="password"
+                placeholder="Confirm Password"
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+                required
+            />
+            <br />
+
             <button type="submit">Create Account</button>
             </form>
         </div>
