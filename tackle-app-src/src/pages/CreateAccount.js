@@ -79,7 +79,7 @@ export default function CreateAccount() {
 
         //Create account for user
         try {
-            const response = await axios.post("http://localhost:5000/api/insert", {username, password});
+            const response = await axios.post("http://localhost:5000/api/insertUser", {username, password});
             if (response.status === 200) {
                 console.log("Account created!");
                 //remove Login button from navbar

@@ -15,7 +15,7 @@ export default function Login() {
             const response = await axios.post("http://localhost:5000/api/authenticate", {username, password});
             if (response.status === 200) {
 
-                const response = await axios.post("http://localhost:5000/api/remove", {username});
+                const response = await axios.post("http://localhost:5000/api/removeUser", {username});
                 if (response.status === 200) {
                     console.log("Account deleted!");
                     //Display to user that account deletion was successful

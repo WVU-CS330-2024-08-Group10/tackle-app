@@ -107,8 +107,36 @@ async function checkForUsername(username) {
 }
 
 
+//Creating route to insert profile picture for user
+// app.post("/api/insertPFP", async (req, res) => {
+
+//     const { username, image } = req.body;
+
+//     try {
+//         //Connect to the database
+//         const pool = await sql.connect(config);
+
+//         //Create query
+//         const query = `INSERT INTO UserInfo Image VALUE '${image}' WHERE Username='${username}'`;
+
+//         //Execute query
+//         const result = await pool.request().query(query);
+//         console.log("PFP saved!");
+//         res.status(200).send("PFP saved!");
+
+//         //Close connection
+//         sql.close();
+//         return true;
+
+//     } catch (error) {
+//         res.status(500).send("Server Error");
+
+//     }
+// });
+
+
 //Creating route to insert user
-app.post("/api/insert", async (req, res) => {
+app.post("/api/insertUser", async (req, res) => {
 
     const { username, password } = req.body;
 
@@ -174,7 +202,7 @@ app.post("/api/insert", async (req, res) => {
 
 
 //Creating route to remove user account
-app.post("/api/remove", async (req, res) => {
+app.post("/api/removeUser", async (req, res) => {
 
     const { username } = req.body;
 
