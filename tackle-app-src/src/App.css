@@ -196,7 +196,7 @@ body {
 	border: 1px solid #000000;
 }
 
-#profile-fish {
+.profile-fish {
 	display: flex;
 	margin: 5px;
 }
@@ -209,22 +209,38 @@ body {
 }
 
 .profile-fish-seperator {
-	text-overflow: ellipsis;
-	text-align: left;
-	width: 20px;
+	text-align: center;
+	margin: 0px 5px 0px 5px;
+}
+
+.profile-fish-index {
+	text-align: right;
+	width: fit-content;
+	margin-right: 5px;
+	color: rgb(199, 188, 94);
 }
 
 .profile-fish-content {
 	text-align: left;
-	width: 24%;
+	width: 26%;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
 }
 
-#profile-fish > button {
-	margin: 2px;
+.profile-fish-date {
+	text-align: left;
+	width: 18%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.profile-fish > button {
+	margin-left: 2px;
+	padding: 0px 6px 0px 6px;
 	float: right;
+	min-width: 22px;
 }
 
 #profile-pfp {
