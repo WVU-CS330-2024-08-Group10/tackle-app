@@ -309,27 +309,48 @@ body {
 
 /*Map styles*/
 #map {
-	margin: auto;
-	position: relative;
-	left: 425px;
-	margin-top: 15px;
+    position: relative;
     height: 60vh;
-    width: 40vw;
-	border-width: 3px;
-	border-style: solid;
-	border-color: black;
-	display: inline-block;
+    width: 40%;
+    border-width: 3px;
+    border-style: solid;
+    border-color: black;
+    display: inline-block;
+    vertical-align: top; /* Align the map and fish box to the top */
 }
 
-#fish {
-	text-align: right;
-	display: inline-block;
-	scale: 0.6;
-	position: relative;
-	left: 550px;
-	border-width: 3px;
-	border-style: solid;
-	border-color: black;
+/*Fish box styles*/
+#fishBox {
+	margin-left: 2%;
+    position: relative;
+    height: 60vh;
+    width: 20%;
+    border-width: 3px;
+    border-style: solid;
+    border-color: black;
+    display: inline-block;
+    vertical-align: top; /* Align the map and fish box to the top */
+}
+
+/*temporary weather box CSS*/
+#weather {
+	margin-right: 2%;
+    position: relative;
+    height: 60vh;
+    width: 20%;
+    border-width: 3px;
+    border-style: solid;
+    border-color: black;
+    display: inline-block;
+    vertical-align: top;
+}
+
+/* Adds CSS to the wrapping for the map, fish box, and weather box */
+#mapBody {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh; 
 }
 
 /* Login Button */
