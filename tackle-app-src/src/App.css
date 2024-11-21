@@ -167,9 +167,12 @@ body {
 }
 
 #profile-left {
+	box-sizing: border-box;
 	padding: 20px;
 	width: 25%;
 	float: left;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 #profile-left > p {
@@ -177,6 +180,7 @@ body {
 }
 
 #profile-right {
+	box-sizing: border-box;
 	padding: 20px;
 	width: 75%;
 	float: right;
@@ -191,7 +195,7 @@ body {
 }
 
 .profile-fishlist {
-	height: 50vh;
+	height: 70vh;
   	overflow: auto;
 	border: 1px solid #000000;
 }
@@ -244,10 +248,13 @@ body {
 }
 
 #profile-pfp {
+	box-sizing: border-box;
 	width: 100%;
 	border-radius: 50%;
 	object-fit: cover;
 	aspect-ratio: 1 / 1;
+	border: solid 1px black;
+	padding: 0.5vw;
 }
 
 .form-modal {
