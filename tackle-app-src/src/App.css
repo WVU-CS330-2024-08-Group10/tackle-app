@@ -384,6 +384,7 @@ body {
 /* More login page stuff */ 
 .login_container {
     display: flex;
+	flex-direction:column;
     justify-content: center;
     align-items: center; 
     min-height: 100vh;
@@ -440,4 +441,16 @@ body {
 
 .login_box button:hover {
     background-color: rgb(11, 248, 129);
+}
+
+.create {
+    padding: 12px;
+    background-color: rgb(119, 241, 25);
+	font-weight: bolder;
+    color: rgb(4, 0, 0);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
 }
