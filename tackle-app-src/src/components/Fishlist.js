@@ -102,8 +102,9 @@ export default function Fishlist(props) {
 
     return <>
         <div className={fishlistClass}>
-            {profile.fishlist.map((fish, i) => (<div id="profile-fish" key={`fish-${i}`}>
+            {profile.fishlist.map((fish, i) => (<div className="profile-fish" key={`fish-${profile.fishlist.length - i}`}>
                 <div className="profile-fish-info">
+                    <div className="profile-fish-index">{(i + 1).toLocaleString('en-US', {minimumIntegerDigits: profile.fishlist.length.toString().length })}.</div>
                     <div className="profile-fish-content">{fish.nickname}</div> 
                     <div className="profile-fish-seperator">--</div> 
                     <div className="profile-fish-content">{fish.species.name.trim().length !== 0 ? fish.species.name : <em>Unknown</em>}</div> 
@@ -112,10 +113,10 @@ export default function Fishlist(props) {
                     <div className="profile-fish-seperator">--</div> 
                     <div className="profile-fish-content">{new Date(fish.timeCaught).toLocaleString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'})}</div>
                 </div>
-                <button onClick={() => swapFish(i, i - 1)}>↑</button>
-                <button onClick={() => swapFish(i, i + 1)}>↓</button>
+                <button onClick={() => swapFish(i, i + 1)}>↑</button>
+                <button onClick={() => swapFish(i, i - 1)}>↓</button>
                 <button onClick={() => openFish(i)}>Edit</button>
-            </div>))}
+            </div>)).toReversed()}
             {profile.fishlist.length < 1 && <p>It's... empty. Something fishy is going on here</p>}
         </div>
         <button onClick={addFish}>Add Fish</button>
