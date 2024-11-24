@@ -167,9 +167,12 @@ body {
 }
 
 #profile-left {
+	box-sizing: border-box;
 	padding: 20px;
 	width: 25%;
 	float: left;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 #profile-left > p {
@@ -177,6 +180,7 @@ body {
 }
 
 #profile-right {
+	box-sizing: border-box;
 	padding: 20px;
 	width: 75%;
 	float: right;
@@ -191,12 +195,12 @@ body {
 }
 
 .profile-fishlist {
-	height: 50vh;
+	height: 70vh;
   	overflow: auto;
 	border: 1px solid #000000;
 }
 
-#profile-fish {
+.profile-fish {
 	display: flex;
 	margin: 5px;
 }
@@ -209,29 +213,48 @@ body {
 }
 
 .profile-fish-seperator {
-	text-overflow: ellipsis;
-	text-align: left;
-	width: 20px;
+	text-align: center;
+	margin: 0px 5px 0px 5px;
+}
+
+.profile-fish-index {
+	text-align: right;
+	width: fit-content;
+	margin-right: 5px;
+	color: rgb(199, 188, 94);
 }
 
 .profile-fish-content {
 	text-align: left;
-	width: 24%;
+	width: 26%;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
 }
 
-#profile-fish > button {
-	margin: 2px;
+.profile-fish-date {
+	text-align: left;
+	width: 18%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.profile-fish > button {
+	margin-left: 2px;
+	padding: 0px 6px 0px 6px;
 	float: right;
+	min-width: 22px;
 }
 
 #profile-pfp {
+	box-sizing: border-box;
 	width: 100%;
 	border-radius: 50%;
 	object-fit: cover;
 	aspect-ratio: 1 / 1;
+	border: solid 1px black;
+	padding: 0.5vw;
 }
 
 .form-modal {
@@ -263,17 +286,17 @@ body {
 .formbutton-submit {
 	position: absolute;
 	bottom: 10px;
-	left: 10px;
+	right: 10px;
 }
 .formbutton-cancel {
 	position: absolute;
 	bottom: 10px;
-	right: 10px;
+	left: 10px;
 }
 .formbutton-delete {
 	position: absolute;
 	bottom: 10px;
-	right: 80px;
+	left: 80px;
 }
 
 #fishform-sex {
