@@ -2,7 +2,7 @@ const reqs = require("./AccountReqs.json");
 
 //SQL Database variables
 const sql = require("mssql");
-require("dotenv").config({ path: "../../DatabaseConfig.env" }); //Loading variables from .env file
+require("dotenv").config({ path: __dirname + "../../DatabaseConfig.env" }); //Loading variables from .env file
 const config = {
     user: process.env.USER,
     password: process.env.PASSWORD,
