@@ -194,37 +194,54 @@ body {
 	white-space: nowrap;
 }
 
-.profile-fishlist {
-	height: 70vh;
-  	overflow: auto;
-	border: 1px solid #000000;
+#fishlist-displaymodified {
+	float: right;
 }
 
-.profile-fish {
+.fishlist-top > button {
+	margin-left: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+#fishlist-addfish {
+	width: 100%;
+	padding: 5px;
+}
+
+.fishlist {
+	margin: 5px 0px 5px 0px;
+	height: 60vh;
+  	overflow: auto;
+	border: 1px solid #000000;
+	width: 100%;
+}
+
+.fishlist-fish {
 	display: flex;
 	margin: 5px;
 }
 
-.profile-fish-info {
+.fishlist-fish-info {
 	display: flex;
 	border: 1px black solid;
 	padding: 5px;
 	width: 95%;
 }
 
-.profile-fish-seperator {
+.fishlist-fish-seperator {
 	text-align: center;
 	margin: 0px 5px 0px 5px;
 }
 
-.profile-fish-index {
+.fishlist-fish-index {
 	text-align: right;
 	width: fit-content;
 	margin-right: 5px;
 	color: rgb(199, 188, 94);
 }
 
-.profile-fish-content {
+.fishlist-fish-content {
 	text-align: left;
 	width: 26%;
 	text-overflow: ellipsis;
@@ -232,15 +249,7 @@ body {
 	white-space: nowrap;
 }
 
-.profile-fish-date {
-	text-align: left;
-	width: 18%;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
-}
-
-.profile-fish > button {
+.fishlist-fish > button {
 	margin-left: 2px;
 	padding: 0px 6px 0px 6px;
 	float: right;

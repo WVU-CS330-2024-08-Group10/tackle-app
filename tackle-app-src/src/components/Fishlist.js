@@ -33,9 +33,6 @@ function getPropIfPositiveNum(val, obj, property) {
 }
 
 export default function Fishlist(props) {
-    
-    let fishlistClass = props.className;
-    if (fishlistClass === undefined) fishlistClass = "profile-fishlist"; 
 
     const profile = props.profile;
     const setProfile = props.setProfile;
@@ -44,6 +41,9 @@ export default function Fishlist(props) {
     const [isFishformEditing, setIsFishformEditing] = useState(false); // indicates whether a fish is being edited (true) or added (false)
     const [fishIndex, setFishIndex] = useState(-1); // index in fishlist of fish being edited
     const [fishEdit, setFishEdit] = useState(emptyFish); // fish in fishform being edited
+    const [sortBy, setSortBy] = useState(0);
+    const [sortAscending, setSortAscending] = useState(false);
+    const [displayModified, setDisplayModified] = useState(false);
 
     function swapFish(index1, index2) {
         if (index1 < 0 || index2 < 0 || index1 > profile.fishlist.length - 1 || index2 > profile.fishlist.length - 1) return;
@@ -100,26 +100,86 @@ export default function Fishlist(props) {
         setProfile({...profile, fishlist: fishlistTemp});
     }
 
+    function sortFishlist(list) {
+        switch (sortBy) {
+            case 1:
+                list.sort((a, b) => a.timeCaught - b.timeCaught);
+                break;
+            case 2:
+                list.sort((a, b) => 0 - a.nickname.localeCompare(b.nickname));
+                break;
+            case 3:
+                list.sort((a, b) => a.weight - b.weight);
+                break;
+            case 4:
+                list.sort((a, b) => a.length - b.length);
+                break;
+        }
+        if (sortAscending) list.reverse();
+        return list;
+    }
+
+    function applySort() {
+        let profileTemp = {...profile};
+        sortFishlist(profileTemp.fishlist);
+
+        setProfile(profileTemp);
+        cancelSort();
+    }
+    function cancelSort() {
+        setSortBy(0);
+        setSortAscending(false);
+    }
+
     return <>
-        <div className={fishlistClass}>
-            {profile.fishlist.map((fish, i) => (<div className="profile-fish" key={`fish-${profile.fishlist.length - i}`}>
-                <div className="profile-fish-info">
-                    <div className="profile-fish-index">{(i + 1).toLocaleString('en-US', {minimumIntegerDigits: profile.fishlist.length.toString().length })}.</div>
-                    <div className="profile-fish-content">{fish.nickname}</div> 
-                    <div className="profile-fish-seperator">--</div> 
-                    <div className="profile-fish-content">{fish.species.name.trim().length !== 0 ? fish.species.name : <em>Unknown</em>}</div> 
-                    <div className="profile-fish-seperator">--</div> 
-                    <div className="profile-fish-content">{fish.bodyCaught.trim().length !== 0 ? fish.bodyCaught : <em>Unknown, ST</em>}</div> 
-                    <div className="profile-fish-seperator">--</div> 
-                    <div className="profile-fish-content">{new Date(fish.timeCaught).toLocaleString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'})}</div>
-                </div>
-                <button onClick={() => swapFish(i, i + 1)}>↑</button>
-                <button onClick={() => swapFish(i, i - 1)}>↓</button>
-                <button onClick={() => openFish(i)}>Edit</button>
-            </div>)).toReversed()}
-            {profile.fishlist.length < 1 && <p>It's... empty. Something fishy is going on here</p>}
+        <div>
+            <div className="fishlist-top">
+                <label htmlFor="fishlist-sortby">Sort by: </label>
+                <select name="fishlist-sortby" id="fishlist-sortby" value={sortBy} onChange={(e) => setSortBy(parseInt(e.target.value))}>
+                    <option value="0">---</option>
+                    <option value="1">Time Caught</option>
+                    <option value="2">Nickname</option>
+                    <option value="3">Weight</option>
+                    <option value="4">Length</option>
+                </select>
+                <input type="checkbox" id="fishlist-sortascending" name="fishlist-sortascending" checked={sortAscending} onChange={() => setSortAscending(!sortAscending)} />
+                <label htmlFor="fishlist-sortascending"> Ascending</label>
+                <button disabled={sortBy === 0 && !sortAscending} onClick={applySort}>Apply</button>
+                <button disabled={sortBy === 0 && !sortAscending} onClick={cancelSort}>Cancel</button>
+
+                <select name="fishlist-displaymodified" id="fishlist-displaymodified" value={displayModified.toString()} onChange={(e) => setDisplayModified(e.target.value === "true")}>
+                    <option value="false">Nickname -- Species -- Location -- Time</option>
+                    <option value="true">Nickname -- Weight -- Length -- Time</option>
+                </select>
+            </div>
+            <div className="fishlist">
+                {sortFishlist(profile.fishlist.map((el, i) => ({...el, index: i}))).map((fish, i) => (<div className="fishlist-fish" key={`fish-${profile.fishlist.length - i}`}>
+                    <div className="fishlist-fish-info">
+                        <div className="fishlist-fish-index">{(fish.index + 1).toLocaleString('en-US', {minimumIntegerDigits: profile.fishlist.length.toString().length })}.</div>
+                        <div className="fishlist-fish-content">{fish.nickname}</div> 
+                        <div className="fishlist-fish-seperator">--</div> 
+                        {displayModified ? <>
+                            <div className="fishlist-fish-content">{fish.weight === null ? <em>????? lbs</em> : `${fish.weight} lbs`}</div> 
+                            <div className="fishlist-fish-seperator">--</div> 
+                            <div className="fishlist-fish-content">{fish.length === null ? <em>????? in</em> : `${fish.length} in`}</div> 
+                        </> : <>
+                            <div className="fishlist-fish-content">{fish.species.name.trim().length !== 0 ? fish.species.name : <em>Unknown</em>}</div> 
+                            <div className="fishlist-fish-seperator">--</div> 
+                            <div className="fishlist-fish-content">{fish.bodyCaught.trim().length !== 0 ? fish.bodyCaught : <em>Unknown, ST</em>}</div> 
+                        </>}
+                        
+                        <div className="fishlist-fish-seperator">--</div> 
+                        <div className="fishlist-fish-content">{new Date(fish.timeCaught).toLocaleString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric', hour: '2-digit', minute:'2-digit'})}</div>
+                    </div>
+                    <button disabled={sortBy !== 0 || sortAscending} onClick={() => swapFish(i, i + 1)}>↑</button>
+                    <button disabled={sortBy !== 0 || sortAscending} onClick={() => swapFish(i, i - 1)}>↓</button>
+                    <button onClick={() => openFish(fish.index)}>Edit</button>
+                </div>)).toReversed()}
+                {profile.fishlist.length < 1 && <p>It's... empty. Something fishy is going on here</p>}
+            </div>
+
+            <button id="fishlist-addfish" onClick={addFish}>Submit New Catch!</button>
         </div>
-        <button onClick={addFish}>Add Fish</button>
 
         <ReactModal className="modal form-modal" overlayClassName="modal-overlay" isOpen={renderFishform}>
 

@@ -30,7 +30,7 @@ export const genericProfile = {
             nickname: "Little John",
             timeCaught: new Date().getTime(),
             bodyCaught: "Kanawha River, WV", // REPLACE WITH some sort of location object later
-            weight: 51, // lbs?
+            weight: 53, // lbs?
             length: 22, // inches?
             sex: -1,
             tackled: "Very Good Bait"
@@ -42,7 +42,7 @@ export const genericProfile = {
             nickname: "slipper",
             timeCaught: new Date().getTime(),
             bodyCaught: "Coal River, WV", // REPLACE WITH some sort of location object later
-            weight: 51, // lbs?
+            weight: 52, // lbs?
             length: 22, // inches?
             sex: -1,
             tackled: "Very Good Bait"
