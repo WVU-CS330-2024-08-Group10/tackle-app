@@ -2,7 +2,7 @@ const reqs = require("./AccountReqs.json");
 
 //SQL Database variables
 const sql = require("mssql");
-require("dotenv").config({ path: __dirname + "../../DatabaseConfig.env" }); //Loading variables from .env file
+require("dotenv").config({ path: "../../DatabaseConfig.env" }); //Loading variables from .env file
 const config = {
     user: process.env.USER,
     password: process.env.PASSWORD,
@@ -88,7 +88,7 @@ async function checkForUsername(username) {
         const result = await pool.request().query(query);
 
         //Close connection
-        sql.close();
+        await sql.close();
 
         //Check for username
         console.error(`${username} usernames in database: ` + result.recordset.length);
@@ -190,7 +190,7 @@ app.post("/api/insertUser", async (req, res) => {
             res.status(200).send("Account Created!");
 
             //Close connection
-            sql.close();
+            await sql.close();
             return true;
         }
 
@@ -226,7 +226,7 @@ app.post("/api/removeUser", async (req, res) => {
             res.status(200).send("Account Deleted!");
 
             //Close connection
-            sql.close();
+            await sql.close();
             return true;
         }
 
@@ -259,7 +259,7 @@ app.post("/api/authenticate", async (req, res) => {
             const userResult = await pool.request().query(userQuery);
 
             //Close connection
-            sql.close();
+            await sql.close();
 
             //Check given password with password in record
             if(await bcrypt.compare(password, userResult.recordset[0].Password.trim())){
