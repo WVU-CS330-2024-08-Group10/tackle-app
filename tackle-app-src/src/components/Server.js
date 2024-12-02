@@ -24,55 +24,6 @@ const saltRounds = 10;
 let saltString = "";
 let hashedPassword = "";
 
-//Function to fetch table data
-async function getTableData() {
-    
-    try {
-        //Connect to database
-        const pool = await sql.connect(config);
-
-        //Create query
-        const tableName = "UserInfo";
-        const query = `SELECT * FROM ${tableName}`;
-
-        //Execute query
-        const result = await pool.request().query(query);
-        console.log("Table Data:");
-        console.log(result.recordset, "\n");
-
-    } catch (error) {
-        console.error("Error getting table data:", error, "\n");
-        
-    } finally {
-        //Close the connection
-        sql.close();
-    }
-}
-
-
-//Function to remove table data
-async function removeAllTableData() {
-
-    try {
-        //Connect to database
-        const pool = await sql.connect(config);
-
-        //Create query
-        const query = `DELETE FROM UserInfo`;
-
-        //Execute query
-        const result = await pool.request().query(query);
-        console.log("All data removed successfully:", result, "\n");
-
-    } catch (error) {
-        console.error("Error removing all data:", error, "\n");
-
-    } finally {
-        //Close the connection
-        sql.close();
-    }
-}
-
 
 //Function to check for username in database
 async function checkForUsername(username) {
