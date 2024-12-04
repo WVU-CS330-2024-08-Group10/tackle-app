@@ -14,7 +14,7 @@ startServer.cmd
 /build
 
 #Database configuration information
-DatabaseConfig.env
+.env
 
 # misc
 .DS_Store

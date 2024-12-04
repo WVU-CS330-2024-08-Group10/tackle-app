@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 //Variables
 const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-const apiKey = `96c7b18535c2ca352b52617d3f72ebbc`;
+const apiKey = process.env.REACT_APP_APIKEY;
 const zip = `26508`; // Im thinking that at one point it can be made to  be a user input
 const url = `https://api.openweathermap.org/data/2.5/forecast?zip=${zip}&units=imperial&appid=${apiKey}`;
 const classesDefault = Array(days.length).fill("daybutton");
