@@ -333,6 +333,11 @@ body {
 	margin-right: 5px;
 }
 
+.info {
+	font-size: 10pt;
+	line-height: 0.2;
+}
+
 .error {
 	color: red;
 	font-size: 10pt;

@@ -13,5 +13,15 @@
     "pfp": {
         "allowedTypes": ["png", "jpeg", "gif", "webp"],
         "maxSizeMB": 2 
+    },
+    "error": {
+        "MIN_LENGTH": 1,
+        "MAX_LENGTH": 2,
+        "REGEX": 4,
+        "REGEX_ASCII": 4,
+        "REGEX_SPACES": 8,
+        "MISMATCH": 1,
+        "FILE_TYPE": 1,
+        "MAX_SIZE": 2
     }
 }
