@@ -31,21 +31,18 @@ export default function Login() {
         setPassword(input);
         setErrors({...errors, password: error});
     }
+    function onSelectPassword() {
+        setErrors({...errors, showPassword: true});
+    }
     function onDeselectPassword() {
-        if (errors.password > 0) {
-            setErrors({...errors, showPassword: true});
-            return true;
-        } else {
-            setErrors({...errors, showPassword: false});
-            return false;
-        }
+        setErrors({...errors, showPassword: false});
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         
         // If password is invalid but isn't showing errors to user, will display errors and prevent login. User can press "login" again proceed anyways.
-        if (!errors.showPassword && onDeselectPassword()) return;
+        if (errors.password > 0 && !errors.showPassword && onSelectPassword()) return;
 
         //Authenticate user (Username: user, Password: pass)
         try {
@@ -73,11 +70,11 @@ export default function Login() {
 
                 <form onSubmit = {handleSubmit}>
                     <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
                     />
                     <br />
 
@@ -85,18 +82,17 @@ export default function Login() {
                         type="password"
                         placeholder="Password"
                         value={password}
+                        onSelect={onSelectPassword}
                         onBlur={onDeselectPassword}
                         onChange={checkPassword}
                         required
                     />
-                    {errors.showPassword && <>
-                        {(errors.password & 1) !== 0 && <p className="error">*Password must be at least {reqs.password.minLength} characters long.</p>}
-                        {(errors.password & 2) !== 0 && <p className="error">*Password must be at most {reqs.password.maxLength} characters long.</p>}
-                        {(errors.password & 4) !== 0 && <p className="error">*Password must consist only of ASCII characters.</p>}
-                        {(errors.password & 8) !== 0 && <p className="error">*Password must contain no spaces.</p>}
-                    </>}
+                    <p className="info">*Password must be at least {reqs.password.minLength} characters long.</p>
+                    <p className="info">*Password must be at most {reqs.password.maxLength} characters long.</p>
+                    <p className="info">*Password must consist only of ASCII characters.</p>
+                    <p className="info">*Password must contain no spaces.</p>
                     <br />
-                
+
                     <button type="submit">Login</button>
                 </form>
 
