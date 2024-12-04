@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
 import { Link } from 'react-router-dom';
-import reqs from './AccountReqs.json';
+const reqs = require('./AccountReqs.json');
 
 export const genericProfile = {
     id: 1,
@@ -87,11 +87,11 @@ export default function Profile(props) {
         let input = e.target.value;
 
         // check if meets minimum length
-        if (input.length < reqs.username.minLength) error |= 1;
+        if (input.length < reqs.username.minLength) error |= reqs.error.MIN_LENGTH;
         // check if meets maximum length
-        if (input.length > reqs.username.maxLength) error |= 2;
+        if (input.length > reqs.username.maxLength) error |= reqs.error.MAX_LENGTH;
         // check if is alphanumeric, underscore, or dash
-        if (!input.match(reqs.username.regEx)) error |= 4;
+        if (!input.match(reqs.username.regEx)) error |= reqs.error.REGEX;
 
         setProfileEdit({...profileEdit, username: input});
         setErrors({...errors, username: error});
@@ -111,9 +111,9 @@ export default function Profile(props) {
         let fileType = file.type.substring(file.type.indexOf('/') + 1);
 
         // check if file is of valid type (image file only)
-        if (!reqs.pfp.allowedTypes.includes(fileType)) error |= 1;
+        if (!reqs.pfp.allowedTypes.includes(fileType)) error |= reqs.error.FILE_TYPE;
         // check if file is of valid size
-        if (file.size > reqs.pfp.maxSizeMB * 1024 * 1024) error |= 2;
+        if (file.size > reqs.pfp.maxSizeMB * 1024 * 1024) error |= reqs.error.MAX_SIZE;
 
         if (error === 0) {
             setProfileEdit({...profileEdit, pfpUrl: URL.createObjectURL(file)});
@@ -131,8 +131,8 @@ export default function Profile(props) {
                         <img id="profileform-pfp-display" src={profileEdit.pfpUrl} alt="Uploaded profile pic"/>
                         <input id="profileform-pfp-input" name="pfp" type="file" onChange={checkPfp}></input>
                     </p>
-                    {(errors.pfp & 1) !== 0 && <p className="error">*File type must be {reqs.pfp.allowedTypes.slice(0,-1).map((str) => `${str}, `)} or {reqs.pfp.allowedTypes.slice(-1)[0]}.</p>}
-                    {(errors.pfp & 2) !== 0 && <p className="error">*File size must be under {reqs.pfp.maxSizeMB} MB.</p>}
+                    {(errors.pfp & reqs.error.FILE_TYPE) !== 0 && <p className="error">*File type must be {reqs.pfp.allowedTypes.slice(0,-1).map((str) => `${str}, `)} or {reqs.pfp.allowedTypes.slice(-1)[0]}.</p>}
+                    {(errors.pfp & reqs.error.MAX_SIZE) !== 0 && <p className="error">*File size must be under {reqs.pfp.maxSizeMB} MB.</p>}
                 </div>
                 <div>
                     <p>
@@ -141,9 +141,9 @@ export default function Profile(props) {
                     </p>
                     
                     {errors.showUsername && <>
-                        {(errors.username & 1) !== 0 && <p className="error">*Username must be at least {reqs.username.minLength} characters long.</p>}
-                        {(errors.username & 2) !== 0 && <p className="error">*Username must be at most {reqs.username.maxLength} characters long.</p>}
-                        {(errors.username & 4) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
+                        {(errors.username & reqs.error.MIN_LENGTH) !== 0 && <p className="error">*Username must be at least {reqs.username.minLength} characters long.</p>}
+                        {(errors.username & reqs.error.MAX_LENGTH) !== 0 && <p className="error">*Username must be at most {reqs.username.maxLength} characters long.</p>}
+                        {(errors.username & reqs.error.REGEX) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
                     </>}
 
 

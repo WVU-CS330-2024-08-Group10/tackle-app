@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Link } from 'react-router-dom';
-import reqs from "../components/AccountReqs.json";
+const reqs = require('../components/AccountReqs.json');
 
 const errorsInit = {
     password: 0,
@@ -20,13 +20,13 @@ export default function Login() {
         let input = e.target.value;
 
         // check if meets minimum length
-        if (input.length < reqs.password.minLength) error |= 1;
+        if (input.length < reqs.password.minLength) error |= reqs.error.MIN_LENGTH;
         // check if meets maximum length
-        if (input.length > reqs.password.maxLength) error |= 2;
+        if (input.length > reqs.password.maxLength) error |= reqs.error.MAX_LENGTH;
         // check if only ASCII
-        if (!input.match(reqs.password.regExOnlyASCII)) error |= 4;
+        if (!input.match(reqs.password.regExOnlyASCII)) error |= reqs.error.REGEX_ASCII;
         // check if no spaces
-        if (!input.match(reqs.password.regExNoSpaces)) error |= 8;
+        if (!input.match(reqs.password.regExNoSpaces)) error |= reqs.error.REGEX_SPACES;
 
         setPassword(input);
         setErrors({...errors, password: error});

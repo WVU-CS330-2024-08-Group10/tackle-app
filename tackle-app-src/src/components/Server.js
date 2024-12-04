@@ -94,20 +94,20 @@ app.post("/api/insertUser", async (req, res) => {
     let error = 0;
 
     // check if meets minimum length
-    if (username.length < reqs.username.minLength) error |= 1;
+    if (username.length < reqs.username.minLength) error |= reqs.error.MIN_LENGTH;
     // check if meets maximum length
-    if (username.length > reqs.username.maxLength) error |= 2;
+    if (username.length > reqs.username.maxLength) error |= reqs.error.MAX_LENGTH;
     // check if is alphanumeric, underscore, or dash
-    if (!username.match(reqs.username.regEx)) error |= 4;
+    if (!username.match(reqs.username.regEx)) error |= reqs.error.REGEX;
 
     // check if meets minimum length
-    if (password.length < reqs.password.minLength) error |= 1;
+    if (password.length < reqs.password.minLength) error |= reqs.error.MIN_LENGTH;
     // check if meets maximum length
-    if (password.length > reqs.password.maxLength) error |= 2;
+    if (password.length > reqs.password.maxLength) error |= reqs.error.MAX_LENGTH;
     // check if only ASCII
-    if (!password.match(reqs.password.regExOnlyASCII)) error |= 4;
+    if (!password.match(reqs.password.regExOnlyASCII)) error |= reqs.error.REGEX_ASCII;
     // check if no spaces
-    if (!password.match(reqs.password.regExNoSpaces)) error |= 8;
+    if (!password.match(reqs.password.regExNoSpaces)) error |= reqs.error.REGEX_SPACES;
 
     if (error > 0) {
         console.log("Account can't be created. Username/password doesn't meet minimum requirements.");
