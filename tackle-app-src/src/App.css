@@ -362,6 +362,7 @@ body {
     border-color: black;
     display: inline-block;
     vertical-align: top; /* Align the map and fish box to the top */
+	text-align: center;
 }
 
 /*temporary weather box CSS*/

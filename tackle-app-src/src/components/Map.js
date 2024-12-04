@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
- import * as LEsri from 'esri-leaflet';
+import * as LEsri from 'esri-leaflet';
 
 const Map = () => {
     useEffect(() => {
         const map = L.map('map').setView([38.8976, -80.4549], 7);
-        var fishBox = document.getElementById("fishBox");
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -72,29 +71,56 @@ const Map = () => {
             <div id="fishBox">
                 <h3 id="boxHeader">Body of Water: N/A</h3>
                 <ul id="listFish"></ul>
+                <p id="regulation"></p>
             </div>
         </div>
     );
+}
+
+function setRegulation(regulation, regulationBox) {
+    if(regulation) {
+        regulationBox.innerText = "Regulation: " + regulation;
+    } else {
+        regulationBox.innerText = "Regulation: No Regulation Data";
+    }
 }
 
 function setFish(properties, urlType) {
     let fishTypes = ["ChanCatfish", "Crappie", "StripBass", "LrgmthBass", "Musky", "WhtBass", "Walleye", "Trout"];
     let boxHeader = document.getElementById("boxHeader");
     let listFish = document.getElementById("listFish");
+    let regulationBox = document.getElementById("regulation");
 
     boxHeader.innerText = "Body of Water: N/A";
     listFish.innerHTML = "";
 
     if(urlType == "Lake") {
         boxHeader.innerText = "Body of Water: " + properties.LakeName;
+        setRegulation(properties.RegType, regulationBox);
     } else {
-        boxHeader.innerText = "Body of Water: " + properties.Name;;
+        boxHeader.innerText = "Body of Water: " + properties.Name;
+        let newFish = document.createElement("li");
+        newFish.innerText = "Not Enough Data (See Attached Lakes)";
+        listFish.appendChild(newFish);
+        setRegulation(properties.RegType, regulationBox);
+        return;
     }
 
     fishTypes.forEach(fish => {
         if(properties[fish] == 1) {
             let newFish = document.createElement("li");
-            newFish.innerText = fish;
+
+            switch(fish) {
+                case "ChanCatfish": newFish.innerText = "Channel Catfish"; break;
+                case "Crappie": newFish.innerText = "Crappie"; break;
+                case "StripBass": newFish.innerText = "Striped Bass"; break;
+                case "LrgmthBass": newFish.innerText = "Largemouth Bass"; break;
+                case "Musky": newFish.innerText = "Musky"; break;
+                case "WhtBass": newFish.innerText = "White Bass"; break;
+                case "Walleye": newFish.innerText = "Walleye"; break;
+                case "Trout": newFish.innerText = "Trout"; break;
+            }
+    
             listFish.appendChild(newFish);
         }
     });
