@@ -33,9 +33,9 @@
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
-    "start": "concurrently \"npm run start-backend\" \"npm run start-frontend\" \"npm run start-react\"",
+    "start": "concurrently \"npm run start-backend\" \"npm run start-frontend\"",
     "start-backend": "cd src/components/ && node Server.js",
-    "start-frontend": "cd public/ && npm start",
+    "start-frontend": "cd public/ && npm run start-react",
     "start-react": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
