@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
 import { Link } from 'react-router-dom';
+import { useAuth } from "../components/AuthProvider";
 const reqs = require('./AccountReqs.json');
 
 export const genericProfile = {
@@ -64,6 +65,17 @@ export default function Profile(props) {
     const [renderProfileform, setRenderProfileform] = useState(false);
     const [profileEdit, setProfileEdit] = useState(genericProfile);
     const [errors, setErrors] = useState({...errorsInit});
+    const { brightNess } = useAuth();
+    let classes = "";
+    let overlayClass = "";
+
+    if (brightNess === 0) {
+        classes = "modal-light form-modal";
+        overlayClass = "modal-overlay-light";
+    } else {
+        classes = "modal-dark form-modal";
+        overlayClass = "modal-overlay-dark";
+    }
 
     function openProfile() {
         setProfileEdit(profile);
@@ -124,7 +136,7 @@ export default function Profile(props) {
     return <>
         <button onClick={openProfile}>Edit profile</button>
 
-        <ReactModal className="modal form-modal" overlayClassName="modal-overlay" isOpen={renderProfileform}>
+        <ReactModal className={classes} overlayClassName={overlayClass} isOpen={renderProfileform}>
                 <h1>Editing Profile</h1>
                 <div>
                     <p>

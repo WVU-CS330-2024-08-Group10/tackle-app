@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../components/AuthProvider";
 const reqs = require('../components/AccountReqs.json');
 
 const errorsInit = {
@@ -15,7 +16,15 @@ export default function CreateAccount() {
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [errors, setErrors] = useState({...errorsInit});
+    const { login, brightNess, toggleBrightness } = useAuth();
     const navigate = useNavigate();
+    let styles = {};
+
+    if (brightNess === 0) {
+        styles = {borderColor: "black"};
+    } else {
+        styles = {borderColor: "white"};
+    }
 
     const checkUsername = (e) => {
         let error = 0;
@@ -79,10 +88,24 @@ export default function CreateAccount() {
 
         //Create account for user
         try {
-            const response = await axios.post("http://localhost:5000/api/insertUser", {username, password});
+            const response = await axios.post("http://localhost:5000/insertUser", {username, password});
             if (response.status === 200) {
                 console.log("Account created!");
-                //remove Login button from navbar
+                //Login user after account creation
+                login(username);    //Flag AuthProvider that user is logged in and set states
+                                    //load user preferences (dark/light mode, fish list, profile pic, etc.)
+                
+                //Save existing user information (dark/light mode, fish list, profile pic, etc.)
+                try {
+                    let brightness = brightNess;
+                    const response = await axios.post("http://localhost:5000/insertBrightness", {username, brightness});
+                    if (response.status === 200) {
+                        console.log("Brightness sent!");
+                    }
+                } catch (error) {
+                    console.error("Brightness info failure:", error.response?.data || error.message);
+                    //Display error to user
+                }
                 navigate("/");
             }
             else if(response.status === 401){
@@ -96,7 +119,7 @@ export default function CreateAccount() {
     };
     return (
         <div className = "login_container">
-            <div className = "login_box">
+            <div className = "login_box" style={styles}>
                 <h2>Create Account</h2>
                 <form onSubmit = {handleSubmit}>
                     <input

@@ -86,8 +86,59 @@ async function checkForUsername(username) {
 // });
 
 
+//Creating route to load user information
+app.post("/loadUserInfo", async (req, res) => {
+
+    const { username } = req.body;
+
+    try {
+        const pool = await sql.connect(config);
+
+        //Create query
+        const query = `SELECT * FROM UserInfo WHERE Username='${username}'`;
+
+        //Execute query
+        result = await pool.request().query(query);
+        console.log("User info retrieved!");
+        console.log(result.recordset[0].LightDark);
+        res.status(200).json(result.recordset[0].LightDark);
+
+        //Close connection
+        await sql.close();
+
+    } catch (error) {
+        res.status(500).send("Server Error");
+    }
+});
+
+
+//Creating route to add dark/light mode preference for user account
+app.post("/insertBrightness", async (req, res) => {
+
+    const { username, brightness } = req.body;
+
+    try {
+        const pool = await sql.connect(config);
+
+        //Create query
+        const query = `UPDATE UserInfo SET [LightDark] = '${brightness}' WHERE Username = '${username}'`;
+
+        //Execute query
+        await pool.request().query(query);
+        console.log("Brightness " + brightness + " inserted at " + username + "!");
+        res.status(200).send("Brightness inserted!");
+
+        //Close connection
+        await sql.close();
+
+    } catch (error) {
+        res.status(500).send("Server Error");
+    }
+});
+
+
 //Creating route to insert user
-app.post("/api/insertUser", async (req, res) => {
+app.post("/insertUser", async (req, res) => {
 
     const { username, password } = req.body;
 
@@ -153,7 +204,7 @@ app.post("/api/insertUser", async (req, res) => {
 
 
 //Creating route to remove user account
-app.post("/api/removeUser", async (req, res) => {
+app.post("/removeUser", async (req, res) => {
 
     const { username } = req.body;
 
@@ -188,7 +239,7 @@ app.post("/api/removeUser", async (req, res) => {
 
 
 //Creating route to authenticate user
-app.post("/api/authenticate", async (req, res) => {
+app.post("/authenticate", async (req, res) => {
 
     const { username, password } = req.body;
 
