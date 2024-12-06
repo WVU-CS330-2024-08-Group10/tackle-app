@@ -2,8 +2,18 @@ import React, { useEffect } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import * as LEsri from 'esri-leaflet';
+import { useAuth } from "../components/AuthProvider";
 
 const Map = () => {
+    const { brightNess } = useAuth();
+    let styles = {};
+
+    if (brightNess === 0) {
+        styles = {borderColor: "black"};
+    } else {
+        styles = {borderColor: "white"};
+    }
+
     useEffect(() => {
         const map = L.map('map').setView([38.8976, -80.4549], 7);
 
@@ -66,9 +76,9 @@ const Map = () => {
 
     return(
         <div id="mapBody">
-            <div id="weather"></div>
-            <div id="map"></div>
-            <div id="fishBox">
+            <div id="weather" style={styles}></div>
+            <div id="map" style={styles}></div>
+            <div id="fishBox" style={styles}>
                 <h3 id="boxHeader">Body of Water: N/A</h3>
                 <ul id="listFish"></ul>
                 <p id="stockBox"></p>

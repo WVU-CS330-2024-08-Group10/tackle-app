@@ -1,5 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
+import { useAuth } from "../components/AuthProvider";
+import axios from "axios";
 
 // perhaps it would be better to an array of 4 objects with this info in them? 
 const pages = ["", "Weather", "Personal", "About"];
@@ -9,6 +11,8 @@ const icons = ["home", "sunny", "account_circle", "groups"];
 const classesDefault = Array(pages.length).fill("navbutton");
 
 export default function NavBar(){
+	const { userName, isLoggedIn, logout, brightNess, toggleBrightness} = useAuth();
+	const navigate = useNavigate();
 	let url = window.location.href.split("/");
 	let page = url[url.length - 1];
 	let selected = pages.indexOf(page);
@@ -17,19 +21,54 @@ export default function NavBar(){
 	classesInit[selected] += " navbutton-selected";
 	const [classes, setClasses] = useState(classesInit);
 
-	function color(num) {
+	async function toggleMode() {
+		//0 = light, 1 = dark
+		var element = document.body;
+		if(brightNess === 0){
+			await toggleBrightness(1);
+			element.classList.add("dark-mode-body");
+			if(userName !== null){
+				await sendBrightness(1);
+			}
+		}
+		else{
+			await toggleBrightness(0);
+			element.classList.remove("dark-mode-body");
+			if(userName !== null){
+				await sendBrightness(0);
+			}
+		}
+	}
+
+	async function sendBrightness(newBrightness){
+		//Updating user preference (light/dark mode)
+		try {
+			let username = userName;
+			let brightness = newBrightness;
+			const response = await axios.post("http://localhost:5000/insertBrightness", {username, brightness});
+			if (response.status === 200) {
+				console.log("Brightness sent!");
+			}
+		} catch (error) {
+			console.error("Brightness info failure:", error.response?.data || error.message);
+			//Display error to user
+		}
+	}
+
+	function color(num){
 		if (selected !== num) {
 			selected = num;
-
+	
 			let classesInit = [...classesDefault];
 			classesInit[num] += " navbutton-selected";
 			setClasses(classesInit);
 		}
 	}
-
-	function toggleMode() {
-		var element = document.body;
-   		element.classList.toggle("dark-mode");
+	
+	function logoutAccount() {
+		logout();
+		navigate("/");
+		color(0);
 	}
 
     return(
@@ -40,7 +79,11 @@ export default function NavBar(){
 				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={classes[i]} to={`/${page}`} onClick={() => color(i)}><span className="material-icons">{icons[i]}</span>{display[i]}</Link>
 			})}
 
-			<Link id={`navbutton-login`} key={`navbutton-login`} to={`/Login`} onClick={() => color(-1)}><button className="btnLogin-popup">Login</button></Link>
+			{isLoggedIn ? (
+                <button onClick={() => logoutAccount()} className="btnLogin-popup">Logout</button>
+            ) : (
+                <Link id={`navbutton-login`} key={`navbutton-login`} to={`/Login`} onClick={() => color(-1)}><button className="btnLogin-popup">Login</button></Link>
+            )}
 			
 			<div id="toggle-container">
 				<header id="toggle-header">Light/Dark</header>

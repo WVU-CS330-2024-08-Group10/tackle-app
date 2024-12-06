@@ -1,24 +1,34 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../components/AuthProvider";
 
-export default function Login() {
+export default function DeleteAccount() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const { logout, brightness } = useAuth();
     const navigate = useNavigate();
+    let styles = {};
+
+    if (brightness === 0) {
+        styles = {borderColor: "black"};
+    } else {
+        styles = {borderColor: "white"};
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         
         //Create account for user
         try {
-            const response = await axios.post("http://localhost:5000/api/authenticate", {username, password});
+            const response = await axios.post("http://localhost:5000/authenticate", {username, password});
             if (response.status === 200) {
 
-                const response = await axios.post("http://localhost:5000/api/removeUser", {username});
+                const response = await axios.post("http://localhost:5000/removeUser", {username});
                 if (response.status === 200) {
                     console.log("Account deleted!");
                     //Display to user that account deletion was successful
+                    logout(username);    //Flag AuthProvider that user is logged out
                     navigate("/");
                 }
                 else if(response.status === 401){
@@ -33,7 +43,7 @@ export default function Login() {
     };
     return (
         <div className = "login_container">
-            <div className = "login_box">
+            <div className = "login_box" style={styles}>
                 <h2>Delete Account</h2>
                 <form onSubmit = {handleSubmit}>
                     <input

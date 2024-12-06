@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
+import { useAuth } from "../components/AuthProvider";
 
 const emptyFish = {
     species: {
@@ -36,6 +37,7 @@ export default function Fishlist(props) {
 
     const profile = props.profile;
     const setProfile = props.setProfile;
+    const { brightNess } = useAuth();
 
     const [renderFishform, setRenderFishform] = useState(false); 
     const [isFishformEditing, setIsFishformEditing] = useState(false); // indicates whether a fish is being edited (true) or added (false)
@@ -44,6 +46,14 @@ export default function Fishlist(props) {
     const [sortBy, setSortBy] = useState(0);
     const [sortAscending, setSortAscending] = useState(false);
     const [displayModified, setDisplayModified] = useState(false);
+
+    let styles = {};
+
+    if (brightNess === 0) {
+        styles = {borderColor: "black"};
+    } else {
+        styles = {borderColor: "white"};
+    }
 
     function swapFish(index1, index2) {
         if (index1 < 0 || index2 < 0 || index1 > profile.fishlist.length - 1 || index2 > profile.fishlist.length - 1) return;
@@ -152,9 +162,9 @@ export default function Fishlist(props) {
                     <option value="true">Nickname -- Weight -- Length -- Time</option>
                 </select>
             </div>
-            <div className="fishlist">
+            <div className="fishlist" style={styles}>
                 {sortFishlist(profile.fishlist.map((el, i) => ({...el, index: i}))).map((fish, i) => (<div className="fishlist-fish" key={`fish-${profile.fishlist.length - i}`}>
-                    <div className="fishlist-fish-info">
+                    <div className="fishlist-fish-info" style={styles}>
                         <div className="fishlist-fish-index">{(fish.index + 1).toLocaleString('en-US', {minimumIntegerDigits: profile.fishlist.length.toString().length })}.</div>
                         <div className="fishlist-fish-content">{fish.nickname}</div> 
                         <div className="fishlist-fish-seperator">--</div> 
