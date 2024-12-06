@@ -19,7 +19,7 @@ export const genericProfile = {
             },
             nickname: "Big John",
             timeCaught: new Date().getTime(),
-            bodyCaught: "Poca River, WV", // REPLACE WITH some sort of location object later
+            bodyCaught: "Poca River",
             weight: 51, // lbs?
             length: 22, // inches?
             sex: -1,
@@ -31,7 +31,7 @@ export const genericProfile = {
             },
             nickname: "Little John",
             timeCaught: new Date().getTime(),
-            bodyCaught: "Kanawha River, WV", // REPLACE WITH some sort of location object later
+            bodyCaught: "Kanawha River",
             weight: 53, // lbs?
             length: 22, // inches?
             sex: -1,
@@ -43,7 +43,7 @@ export const genericProfile = {
             },
             nickname: "slipper",
             timeCaught: new Date().getTime(),
-            bodyCaught: "Coal River, WV", // REPLACE WITH some sort of location object later
+            bodyCaught: "Coal River",
             weight: 52, // lbs?
             length: 22, // inches?
             sex: -1,
