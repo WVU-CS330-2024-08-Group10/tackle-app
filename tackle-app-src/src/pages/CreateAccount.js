@@ -16,15 +16,8 @@ export default function CreateAccount() {
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [errors, setErrors] = useState({...errorsInit});
-    const { login, brightNess, toggleBrightness } = useAuth();
+    const { login, borderStyle } = useAuth();
     const navigate = useNavigate();
-    let styles = {};
-
-    if (brightNess === 0) {
-        styles = {borderColor: "black"};
-    } else {
-        styles = {borderColor: "white"};
-    }
 
     const checkUsername = (e) => {
         let error = 0;
@@ -97,7 +90,7 @@ export default function CreateAccount() {
                 
                 //Save existing user information (dark/light mode, fish list, profile pic, etc.)
                 try {
-                    let brightness = brightNess;
+                    let brightness = 0;
                     const response = await axios.post("http://localhost:5000/insertBrightness", {username, brightness});
                     if (response.status === 200) {
                         console.log("Brightness sent!");
@@ -119,7 +112,7 @@ export default function CreateAccount() {
     };
     return (
         <div className = "login_container">
-            <div className = "login_box" style={styles}>
+            <div className = "login_box" style={borderStyle}>
                 <h2>Create Account</h2>
                 <form onSubmit = {handleSubmit}>
                     <input

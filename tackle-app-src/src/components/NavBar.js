@@ -11,7 +11,7 @@ const icons = ["home", "sunny", "account_circle", "groups"];
 const classesDefault = Array(pages.length).fill("navbutton");
 
 export default function NavBar(){
-	const { userName, isLoggedIn, logout, brightNess, toggleBrightness} = useAuth();
+	const { isLoggedIn, profile, logout, setProfile } = useAuth();
 	const navigate = useNavigate();
 	let url = window.location.href.split("/");
 	let page = url[url.length - 1];
@@ -21,25 +21,20 @@ export default function NavBar(){
 	classesInit[selected] += " navbutton-selected";
 	const [classes, setClasses] = useState(classesInit);
 
-	async function toggleMode() {
+	function toggleMode() {
 		//0 = light, 1 = dark
 		var element = document.body;
-		if(brightNess === 0){
-			if(userName !== null){
-				await sendBrightness(1);
-				toggleBrightness(1);
-				element.classList.add("dark-mode-body");
-			}
+		if (!profile.darkmode) {
+			setProfile({...profile, darkmode: true});
+			element.classList.add("dark-mode-body");
 		}
-		else{
-			if(userName !== null){
-				await sendBrightness(0);
-				toggleBrightness(0);
-				element.classList.remove("dark-mode-body");
-			}
+		else {
+			setProfile({...profile, darkmode: false});
+			element.classList.remove("dark-mode-body");
 		}
 	}
 
+	/*
 	async function sendBrightness(newBrightness){
 		//Updating user preference (light/dark mode)
 		try {
@@ -54,6 +49,7 @@ export default function NavBar(){
 			//Display error to user
 		}
 	}
+	*/
 
 	function color(num){
 		if (selected !== num) {

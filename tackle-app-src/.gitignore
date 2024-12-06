@@ -9,6 +9,7 @@
 /coverage
 start.cmd
 startServer.cmd
+startFrontend.cmd
 
 # production
 /build

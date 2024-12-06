@@ -33,11 +33,9 @@ function getPropIfPositiveNum(val, obj, property) {
     return objTemp;
 }
 
-export default function Fishlist(props) {
+export default function Fishlist() {
 
-    const profile = props.profile;
-    const setProfile = props.setProfile;
-    const { brightNess } = useAuth();
+    const { profile, setProfile, borderStyle } = useAuth();
 
     const [renderFishform, setRenderFishform] = useState(false); 
     const [isFishformEditing, setIsFishformEditing] = useState(false); // indicates whether a fish is being edited (true) or added (false)
@@ -47,13 +45,6 @@ export default function Fishlist(props) {
     const [sortAscending, setSortAscending] = useState(false);
     const [displayModified, setDisplayModified] = useState(false);
 
-    let styles = {};
-
-    if (brightNess === 0) {
-        styles = {borderColor: "black"};
-    } else {
-        styles = {borderColor: "white"};
-    }
 
     function swapFish(index1, index2) {
         if (index1 < 0 || index2 < 0 || index1 > profile.fishlist.length - 1 || index2 > profile.fishlist.length - 1) return;
@@ -162,9 +153,9 @@ export default function Fishlist(props) {
                     <option value="true">Nickname -- Weight -- Length -- Time</option>
                 </select>
             </div>
-            <div className="fishlist" style={styles}>
+            <div className="fishlist" style={borderStyle}>
                 {sortFishlist(profile.fishlist.map((el, i) => ({...el, index: i}))).map((fish, i) => (<div className="fishlist-fish" key={`fish-${profile.fishlist.length - i}`}>
-                    <div className="fishlist-fish-info" style={styles}>
+                    <div className="fishlist-fish-info" style={borderStyle}>
                         <div className="fishlist-fish-index">{(fish.index + 1).toLocaleString('en-US', {minimumIntegerDigits: profile.fishlist.length.toString().length })}.</div>
                         <div className="fishlist-fish-content">{fish.nickname}</div> 
                         <div className="fishlist-fish-seperator">--</div> 
@@ -191,7 +182,7 @@ export default function Fishlist(props) {
             <button id="fishlist-addfish" onClick={addFish}>Submit New Catch!</button>
         </div>
 
-        <ReactModal className="modal form-modal" overlayClassName="modal-overlay" isOpen={renderFishform}>
+        <ReactModal className={(profile.darkmode ? "modal-dark" : "modal-light") + " form-modal"} overlayClassName={profile.darkmode ? "modal-overlay-dark" : "modal-overlay-light"} isOpen={renderFishform}>
 
                 <h1>{isFishformEditing ? `Editing \"${profile.fishlist[fishIndex] !== undefined ? profile.fishlist[fishIndex].nickname : "Null"}\"` : "🏆 Congrats On Your New Catch! 🏆"}</h1>
                 <div>

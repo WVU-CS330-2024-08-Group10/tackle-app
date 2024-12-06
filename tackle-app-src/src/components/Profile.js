@@ -10,6 +10,7 @@ export const genericProfile = {
     nickname: "Jeremy Wade",
     pfpUrl: require('../assets/jeremyPfp.jpg'),
     gender: "male",
+    darkmode: false,
     favSpots: [],
     fishlist: [
         {
@@ -57,25 +58,13 @@ const errorsInit = {
     pfp: 0,
 };
 
-export default function Profile(props) {
+export default function Profile() {
 
-    const profile = props.profile;
-    const setProfile = props.setProfile;
+    const { profile, setProfile } = useAuth();
 
     const [renderProfileform, setRenderProfileform] = useState(false);
     const [profileEdit, setProfileEdit] = useState(genericProfile);
     const [errors, setErrors] = useState({...errorsInit});
-    const { brightNess } = useAuth();
-    let classes = "";
-    let overlayClass = "";
-
-    if (brightNess === 0) {
-        classes = "modal-light form-modal";
-        overlayClass = "modal-overlay-light";
-    } else {
-        classes = "modal-dark form-modal";
-        overlayClass = "modal-overlay-dark";
-    }
 
     function openProfile() {
         setProfileEdit(profile);
@@ -136,7 +125,7 @@ export default function Profile(props) {
     return <>
         <button onClick={openProfile}>Edit profile</button>
 
-        <ReactModal className={classes} overlayClassName={overlayClass} isOpen={renderProfileform}>
+        <ReactModal className={(profile.darkmode ? "modal-dark" : "modal-light") + " form-modal"} overlayClassName={profile.darkmode ? "modal-overlay-dark" : "modal-overlay-light"} isOpen={renderProfileform}>
                 <h1>Editing Profile</h1>
                 <div>
                     <p>

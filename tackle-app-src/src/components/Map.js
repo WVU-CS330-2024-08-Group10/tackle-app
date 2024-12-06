@@ -5,14 +5,7 @@ import * as LEsri from 'esri-leaflet';
 import { useAuth } from "../components/AuthProvider";
 
 const Map = () => {
-    const { brightNess } = useAuth();
-    let styles = {};
-
-    if (brightNess === 0) {
-        styles = {borderColor: "black"};
-    } else {
-        styles = {borderColor: "white"};
-    }
+    const { borderStyle } = useAuth();
 
     useEffect(() => {
         const map = L.map('map').setView([38.8976, -80.4549], 7);
@@ -76,9 +69,9 @@ const Map = () => {
 
     return(
         <div id="mapBody">
-            <div id="weather" style={styles}></div>
-            <div id="map" style={styles}></div>
-            <div id="fishBox" style={styles}>
+            <div id="weather" style={borderStyle}></div>
+            <div id="map" style={borderStyle}></div>
+            <div id="fishBox" style={borderStyle}>
                 <h3 id="boxHeader">Body of Water: N/A</h3>
                 <ul id="listFish"></ul>
                 <p id="regulation"></p>

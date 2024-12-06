@@ -6,15 +6,8 @@ import { useAuth } from "../components/AuthProvider";
 export default function DeleteAccount() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const { logout, brightness } = useAuth();
+    const { logout, borderStyle } = useAuth();
     const navigate = useNavigate();
-    let styles = {};
-
-    if (brightness === 0) {
-        styles = {borderColor: "black"};
-    } else {
-        styles = {borderColor: "white"};
-    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -43,7 +36,7 @@ export default function DeleteAccount() {
     };
     return (
         <div className = "login_container">
-            <div className = "login_box" style={styles}>
+            <div className = "login_box" style={borderStyle}>
                 <h2>Delete Account</h2>
                 <form onSubmit = {handleSubmit}>
                     <input

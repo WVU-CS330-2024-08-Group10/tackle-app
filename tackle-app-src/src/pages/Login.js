@@ -16,14 +16,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({...errorsInit});
     const navigate = useNavigate();
-    const { login, brightNess, toggleBrightness } = useAuth();
-    let styles = {};
-
-    if (brightNess === 0) {
-        styles = {borderColor: "black"};
-    } else {
-        styles = {borderColor: "white"};
-    }
+    const { login, borderStyle } = useAuth();
 
     const checkPassword = (e) => {
         let error = 0;
@@ -67,10 +60,10 @@ export default function Login() {
                     const response = await axios.post("http://localhost:5000/loadUserInfo", {username});
                     if (response.status === 200) {
                         console.log("User info retrieved!");
-                        toggleBrightness(response.data);
+                        //toggleBrightness(response.data);
 
                         //Set light for doc body
-                        if(brightNess === 0){
+                        if(0 === 0){
                             document.body.classList.add("dark-mode-body");
                         }
                         else{
@@ -94,7 +87,7 @@ export default function Login() {
     };
     return (
         <div className = "login_container">
-            <div className = "login_box" style={styles}>
+            <div className = "login_box" style={borderStyle}>
                 <h2>Login</h2>
 
                 <form onSubmit = {handleSubmit}>

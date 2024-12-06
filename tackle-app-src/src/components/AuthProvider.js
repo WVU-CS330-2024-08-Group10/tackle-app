@@ -1,36 +1,48 @@
 import React, { createContext, useContext, useState } from 'react';
+import { genericProfile } from '../components/Profile';
 
 const AuthContext = createContext();
 
+const borderWhite = {
+    borderColor: "white"
+}
+const borderBlack = {
+    borderColor: "black"
+}
+
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userName, setUsername] = useState(null);
-    const[brightNess, setBrightness] = useState(0);
-    const [pfp, setPFP] = useState("../assets/jeremyPfp.jpg");
+    const [profile, setProfileDirectly] = useState(genericProfile);
+    const [borderStyle, setBorderStyle] = useState(borderBlack);
 
-    const login = (userData) => {
+    const login = (userProfile) => {
         setIsLoggedIn(true);
-        setUsername(userData);
+        setProfile(userProfile);
     };
 
     const logout = () => {
         setIsLoggedIn(false);
-        setUsername(null);
+        setProfile(genericProfile);
     };
 
-    const toggleBrightness = (brightnessData) => {
-        setBrightness(brightnessData);
-    };
+    const updateBorderStyle = () => {
+        if (!profile.darkmode) {
+            setBorderStyle(borderWhite);
+        } else {
+            setBorderStyle(borderBlack);
+        }
+    }
 
-    const changePFP = (pfp) => {
-        setPFP(pfp);
-    };
+    const setProfile = (newProfile) => {
+        setProfileDirectly(newProfile);
+        updateBorderStyle();
+    }
 
-    return (
-        <AuthContext.Provider value={{ isLoggedIn, userName, brightNess, pfp, login, logout, toggleBrightness, changePFP }}>
+    return (<>
+        <AuthContext.Provider value={{ isLoggedIn, profile, borderStyle, login, logout, setIsLoggedIn, setProfile }}>
             {children}
         </AuthContext.Provider>
-    );
+    </>);
 };
 
 export const useAuth = () => useContext(AuthContext);
