@@ -25,17 +25,17 @@ export default function NavBar(){
 		//0 = light, 1 = dark
 		var element = document.body;
 		if(brightNess === 0){
+			await toggleBrightness(1);
+			element.classList.add("dark-mode-body");
 			if(userName !== null){
 				await sendBrightness(1);
-				toggleBrightness(1);
-				element.classList.add("dark-mode-body");
 			}
 		}
 		else{
+			await toggleBrightness(0);
+			element.classList.remove("dark-mode-body");
 			if(userName !== null){
 				await sendBrightness(0);
-				toggleBrightness(0);
-				element.classList.remove("dark-mode-body");
 			}
 		}
 	}

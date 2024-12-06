@@ -66,16 +66,19 @@ export default function Login() {
                 try {
                     const response = await axios.post("http://localhost:5000/loadUserInfo", {username});
                     if (response.status === 200) {
-                        console.log("User info retrieved!");
-                        toggleBrightness(response.data);
+                        console.log("User info " + response.data + " retrieved!");
+                        
 
                         //Set light for doc body
-                        if(brightNess === 0){
-                            document.body.classList.add("dark-mode-body");
-                        }
-                        else{
+                        let result = document.body.classList.contains("dark-mode-body");
+                        if(response.data === 0 && result === true){
                             document.body.classList.remove("dark-mode-body");
                         }
+                        else if(response.data === 1 && result === false){
+                            document.body.classList.add("dark-mode-body");
+                        }
+
+                        await toggleBrightness(response.data);
                     }
                 } catch (error) {
                     console.error("User info retrieval failure:", error.response?.data || error.message);
