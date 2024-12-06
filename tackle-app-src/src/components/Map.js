@@ -86,6 +86,7 @@ function setRegulation(regulation, regulationBox) {
     }
 }
 
+//placeholder for indicating whether body of water is stocked or not
 function setStock() {
     
 }
