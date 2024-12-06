@@ -71,7 +71,8 @@ const Map = () => {
             <div id="fishBox">
                 <h3 id="boxHeader">Body of Water: N/A</h3>
                 <ul id="listFish"></ul>
-                <p id="regulation"></p>
+                <p id="stockBox"></p>
+                <p id="regulationBox"></p>
             </div>
         </div>
     );
@@ -85,11 +86,15 @@ function setRegulation(regulation, regulationBox) {
     }
 }
 
+function setStock() {
+    
+}
+
 function setFish(properties, urlType) {
     let fishTypes = ["ChanCatfish", "Crappie", "StripBass", "LrgmthBass", "Musky", "WhtBass", "Walleye", "Trout"];
     let boxHeader = document.getElementById("boxHeader");
     let listFish = document.getElementById("listFish");
-    let regulationBox = document.getElementById("regulation");
+    let regulationBox = document.getElementById("regulationBox");
 
     boxHeader.innerText = "Body of Water: N/A";
     listFish.innerHTML = "";
