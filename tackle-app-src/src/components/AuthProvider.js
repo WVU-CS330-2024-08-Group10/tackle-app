@@ -65,6 +65,15 @@ export const AuthProvider = ({ children }) => {
 
         // TODO: make axios request to save modified profile properties under "keys"
 
+        // the "keys" array will contain all object properties that have been modified by a call to set profile.
+        // In theory, an axios request can be made here containing every modified key/value pair to send all the 
+        // new values to the azure database, rather than sending the entire profile object.
+
+        // of course, since there is a disconnect between the names of some object properties in the profile object
+        // and the name of corresponding column in the Azure database (for example, light/dark mode being called 
+        // "darkmode" in the profile object and "LightDark" in the Azure database) so server.js will have to be 
+        // updated to contain all the pairs of object property names and azure database names
+
         setOldProfile(newProfile);
     }
 
