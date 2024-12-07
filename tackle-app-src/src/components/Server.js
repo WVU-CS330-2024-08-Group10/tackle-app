@@ -1,4 +1,5 @@
 const reqs = require("./AccountReqs.json");
+const fs = require("fs");
 
 //SQL Database variables
 const sql = require("mssql");
@@ -25,6 +26,33 @@ let saltString = "";
 let hashedPassword = "";
 
 
+//Upload an image as binary data
+async function uploadImage(username, pfpURL) {
+    try {
+        //Read the image file as a binary buffer
+        const imageBuffer = fs.readFileSync(pfpURL);
+
+        //Connect to the database
+        const pool = await sql.connect(config);
+
+        //Create query
+        const query = `UPDATE UserInfo SET [ProfileImage] = @image WHERE UserId = @username;`;
+
+        //Execute query
+        await pool.request()
+            .input('username', sql.NVarChar, username) //username
+            .input('image', sql.VarBinary, imageBuffer) //Binary image data
+            .query(query);
+
+        //Close connection
+        await sql.close();
+
+    } catch (err) {
+        res.status(500).send("Server Error");
+    }
+}
+
+
 //Function to check for username in database
 async function checkForUsername(username) {
 
@@ -33,10 +61,12 @@ async function checkForUsername(username) {
         const pool = await sql.connect(config);
 
         //Create query
-        const query = `SELECT Username FROM UserInfo WHERE Username='${username}'`;
+        const query = `SELECT Username FROM UserInfo WHERE Username=@username;`;
 
         //Execute query
-        const result = await pool.request().query(query);
+        const result = await pool.request()
+                                    .input('username', sql.NVarChar, username) //username
+                                    .query(query);
 
         //Close connection
         await sql.close();
@@ -45,45 +75,11 @@ async function checkForUsername(username) {
         console.error(`${username} usernames in database: ` + result.recordset.length);
         if(result.recordset.length > 0){
             console.log("Username is already in use", "\n");
-            return true;
         }
-        else{
-            return false;
-        }
-
     } catch (error) {
         console.error("Error checking for username:", error, "\n");
-        return false;
     }
 }
-
-
-//Creating route to insert profile picture for user
-// app.post("/api/insertPFP", async (req, res) => {
-
-//     const { username, image } = req.body;
-
-//     try {
-//         //Connect to the database
-//         const pool = await sql.connect(config);
-
-//         //Create query
-//         const query = `INSERT INTO UserInfo Image VALUE '${image}' WHERE Username='${username}'`;
-
-//         //Execute query
-//         const result = await pool.request().query(query);
-//         console.log("PFP saved!");
-//         res.status(200).send("PFP saved!");
-
-//         //Close connection
-//         sql.close();
-//         return true;
-
-//     } catch (error) {
-//         res.status(500).send("Server Error");
-
-//     }
-// });
 
 
 //Creating route to load user information
@@ -95,13 +91,16 @@ app.post("/loadUserInfo", async (req, res) => {
         const pool = await sql.connect(config);
 
         //Create query
-        const query = `SELECT * FROM UserInfo WHERE Username='${username}'`;
+        const query = `SELECT * FROM UserInfo WHERE Username=@username;`;
 
         //Execute query
-        result = await pool.request().query(query);
-        console.log("User info retrieved!");
-        console.log(result.recordset[0].LightDark);
-        res.status(200).json(result.recordset[0].LightDark);
+        const result = await pool.request()
+                                    .input('username', sql.NVarChar, username) //username
+                                    .query(query);
+
+        //Save recordset
+        console.log("User info retrieved: \n" + JSON.stringify(result.recordset[0], null, 1));
+        res.status(200).json(result.recordset[0]);
 
         //Close connection
         await sql.close();
@@ -113,20 +112,27 @@ app.post("/loadUserInfo", async (req, res) => {
 
 
 //Creating route to add dark/light mode preference for user account
-app.post("/insertBrightness", async (req, res) => {
+app.post("/updateUserInfo", async (req, res) => {
 
-    const { username, brightness } = req.body;
+    const { username, darkmode, nickname, pfp, gender } = req.body;
 
     try {
         const pool = await sql.connect(config);
-
+        
         //Create query
-        const query = `UPDATE UserInfo SET [LightDark] = '${brightness}' WHERE Username = '${username}'`;
+        const query = `UPDATE UserInfo SET [darkmode]=@darkmode, [nickname]=@nickname, [gender]=@gender WHERE Username=@username;`;
 
         //Execute query
-        await pool.request().query(query);
-        console.log("Brightness " + brightness + " inserted at " + username + "!");
-        res.status(200).send("Brightness inserted!");
+        const result = await pool.request()
+                                    .input('darkmode', sql.Bit, darkmode) //darkmode
+                                    .input('nickname', sql.NVarChar, nickname) //nickname
+                                    .input('gender', sql.NVarChar, gender) //gender
+                                    .input('username', sql.NVarChar, username) //username
+                                    .query(query);
+        
+        //Update pfp
+        //uploadImage(username, pfp);
+        res.status(200).send("User info updated!");
 
         //Close connection
         await sql.close();
@@ -140,7 +146,7 @@ app.post("/insertBrightness", async (req, res) => {
 //Creating route to insert user
 app.post("/insertUser", async (req, res) => {
 
-    const { username, password } = req.body;
+    const { username, password, darkmode, nickname, pfp, gender } = req.body;
 
     let error = 0;
 
@@ -163,7 +169,6 @@ app.post("/insertUser", async (req, res) => {
     if (error > 0) {
         console.log("Account can't be created. Username/password doesn't meet minimum requirements.");
         res.status(401).send("Username/password doesn't meet minimum requirements");
-        return false;
     }
 
     try {
@@ -171,7 +176,6 @@ app.post("/insertUser", async (req, res) => {
         if(await checkForUsername(username)){
             console.log("Account can't be created. Username already exists.");
             res.status(401).send("Username already exists");
-            return false;
         }
         else{
             //Hash password
@@ -184,16 +188,23 @@ app.post("/insertUser", async (req, res) => {
             const pool = await sql.connect(config);
 
             //Create query
-            const query = `INSERT INTO UserInfo (Username, Password, Salt) VALUES ('${username}', '${hashedPassword}', '${saltString}')`;
+            const query = `INSERT INTO UserInfo (Username, Password, Salt, darkmode, nickname, gender) VALUES (@username, @password, @salt, @darkmode, @nickname, @gender);`;
 
             //Execute query
-            const result = await pool.request().query(query);
+            await pool.request()
+                        .input('username', sql.NVarChar, username) //username
+                        .input('password', sql.Char, hashedPassword) //password
+                        .input('salt', sql.Char, saltString) //salt
+                        .input('darkmode', sql.Bit, darkmode) //darkmode
+                        .input('nickname', sql.NVarChar, nickname) //nickname
+                        .input('gender', sql.NVarChar, gender) //gender
+                        .query(query);
+            //await uploadImage(username, pfp);
             console.log("Account created!");
             res.status(200).send("Account Created!");
 
             //Close connection
             await sql.close();
-            return true;
         }
 
     } catch (error) {
@@ -213,23 +224,23 @@ app.post("/removeUser", async (req, res) => {
         if(await checkForUsername(username) === false){
             console.log("Account can't be deleted. Username doesn't exist.");
             res.status(401).send("Username doesn't exist");
-            return false;
         }
         else{
             //Connect to database
             const pool = await sql.connect(config);
 
             //Create query
-            const query = `DELETE FROM UserInfo WHERE Username='${username}'`;
+            const query = `DELETE FROM UserInfo WHERE Username=@username;`;
 
             //Execute query
-            await pool.request().query(query);
+            await pool.request()
+                        .input('username', sql.NVarChar, username) //username
+                        .query(query);
             console.log("Account Deleted!");
             res.status(200).send("Account Deleted!");
 
             //Close connection
             await sql.close();
-            return true;
         }
 
     } catch (error) {
@@ -248,17 +259,18 @@ app.post("/authenticate", async (req, res) => {
         if(await checkForUsername(username) === false){
             console.log("Authentication failed. Username doesn't exist.");
             res.status(401).send("Username doesn't exist");
-            return false;
         }
         else{
             //Connect to the database
             const pool = await sql.connect(config);
 
             //Create query
-            const userQuery = `SELECT * FROM UserInfo WHERE Username='${username}'`;
+            const query = `SELECT * FROM UserInfo WHERE Username=@username;`;
 
             //Execute query
-            const userResult = await pool.request().query(userQuery);
+            const userResult = await pool.request()
+                                            .input('username', sql.NVarChar, username) //username
+                                            .query(query);
 
             //Close connection
             await sql.close();
@@ -267,12 +279,10 @@ app.post("/authenticate", async (req, res) => {
             if(await bcrypt.compare(password, userResult.recordset[0].Password.trim())){
                 console.log("Authenticated!");
                 res.status(200).send("Authenticated!");
-                return true;
             }
             else{
                 console.log("Authentication failed");
                 res.status(401).send("Invalid username/password");
-                return false;
             }
         }
 

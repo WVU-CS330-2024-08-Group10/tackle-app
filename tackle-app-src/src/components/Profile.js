@@ -10,6 +10,7 @@ export const genericProfile = {
     nickname: "Jeremy Wade",
     pfpUrl: require('../assets/jeremyPfp.jpg'),
     gender: "male",
+    darkmode: false,
     favSpots: [],
     fishlist: [
         {
@@ -18,7 +19,7 @@ export const genericProfile = {
             },
             nickname: "Big John",
             timeCaught: new Date().getTime(),
-            bodyCaught: "Poca River, WV", // REPLACE WITH some sort of location object later
+            bodyCaught: "Poca River",
             weight: 51, // lbs?
             length: 22, // inches?
             sex: -1,
@@ -30,7 +31,7 @@ export const genericProfile = {
             },
             nickname: "Little John",
             timeCaught: new Date().getTime(),
-            bodyCaught: "Kanawha River, WV", // REPLACE WITH some sort of location object later
+            bodyCaught: "Kanawha River",
             weight: 53, // lbs?
             length: 22, // inches?
             sex: -1,
@@ -42,7 +43,7 @@ export const genericProfile = {
             },
             nickname: "slipper",
             timeCaught: new Date().getTime(),
-            bodyCaught: "Coal River, WV", // REPLACE WITH some sort of location object later
+            bodyCaught: "Coal River",
             weight: 52, // lbs?
             length: 22, // inches?
             sex: -1,
@@ -57,25 +58,13 @@ const errorsInit = {
     pfp: 0,
 };
 
-export default function Profile(props) {
+export default function Profile() {
 
-    const profile = props.profile;
-    const setProfile = props.setProfile;
+    const { profile, setProfile } = useAuth();
 
     const [renderProfileform, setRenderProfileform] = useState(false);
     const [profileEdit, setProfileEdit] = useState(genericProfile);
     const [errors, setErrors] = useState({...errorsInit});
-    const { brightNess } = useAuth();
-    let classes = "";
-    let overlayClass = "";
-
-    if (brightNess === 0) {
-        classes = "modal-light form-modal";
-        overlayClass = "modal-overlay-light";
-    } else {
-        classes = "modal-dark form-modal";
-        overlayClass = "modal-overlay-dark";
-    }
 
     function openProfile() {
         setProfileEdit(profile);
@@ -92,28 +81,6 @@ export default function Profile(props) {
     }
     function cancelProfile() {
         setRenderProfileform(false);
-    }
-
-    const checkUsername = (e) => {
-        let error = 0;
-        let input = e.target.value;
-
-        // check if meets minimum length
-        if (input.length < reqs.username.minLength) error |= reqs.error.MIN_LENGTH;
-        // check if meets maximum length
-        if (input.length > reqs.username.maxLength) error |= reqs.error.MAX_LENGTH;
-        // check if is alphanumeric, underscore, or dash
-        if (!input.match(reqs.username.regEx)) error |= reqs.error.REGEX;
-
-        setProfileEdit({...profileEdit, username: input});
-        setErrors({...errors, username: error});
-    }
-    function onDeselectUsername() {
-        if (errors.username > 0) {
-            setErrors({...errors, showUsername: true});
-        } else {
-            setErrors({...errors, showUsername: false});
-        }
     }
 
     const checkPfp = (e) => {
@@ -136,7 +103,7 @@ export default function Profile(props) {
     return <>
         <button onClick={openProfile}>Edit profile</button>
 
-        <ReactModal className={classes} overlayClassName={overlayClass} isOpen={renderProfileform}>
+        <ReactModal className={(profile.darkmode ? "modal-dark" : "modal-light") + " form-modal"} overlayClassName={profile.darkmode ? "modal-overlay-dark" : "modal-overlay-light"} isOpen={renderProfileform}>
                 <h1>Editing Profile</h1>
                 <div>
                     <p>
@@ -147,17 +114,6 @@ export default function Profile(props) {
                     {(errors.pfp & reqs.error.MAX_SIZE) !== 0 && <p className="error">*File size must be under {reqs.pfp.maxSizeMB} MB.</p>}
                 </div>
                 <div>
-                    <p>
-                        <label htmlFor="profileUsername">Username: </label>
-                        <input id="profileform-username" name="profileUsername" value={profileEdit.username} onBlur={onDeselectUsername} onChange={checkUsername} />
-                    </p>
-                    
-                    {errors.showUsername && <>
-                        {(errors.username & reqs.error.MIN_LENGTH) !== 0 && <p className="error">*Username must be at least {reqs.username.minLength} characters long.</p>}
-                        {(errors.username & reqs.error.MAX_LENGTH) !== 0 && <p className="error">*Username must be at most {reqs.username.maxLength} characters long.</p>}
-                        {(errors.username & reqs.error.REGEX) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
-                    </>}
-
 
                     <p>
                         <label htmlFor="profileNickname">Nickname: </label>

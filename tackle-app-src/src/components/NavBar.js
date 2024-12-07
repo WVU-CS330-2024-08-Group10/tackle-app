@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { useAuth } from "../components/AuthProvider";
-import axios from "axios";
 
 // perhaps it would be better to an array of 4 objects with this info in them? 
 const pages = ["", "Weather", "Personal", "About"];
@@ -11,7 +10,7 @@ const icons = ["home", "sunny", "account_circle", "groups"];
 const classesDefault = Array(pages.length).fill("navbutton");
 
 export default function NavBar(){
-	const { userName, isLoggedIn, logout, brightNess, toggleBrightness} = useAuth();
+	const { isLoggedIn, profile, logout, setProfile } = useAuth();
 	const navigate = useNavigate();
 	let url = window.location.href.split("/");
 	let page = url[url.length - 1];
@@ -21,37 +20,17 @@ export default function NavBar(){
 	classesInit[selected] += " navbutton-selected";
 	const [classes, setClasses] = useState(classesInit);
 
-	async function toggleMode() {
+	function toggleMode() {
 		//0 = light, 1 = dark
 		var element = document.body;
-		if(brightNess === 0){
-			await toggleBrightness(1);
+		if (!profile.darkmode) {
+			
+			setProfile({...profile, darkmode: true});
 			element.classList.add("dark-mode-body");
-			if(userName !== null){
-				await sendBrightness(1);
-			}
 		}
-		else{
-			await toggleBrightness(0);
+		else {
+			setProfile({...profile, darkmode: false});
 			element.classList.remove("dark-mode-body");
-			if(userName !== null){
-				await sendBrightness(0);
-			}
-		}
-	}
-
-	async function sendBrightness(newBrightness){
-		//Updating user preference (light/dark mode)
-		try {
-			let username = userName;
-			let brightness = newBrightness;
-			const response = await axios.post("http://localhost:5000/insertBrightness", {username, brightness});
-			if (response.status === 200) {
-				console.log("Brightness sent!");
-			}
-		} catch (error) {
-			console.error("Brightness info failure:", error.response?.data || error.message);
-			//Display error to user
 		}
 	}
 

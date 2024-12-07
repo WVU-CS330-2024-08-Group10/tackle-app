@@ -16,14 +16,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({...errorsInit});
     const navigate = useNavigate();
-    const { login, brightNess, toggleBrightness } = useAuth();
-    let styles = {};
-
-    if (brightNess === 0) {
-        styles = {borderColor: "black"};
-    } else {
-        styles = {borderColor: "white"};
-    }
+    const { borderStyle, login } = useAuth();
 
     const checkPassword = (e) => {
         let error = 0;
@@ -57,33 +50,9 @@ export default function Login() {
         //Authenticate user (Username: user, Password: pass)
         try {
             const response = await axios.post("http://localhost:5000/authenticate", {username, password});
-            console.log(response);
             if (response.status === 200) {
                 console.log("User authenticated!");
-                login(username);    //Flag AuthProvider that user is logged in and set states
-                                    
-                //Load user preferences (dark/light mode, fish list, profile pic, etc.)
-                try {
-                    const response = await axios.post("http://localhost:5000/loadUserInfo", {username});
-                    if (response.status === 200) {
-                        console.log("User info " + response.data + " retrieved!");
-                        
-
-                        //Set light for doc body
-                        let result = document.body.classList.contains("dark-mode-body");
-                        if(response.data === 0 && result === true){
-                            document.body.classList.remove("dark-mode-body");
-                        }
-                        else if(response.data === 1 && result === false){
-                            document.body.classList.add("dark-mode-body");
-                        }
-
-                        await toggleBrightness(response.data);
-                    }
-                } catch (error) {
-                    console.error("User info retrieval failure:", error.response?.data || error.message);
-                    //Display error to user
-                }
+                login(username);
                 navigate("/");
             }
             else if(response.status === 401){
@@ -97,7 +66,7 @@ export default function Login() {
     };
     return (
         <div className = "login_container">
-            <div className = "login_box" style={styles}>
+            <div className = "login_box" style={borderStyle}>
                 <h2>Login</h2>
 
                 <form onSubmit = {handleSubmit}>

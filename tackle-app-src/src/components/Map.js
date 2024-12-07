@@ -4,15 +4,19 @@ import 'leaflet/dist/leaflet.css';
 import * as LEsri from 'esri-leaflet';
 import { useAuth } from "../components/AuthProvider";
 
-const Map = () => {
-    const { brightNess } = useAuth();
-    let styles = {};
+export const fishTypes = {
+    "ChanCatfish": "Channel Catfish",
+    "Crappie": "Crappie",
+    "StripBass": "Striped Bass",
+    "LrgmthBass": "Largemouth Bass",
+    "Musky": "Musky",
+    "WhtBass": "White Bass",
+    "Walleye": "Walleye",
+    "Trout": "Trout"
+} 
 
-    if (brightNess === 0) {
-        styles = {borderColor: "black"};
-    } else {
-        styles = {borderColor: "white"};
-    }
+const Map = () => {
+    const { borderStyle, setLastLocation } = useAuth();
 
     useEffect(() => {
         const map = L.map('map').setView([38.8976, -80.4549], 7);
@@ -48,6 +52,7 @@ const Map = () => {
             onEachFeature: (feature, layer) => {
                 layer.on("click", function() {
                     setFish(feature.properties, "Lake");
+                    setLastLocation(feature.properties.LakeName); // So fishlist can automatically fill in location for new fish
                 });
             },
             opacity: 0.0
@@ -60,6 +65,7 @@ const Map = () => {
             onEachFeature: (feature, layer) => {
                 layer.on("click", function() {
                     setFish(feature.properties, "NotLake");
+                    setLastLocation(feature.properties.Name); // So fishlist can automatically fill in location for new fish
                 });
             },
             opacity: 0.0
@@ -76,9 +82,9 @@ const Map = () => {
 
     return(
         <div id="mapBody">
-            <div id="weather" style={styles}></div>
-            <div id="map" style={styles}></div>
-            <div id="fishBox" style={styles}>
+            <div id="weather" style={borderStyle}></div>
+            <div id="map" style={borderStyle}></div>
+            <div id="fishBox" style={borderStyle}>
                 <h3 id="boxHeader">Body of Water: N/A</h3>
                 <ul id="listFish"></ul>
                 <p id="regulation"></p>
@@ -96,7 +102,6 @@ function setRegulation(regulation, regulationBox) {
 }
 
 function setFish(properties, urlType) {
-    let fishTypes = ["ChanCatfish", "Crappie", "StripBass", "LrgmthBass", "Musky", "WhtBass", "Walleye", "Trout"];
     let boxHeader = document.getElementById("boxHeader");
     let listFish = document.getElementById("listFish");
     let regulationBox = document.getElementById("regulation");
@@ -116,20 +121,10 @@ function setFish(properties, urlType) {
         return;
     }
 
-    fishTypes.forEach(fish => {
+    Object.keys(fishTypes).forEach(fish => {
         if(properties[fish] == 1) {
             let newFish = document.createElement("li");
-
-            switch(fish) {
-                case "ChanCatfish": newFish.innerText = "Channel Catfish"; break;
-                case "Crappie": newFish.innerText = "Crappie"; break;
-                case "StripBass": newFish.innerText = "Striped Bass"; break;
-                case "LrgmthBass": newFish.innerText = "Largemouth Bass"; break;
-                case "Musky": newFish.innerText = "Musky"; break;
-                case "WhtBass": newFish.innerText = "White Bass"; break;
-                case "Walleye": newFish.innerText = "Walleye"; break;
-                case "Trout": newFish.innerText = "Trout"; break;
-            }
+            newFish.innerText = fishTypes[fish];
     
             listFish.appendChild(newFish);
         }

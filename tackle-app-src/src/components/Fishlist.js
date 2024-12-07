@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
-import { useAuth } from "../components/AuthProvider";
+import { useAuth } from "./AuthProvider";
+import { fishTypes } from "./Map";
 
 const emptyFish = {
     species: {
@@ -33,11 +34,9 @@ function getPropIfPositiveNum(val, obj, property) {
     return objTemp;
 }
 
-export default function Fishlist(props) {
+export default function Fishlist() {
 
-    const profile = props.profile;
-    const setProfile = props.setProfile;
-    const { brightNess } = useAuth();
+    const { profile, setProfile, borderStyle, setLastLocation, lastLocation } = useAuth();
 
     const [renderFishform, setRenderFishform] = useState(false); 
     const [isFishformEditing, setIsFishformEditing] = useState(false); // indicates whether a fish is being edited (true) or added (false)
@@ -46,14 +45,8 @@ export default function Fishlist(props) {
     const [sortBy, setSortBy] = useState(0);
     const [sortAscending, setSortAscending] = useState(false);
     const [displayModified, setDisplayModified] = useState(false);
+    const [randomPlaceholderFish, setRandomPlaceholderFish] = useState("Channel Catfish");
 
-    let styles = {};
-
-    if (brightNess === 0) {
-        styles = {borderColor: "black"};
-    } else {
-        styles = {borderColor: "white"};
-    }
 
     function swapFish(index1, index2) {
         if (index1 < 0 || index2 < 0 || index1 > profile.fishlist.length - 1 || index2 > profile.fishlist.length - 1) return;
@@ -69,6 +62,7 @@ export default function Fishlist(props) {
     function openFish(index) {
         setIsFishformEditing(true);
         setFishIndex(index);
+        randomizePlaceholderFish();
 
         setFishEdit(profile.fishlist[index]);
         setRenderFishform(true);
@@ -77,9 +71,11 @@ export default function Fishlist(props) {
     function addFish() {
         setIsFishformEditing(false);
         setFishIndex(profile.fishlist.length);
+        randomizePlaceholderFish();
 
         let fishTemp = {...emptyFish};
         fishTemp.timeCaught = new Date().getTime();
+        fishTemp.bodyCaught = lastLocation;
 
         setFishEdit(fishTemp);
         setRenderFishform(true);
@@ -90,6 +86,7 @@ export default function Fishlist(props) {
 
         let fishTemp = {...fishEdit};
         if (fishTemp.nickname === "") fishTemp.nickname = `Fish #${fishIndex + 1}`;
+        if (fishTemp.bodyCaught.trim().length != 0) setLastLocation(fishTemp.bodyCaught);
 
         let fishlistTemp = [...profile.fishlist];
         fishlistTemp[fishIndex] = fishTemp;
@@ -141,6 +138,12 @@ export default function Fishlist(props) {
         setSortAscending(false);
     }
 
+    function randomizePlaceholderFish() {
+        const fishTypesArray = Object.keys(fishTypes);
+        const randomFish = fishTypes[fishTypesArray[Math.floor(Math.random()*fishTypesArray.length)]]
+        setRandomPlaceholderFish(randomFish);
+    }
+
     return <>
         <div>
             <div className="fishlist-top">
@@ -162,9 +165,9 @@ export default function Fishlist(props) {
                     <option value="true">Nickname -- Weight -- Length -- Time</option>
                 </select>
             </div>
-            <div className="fishlist" style={styles}>
+            <div className="fishlist" style={borderStyle}>
                 {sortFishlist(profile.fishlist.map((el, i) => ({...el, index: i}))).map((fish, i) => (<div className="fishlist-fish" key={`fish-${profile.fishlist.length - i}`}>
-                    <div className="fishlist-fish-info" style={styles}>
+                    <div className="fishlist-fish-info" style={borderStyle}>
                         <div className="fishlist-fish-index">{(fish.index + 1).toLocaleString('en-US', {minimumIntegerDigits: profile.fishlist.length.toString().length })}.</div>
                         <div className="fishlist-fish-content">{fish.nickname}</div> 
                         <div className="fishlist-fish-seperator">--</div> 
@@ -175,7 +178,7 @@ export default function Fishlist(props) {
                         </> : <>
                             <div className="fishlist-fish-content">{fish.species.name.trim().length !== 0 ? fish.species.name : <em>Unknown</em>}</div> 
                             <div className="fishlist-fish-seperator">--</div> 
-                            <div className="fishlist-fish-content">{fish.bodyCaught.trim().length !== 0 ? fish.bodyCaught : <em>Unknown, ST</em>}</div> 
+                            <div className="fishlist-fish-content">{fish.bodyCaught.trim().length !== 0 ? fish.bodyCaught : <em>Unknown</em>}</div> 
                         </>}
                         
                         <div className="fishlist-fish-seperator">--</div> 
@@ -191,7 +194,7 @@ export default function Fishlist(props) {
             <button id="fishlist-addfish" onClick={addFish}>Submit New Catch!</button>
         </div>
 
-        <ReactModal className="modal form-modal" overlayClassName="modal-overlay" isOpen={renderFishform}>
+        <ReactModal className={(profile.darkmode ? "modal-dark" : "modal-light") + " form-modal"} overlayClassName={profile.darkmode ? "modal-overlay-dark" : "modal-overlay-light"} isOpen={renderFishform}>
 
                 <h1>{isFishformEditing ? `Editing \"${profile.fishlist[fishIndex] !== undefined ? profile.fishlist[fishIndex].nickname : "Null"}\"` : "🏆 Congrats On Your New Catch! 🏆"}</h1>
                 <div>
@@ -202,7 +205,12 @@ export default function Fishlist(props) {
                     <p>
                         {/* TODO: make species input dropdown of species in location */}
                         <label htmlFor="species">Species: </label>
-                        <input id="fishform-species" name="species" placeholder="Catfish" value={fishEdit.species.name} onChange={(e) => setFishEdit({...fishEdit, species: {name: e.target.value}}) } />
+                        <input list="fish-species" id="fishform-species" name="species" placeholder={randomPlaceholderFish} value={fishEdit.species.name} onChange={(e) => setFishEdit({...fishEdit, species: {name: e.target.value}}) } />
+                        <datalist id="fish-species">
+                            {Object.keys(fishTypes).map(fish => 
+                                <option key={fish} value={fishTypes[fish]} />
+                            )}
+                        </datalist>
                     </p>
                 </div>
 
@@ -214,7 +222,7 @@ export default function Fishlist(props) {
 
                     <p>
                         <label htmlFor="bodyCaught">Body Caught: </label>
-                        <input id="fishform-bodyCaught" name="bodyCaught" placeholder="Kanawha River, WV" value={fishEdit.bodyCaught} onChange={(e) => setFishEdit({...fishEdit, bodyCaught: e.target.value}) }/>
+                        <input id="fishform-bodyCaught" name="bodyCaught" placeholder="Kanawha River" value={fishEdit.bodyCaught} onChange={(e) => setFishEdit({...fishEdit, bodyCaught: e.target.value}) }/>
                     </p>
                 </div>
 
