@@ -15,6 +15,21 @@ export const fishTypes = {
     "Trout": "Trout"
 } 
 
+const stockTypes = {
+    "BA":"Once in January and Once in March",
+    "BW":"Twice each month February through April and once in May.",
+    "CR":"Varies",
+    "MD":"Maryland Restrictions/Regulations",
+    "MJ":"Once each month January through April.",
+    "NS":"Not Stocked with Trout",
+    "F":"Once each Week during the weeks of October 19th and the 26th",
+    "M":"Once each month January through May.",
+    "W":"Once in January, twice in February, and once each week March through May.",
+    "Q":"1st Week of March",
+    "X":"After April 1 or area is open to public",
+    "Y": "Once in April"
+} 
+
 const Map = () => {
     const { borderStyle, setLastLocation } = useAuth();
 
@@ -103,14 +118,23 @@ function setRegulation(regulation, regulationBox) {
 }
 
 //placeholder for indicating whether body of water is stocked or not
-function setStock() {
-    
+function setStock(stock, stockBox) {
+    if(stock !== undefined) {
+        Object.keys(stockTypes).forEach(type => {
+            if(type == stock) {
+                stockBox.innerText = "Trout Stock Status: " + stockTypes[stock];
+            }
+        });
+    } else {
+        stockBox.innerText = "Trout Stock Status: No Stock Data Available";
+    }
 }
 
 function setFish(properties, urlType) {
     let boxHeader = document.getElementById("boxHeader");
     let listFish = document.getElementById("listFish");
     let regulationBox = document.getElementById("regulationBox");
+    let stockBox = document.getElementById("stockBox");
 
     boxHeader.innerText = "Body of Water: N/A";
     listFish.innerHTML = "";
@@ -118,12 +142,14 @@ function setFish(properties, urlType) {
     if(urlType == "Lake") {
         boxHeader.innerText = "Body of Water: " + properties.LakeName;
         setRegulation(properties.RegType, regulationBox);
+        setStock(properties.StockCode, stockBox);
     } else {
         boxHeader.innerText = "Body of Water: " + properties.Name;
         let newFish = document.createElement("li");
         newFish.innerText = "Not Enough Data (See Attached Lakes)";
         listFish.appendChild(newFish);
         setRegulation(properties.RegType, regulationBox);
+        setStock(properties.StockCode, stockBox);
         return;
     }
 

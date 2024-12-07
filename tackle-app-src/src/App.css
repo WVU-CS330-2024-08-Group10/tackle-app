@@ -387,6 +387,21 @@ body {
     border-color: black;
     display: inline-block;
     vertical-align: top; /* Align the map and fish box to the top */
+}
+
+#boxHeader {
+	text-align: center;
+}
+
+#listFish {
+	text-align: center;
+}
+
+#stockBox {
+	text-align: center;
+}
+
+#regulationBox {
 	text-align: center;
 }
 
