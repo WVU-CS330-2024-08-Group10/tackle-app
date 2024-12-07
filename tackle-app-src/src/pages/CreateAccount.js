@@ -16,7 +16,7 @@ export default function CreateAccount() {
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [errors, setErrors] = useState({...errorsInit});
-    const { login, borderStyle } = useAuth();
+    const { borderStyle, profile, setIsLoggedIn } = useAuth();
     const navigate = useNavigate();
 
     const checkUsername = (e) => {
@@ -81,28 +81,16 @@ export default function CreateAccount() {
 
         //Create account for user
         try {
-            const response = await axios.post("http://localhost:5000/insertUser", {username, password});
+            let darkmode = profile.darkmode;
+            let nickname = profile.nickname;
+            let pfp = profile.pfp;
+            let gender = profile.gender;
+            //let fishlist = profile.fishlist;
+            const response = await axios.post("http://localhost:5000/insertUser", {username, password, darkmode, nickname, pfp, gender });
             if (response.status === 200) {
                 console.log("Account created!");
-                //Login user after account creation
-                login(username);    //Flag AuthProvider that user is logged in and set states
-                                    //load user preferences (dark/light mode, fish list, profile pic, etc.)
-                
-                //Save existing user information (dark/light mode, fish list, profile pic, etc.)
-                try {
-                    let brightness = 0;
-                    const response = await axios.post("http://localhost:5000/insertBrightness", {username, brightness});
-                    if (response.status === 200) {
-                        console.log("Brightness sent!");
-                    }
-                } catch (error) {
-                    console.error("Brightness info failure:", error.response?.data || error.message);
-                    //Display error to user
-                }
+                setIsLoggedIn(true);
                 navigate("/");
-            }
-            else if(response.status === 401){
-                console.error("Account creation failed: Username already exists");
             }
         } catch (error) {
             console.error("Account creation failed:", error.response?.data || error.message);

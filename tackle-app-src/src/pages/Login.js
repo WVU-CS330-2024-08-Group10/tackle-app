@@ -16,7 +16,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({...errorsInit});
     const navigate = useNavigate();
-    const { login, borderStyle } = useAuth();
+    const { borderStyle, login } = useAuth();
 
     const checkPassword = (e) => {
         let error = 0;
@@ -50,30 +50,9 @@ export default function Login() {
         //Authenticate user (Username: user, Password: pass)
         try {
             const response = await axios.post("http://localhost:5000/authenticate", {username, password});
-            console.log(response);
             if (response.status === 200) {
                 console.log("User authenticated!");
-                login(username);    //Flag AuthProvider that user is logged in and set states
-                                    
-                //Load user preferences (dark/light mode, fish list, profile pic, etc.)
-                try {
-                    const response = await axios.post("http://localhost:5000/loadUserInfo", {username});
-                    if (response.status === 200) {
-                        console.log("User info retrieved!");
-                        //toggleBrightness(response.data);
-
-                        //Set light for doc body
-                        if(0 === 0){
-                            document.body.classList.add("dark-mode-body");
-                        }
-                        else{
-                            document.body.classList.remove("dark-mode-body");
-                        }
-                    }
-                } catch (error) {
-                    console.error("User info retrieval failure:", error.response?.data || error.message);
-                    //Display error to user
-                }
+                login(username);
                 navigate("/");
             }
             else if(response.status === 401){

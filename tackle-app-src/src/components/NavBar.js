@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import { useAuth } from "../components/AuthProvider";
-import axios from "axios";
 
 // perhaps it would be better to an array of 4 objects with this info in them? 
 const pages = ["", "Weather", "Personal", "About"];
@@ -25,6 +24,7 @@ export default function NavBar(){
 		//0 = light, 1 = dark
 		var element = document.body;
 		if (!profile.darkmode) {
+			
 			setProfile({...profile, darkmode: true});
 			element.classList.add("dark-mode-body");
 		}
@@ -33,23 +33,6 @@ export default function NavBar(){
 			element.classList.remove("dark-mode-body");
 		}
 	}
-
-	/*
-	async function sendBrightness(newBrightness){
-		//Updating user preference (light/dark mode)
-		try {
-			let username = userName;
-			let brightness = newBrightness;
-			const response = await axios.post("http://localhost:5000/insertBrightness", {username, brightness});
-			if (response.status === 200) {
-				console.log("Brightness sent!");
-			}
-		} catch (error) {
-			console.error("Brightness info failure:", error.response?.data || error.message);
-			//Display error to user
-		}
-	}
-	*/
 
 	function color(num){
 		if (selected !== num) {

@@ -83,28 +83,6 @@ export default function Profile() {
         setRenderProfileform(false);
     }
 
-    const checkUsername = (e) => {
-        let error = 0;
-        let input = e.target.value;
-
-        // check if meets minimum length
-        if (input.length < reqs.username.minLength) error |= reqs.error.MIN_LENGTH;
-        // check if meets maximum length
-        if (input.length > reqs.username.maxLength) error |= reqs.error.MAX_LENGTH;
-        // check if is alphanumeric, underscore, or dash
-        if (!input.match(reqs.username.regEx)) error |= reqs.error.REGEX;
-
-        setProfileEdit({...profileEdit, username: input});
-        setErrors({...errors, username: error});
-    }
-    function onDeselectUsername() {
-        if (errors.username > 0) {
-            setErrors({...errors, showUsername: true});
-        } else {
-            setErrors({...errors, showUsername: false});
-        }
-    }
-
     const checkPfp = (e) => {
         let error = 0;
 
@@ -136,17 +114,6 @@ export default function Profile() {
                     {(errors.pfp & reqs.error.MAX_SIZE) !== 0 && <p className="error">*File size must be under {reqs.pfp.maxSizeMB} MB.</p>}
                 </div>
                 <div>
-                    <p>
-                        <label htmlFor="profileUsername">Username: </label>
-                        <input id="profileform-username" name="profileUsername" value={profileEdit.username} onBlur={onDeselectUsername} onChange={checkUsername} />
-                    </p>
-                    
-                    {errors.showUsername && <>
-                        {(errors.username & reqs.error.MIN_LENGTH) !== 0 && <p className="error">*Username must be at least {reqs.username.minLength} characters long.</p>}
-                        {(errors.username & reqs.error.MAX_LENGTH) !== 0 && <p className="error">*Username must be at most {reqs.username.maxLength} characters long.</p>}
-                        {(errors.username & reqs.error.REGEX) !== 0 && <p className="error">*Username must consist of letters, numbers, dashes, or underscores.</p>}
-                    </>}
-
 
                     <p>
                         <label htmlFor="profileNickname">Nickname: </label>
