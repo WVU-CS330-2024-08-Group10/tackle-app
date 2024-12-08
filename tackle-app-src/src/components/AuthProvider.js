@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import axios from "axios";
 import { genericProfile } from '../components/Profile';
 const AuthContext = createContext();
@@ -29,9 +29,8 @@ function findDifferentKeys(objA, objB) {
 }
 
 export const AuthProvider = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(0);
-    const [profile, setProfileDirectly] = useState(genericProfile);
-    const [oldProfile, setOldProfile] = useState(genericProfile);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [profile, setProfileDirectly] = useState({...genericProfile});
     const [lastLocation, setLastLocationDirectly] = useState("");
     const [borderStyle, setBorderStyle] = useState(lightModeBorders);
 
@@ -42,15 +41,13 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         setIsLoggedIn(false);
-    };
-
-    //effect for logout
-    useEffect(() => {
-        if (isLoggedIn === false) {
-            setProfile(genericProfile);
-            setIsLoggedIn(0);
+        setBorderStyle(lightModeBorders);
+        setProfileDirectly({...genericProfile});
+        let result = document.body.classList.contains("dark-mode-body");
+        if(result === true){
+            document.body.classList.remove("dark-mode-body");
         }
-    }, [isLoggedIn]);
+    };
 
     const updateBorderStyle = (newProfile = profile) => {
         if (newProfile.darkmode) {
@@ -61,37 +58,45 @@ export const AuthProvider = ({ children }) => {
     }
 
     const setProfile = (newProfile) => {
-        if(isLoggedIn === true){
+        if(isLoggedIn){
             triggerProfileSave(newProfile);
         }
-        setOldProfile(profile);
         setProfileDirectly(newProfile);
         updateBorderStyle(newProfile);
     }
 
-    const triggerProfileSave = async (newProfile = profile) => {
-        const keys = findDifferentKeys(newProfile, oldProfile);
-        console.log(keys);
-
-        // TODO: make axios request to save modified profile properties under "keys"
-
-        // the "keys" array will contain all object properties that have been modified by a call to set profile.
-        // In theory, an axios request can be made here containing every modified key/value pair to send all the 
-        // new values to the azure database, rather than sending the entire profile object.
-
-        // of course, since there is a disconnect between the names of some object properties in the profile object
-        // and the name of corresponding column in the Azure database (for example, light/dark mode being called 
-        // "darkmode" in the profile object and "LightDark" in the Azure database) so server.js will have to be 
-        // updated to contain all the pairs of object property names and azure database names
+    //create account
+    const triggerProfileCreate = async (newProfile, password) => {
 
         try {
-            let username = newProfile.username;
-            let darkmode = newProfile.darkmode;
-            let nickname = newProfile.nickname;
-            let pfp = newProfile.pfp;
-            let gender = newProfile.gender;
+            var username = newProfile.username;
+            var darkmode = newProfile.darkmode;
+            var nickname = newProfile.nickname;
+            var gender = newProfile.gender;
             //let fishlist = newProfile.fishlist;
-            const response = await axios.post("http://localhost:5000/updateUserInfo", {username, darkmode, nickname, pfp, gender});
+            const response = await axios.post("http://localhost:5000/insertUser", {username, password, darkmode, nickname, gender});
+            if (response.status === 200) {
+                console.log("Inserted ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender);
+
+            }
+        } catch (error) {
+            console.error("User info insertion failure:", error.response?.data || error.message);
+            //Display error to user
+        }
+    }
+
+    //update user account
+    const triggerProfileSave = async (newProfile = profile) => {
+        const keys = findDifferentKeys(newProfile, profile);
+        console.log(keys);
+
+        try {
+            var username = newProfile.username;
+            var darkmode = newProfile.darkmode;
+            var nickname = newProfile.nickname;
+            var gender = newProfile.gender;
+            //let fishlist = newProfile.fishlist;
+            const response = await axios.post("http://localhost:5000/updateUserInfo", {username, darkmode, nickname, gender});
             if (response.status === 200) {
                 console.log("Saved ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender);
 
@@ -100,25 +105,26 @@ export const AuthProvider = ({ children }) => {
             console.error("User info update failure:", error.response?.data || error.message);
             //Display error to user
         }
-
-        setOldProfile(newProfile);
     }
 
+    //load user account
     const triggerProfileLoad = async (username) => {
 
-        // TODO: make axios request to load user profile properties
-        //Load user preferences (dark/light mode, fish list, profile pic, etc.)
         try {
             const response = await axios.post("http://localhost:5000/loadUserInfo", {username});
             if (response.status === 200) {
                 profile.username = response.data.Username;
                 profile.darkmode = response.data.darkmode;
                 profile.nickname = response.data.nickname;
-                profile.pfpUrl = response.data.pfp;
                 profile.gender = response.data.gender;
-                //profile.fishlist = response.data.fishlist;
-                console.log("Received ->\nUsername: " + profile.username + "\nDarkmode: " + profile.darkmode + "\nNickname: " + profile.nickname + "\nGender: " + profile.gender);
-                //assign the other data to profile properties
+                //fishlist: response.data.fishlist
+                console.log("Retreived ->\nUsername: " + profile.username + "\nDarkmode: " + profile.darkmode + "\nNickname: " + profile.nickname + "\nGender: " + profile.gender);
+
+                //Set profile picture (must convert from Binary data to a Blob and then create a Blob url)
+                const blob = new Blob([response.data.pfp], { type: 'image/png' });
+                const blobURL = URL.createObjectURL(blob);
+                profile.pfpURL = blobURL;
+                console.log(profile.pfpURL);
 
                 //Set light for doc body
                 let result = document.body.classList.contains("dark-mode-body");
@@ -128,8 +134,7 @@ export const AuthProvider = ({ children }) => {
                 else if(profile.darkmode && result === false){
                     document.body.classList.add("dark-mode-body");
                 }
-
-                updateBorderStyle();
+                updateBorderStyle(profile);
             }
         } catch (error) {
             console.error("User info retrieval failure:", error.response?.data || error.message);
@@ -145,7 +150,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, profile, lastLocation, borderStyle, login, logout, setIsLoggedIn, setProfile, triggerProfileLoad, setLastLocation }}>
+        <AuthContext.Provider value={{ isLoggedIn, profile, lastLocation, borderStyle, login, logout, setIsLoggedIn, setProfile, setProfileDirectly, triggerProfileLoad, triggerProfileCreate, setLastLocation, updateBorderStyle }}>
             {children}
         </AuthContext.Provider>
     );

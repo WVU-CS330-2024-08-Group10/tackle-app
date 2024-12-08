@@ -24,7 +24,6 @@ export default function NavBar(){
 		//0 = light, 1 = dark
 		var element = document.body;
 		if (!profile.darkmode) {
-			
 			setProfile({...profile, darkmode: true});
 			element.classList.add("dark-mode-body");
 		}

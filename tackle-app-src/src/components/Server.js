@@ -1,5 +1,4 @@
 const reqs = require("./AccountReqs.json");
-const fs = require("fs");
 
 //SQL Database variables
 const sql = require("mssql");
@@ -13,11 +12,15 @@ const config = {
 
 //Express variables
 const express = require("express");
+const multer = require("multer");
 const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(cors());
 
+//Set up multer for handling image uploads
+const storage = multer.memoryStorage(); //Store file in memory as buffer
+const upload = multer({ storage: storage });
 
 //Hashing variables
 const bcrypt = require("bcrypt");
@@ -27,30 +30,34 @@ let hashedPassword = "";
 
 
 //Upload an image as binary data
-async function uploadImage(username, pfpURL) {
-    try {
-        //Read the image file as a binary buffer
-        const imageBuffer = fs.readFileSync(pfpURL);
+app.post("/uploadPFP", upload.single("pfp"), async (req, res) => {
 
-        //Connect to the database
+    const file = req.file;
+    const { username } = req.body;
+
+    try {
         const pool = await sql.connect(config);
 
+        //Get the binary data
+        const fileBuffer = file.buffer;
+
         //Create query
-        const query = `UPDATE UserInfo SET [ProfileImage] = @image WHERE UserId = @username;`;
+        const query = `UPDATE UserInfo SET [pfp]=@pfp WHERE Username=@username;`;
 
         //Execute query
         await pool.request()
-            .input('username', sql.NVarChar, username) //username
-            .input('image', sql.VarBinary, imageBuffer) //Binary image data
-            .query(query);
+                    .input('username', sql.NVarChar, username) //username
+                    .input('pfp', sql.VarBinary, fileBuffer) //pfp as binary data
+                    .query(query);
 
         //Close connection
+        res.status(200).send("PFP was inserted!");
         await sql.close();
 
     } catch (err) {
-        res.status(500).send("Server Error");
+        console.log("Error uploading pfp: " + err);
     }
-}
+});
 
 
 //Function to check for username in database
@@ -98,15 +105,12 @@ app.post("/loadUserInfo", async (req, res) => {
                                     .input('username', sql.NVarChar, username) //username
                                     .query(query);
 
-        //Save recordset
-        console.log("User info retrieved: \n" + JSON.stringify(result.recordset[0], null, 1));
-        res.status(200).json(result.recordset[0]);
-
         //Close connection
+        res.status(200).json(result.recordset[0]);
         await sql.close();
 
     } catch (error) {
-        res.status(500).send("Server Error");
+        res.status(500).send("Server Error: Loading user info");
     }
 });
 
@@ -114,7 +118,7 @@ app.post("/loadUserInfo", async (req, res) => {
 //Creating route to add dark/light mode preference for user account
 app.post("/updateUserInfo", async (req, res) => {
 
-    const { username, darkmode, nickname, pfp, gender } = req.body;
+    const { username, darkmode, nickname, gender } = req.body;
 
     try {
         const pool = await sql.connect(config);
@@ -123,22 +127,19 @@ app.post("/updateUserInfo", async (req, res) => {
         const query = `UPDATE UserInfo SET [darkmode]=@darkmode, [nickname]=@nickname, [gender]=@gender WHERE Username=@username;`;
 
         //Execute query
-        const result = await pool.request()
-                                    .input('darkmode', sql.Bit, darkmode) //darkmode
-                                    .input('nickname', sql.NVarChar, nickname) //nickname
-                                    .input('gender', sql.NVarChar, gender) //gender
-                                    .input('username', sql.NVarChar, username) //username
-                                    .query(query);
+        await pool.request()
+                        .input('darkmode', sql.Bit, darkmode) //darkmode
+                        .input('nickname', sql.NVarChar, nickname) //nickname
+                        .input('gender', sql.NVarChar, gender) //gender
+                        .input('username', sql.NVarChar, username) //username
+                        .query(query);
         
-        //Update pfp
-        //uploadImage(username, pfp);
-        res.status(200).send("User info updated!");
-
         //Close connection
+        res.status(200).send("User info updated!");
         await sql.close();
 
     } catch (error) {
-        res.status(500).send("Server Error");
+        res.status(500).send("Server Error: Updating user info");
     }
 });
 
@@ -146,7 +147,7 @@ app.post("/updateUserInfo", async (req, res) => {
 //Creating route to insert user
 app.post("/insertUser", async (req, res) => {
 
-    const { username, password, darkmode, nickname, pfp, gender } = req.body;
+    const { username, password, darkmode, nickname, gender } = req.body;
 
     let error = 0;
 
@@ -191,7 +192,7 @@ app.post("/insertUser", async (req, res) => {
             const query = `INSERT INTO UserInfo (Username, Password, Salt, darkmode, nickname, gender) VALUES (@username, @password, @salt, @darkmode, @nickname, @gender);`;
 
             //Execute query
-            await pool.request()
+            const result = await pool.request()
                         .input('username', sql.NVarChar, username) //username
                         .input('password', sql.Char, hashedPassword) //password
                         .input('salt', sql.Char, saltString) //salt
@@ -199,16 +200,16 @@ app.post("/insertUser", async (req, res) => {
                         .input('nickname', sql.NVarChar, nickname) //nickname
                         .input('gender', sql.NVarChar, gender) //gender
                         .query(query);
-            //await uploadImage(username, pfp);
-            console.log("Account created!");
-            res.status(200).send("Account Created!");
 
             //Close connection
+            console.log("Account created!");
+            res.status(200).send("Account Created!");
             await sql.close();
         }
 
     } catch (error) {
-        res.status(500).send("Server Error");
+        console.log(error);
+        res.status(500).send("Server Error: Creating account");
 
     }
 });
@@ -236,15 +237,15 @@ app.post("/removeUser", async (req, res) => {
             await pool.request()
                         .input('username', sql.NVarChar, username) //username
                         .query(query);
-            console.log("Account Deleted!");
-            res.status(200).send("Account Deleted!");
 
             //Close connection
+            console.log("Account Deleted!");
+            res.status(200).send("Account Deleted!");
             await sql.close();
         }
 
     } catch (error) {
-        res.status(500).send("Server Error");
+        res.status(500).send("Server Error: Deleting account");
     }
 });
 
@@ -287,7 +288,7 @@ app.post("/authenticate", async (req, res) => {
         }
 
     } catch (error) {
-        res.status(500).send("Server Error");
+        res.status(500).send("Server Error: Authenticating user");
     }
 });
 

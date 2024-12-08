@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../components/AuthProvider";
 const reqs = require('../components/AccountReqs.json');
 
@@ -16,7 +15,7 @@ export default function CreateAccount() {
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [errors, setErrors] = useState({...errorsInit});
-    const { borderStyle, profile, setIsLoggedIn } = useAuth();
+    const { borderStyle, profile, triggerProfileCreate, setIsLoggedIn, setProfileDirectly, updateBorderStyle } = useAuth();
     const navigate = useNavigate();
 
     const checkUsername = (e) => {
@@ -79,24 +78,11 @@ export default function CreateAccount() {
             return;
         }
 
-        //Create account for user
-        try {
-            let darkmode = profile.darkmode;
-            let nickname = profile.nickname;
-            let pfp = profile.pfp;
-            let gender = profile.gender;
-            //let fishlist = profile.fishlist;
-            const response = await axios.post("http://localhost:5000/insertUser", {username, password, darkmode, nickname, pfp, gender });
-            if (response.status === 200) {
-                console.log("Account created!");
-                setIsLoggedIn(true);
-                navigate("/");
-            }
-        } catch (error) {
-            console.error("Account creation failed:", error.response?.data || error.message);
-            //Display error to user
-        }
-
+        setIsLoggedIn(true);
+        triggerProfileCreate({...profile, username: username}, password);
+        setProfileDirectly({...profile, username: username});
+        updateBorderStyle({...profile, username: username});
+        navigate("/");
     };
     return (
         <div className = "login_container">
