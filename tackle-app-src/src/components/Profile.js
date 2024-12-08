@@ -64,10 +64,11 @@ export default function Profile() {
     const { profile, setProfile, isLoggedIn } = useAuth();
 
     const [renderProfileform, setRenderProfileform] = useState(false);
-    const [profileEdit, setProfileEdit] = useState(profile);
+    const [profileEdit, setProfileEdit] = useState(genericProfile);
     const [errors, setErrors] = useState({...errorsInit});
 
     function openProfile() {
+        setProfileEdit({...profile});
         setErrors({...errorsInit});
         setRenderProfileform(true);
     }
