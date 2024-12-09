@@ -4,12 +4,14 @@ import { Link } from 'react-router-dom';
 import axios from "axios";
 import { useAuth } from "../components/AuthProvider";
 const reqs = require('./AccountReqs.json');
+const defaultPfp = require('../assets/defaultPfp.png');
 
 export const genericProfile = {
     id: 1,
     username: "JeremyWade_Official",
     nickname: "Jeremy Wade",
     pfpURL: require('../assets/jeremyPfp.jpg'),
+    pfpFileType: "none",
     gender: "male",
     darkmode: false,
     favSpots: [],
@@ -96,12 +98,14 @@ export default function Profile() {
         if (file.size > reqs.pfp.maxSizeMB * 1024 * 1024) error |= reqs.error.MAX_SIZE;
 
         if (error === 0) {
-            setProfileEdit({...profileEdit, pfpURL: URL.createObjectURL(file)});
+            setProfileEdit({...profileEdit, pfpURL: URL.createObjectURL(file), pfpFileType: fileType});
 
+            // TODO: axios request shouldn't be here, should only happen after "submit" is clicked.
             //Sending image to Server.js
             if (file && isLoggedIn) {
                 const formData = new FormData();
                 formData.append("pfp", file);
+                formData.append("pfpFileType", fileType);
                 formData.append("username", profile.username);
         
                 axios.post("http://localhost:5000/uploadPFP", formData, {
@@ -121,7 +125,7 @@ export default function Profile() {
                 <h1>Editing Profile</h1>
                 <div>
                     <p>
-                        <img id="profileform-pfp-display" src={profileEdit.pfpURL} alt="Uploaded profile pic"/>
+                        <img id="profileform-pfp-display" src={reqs.pfp.allowedTypes.includes(profileEdit.pfpFileType) ? profileEdit.pfpURL : defaultPfp} alt="Uploaded profile pic"/>
                         <input id="profileform-pfp-input" name="pfp" type="file" onChange={checkPfp}></input>
                     </p>
                     {(errors.pfp & reqs.error.FILE_TYPE) !== 0 && <p className="error">*File type must be {reqs.pfp.allowedTypes.slice(0,-1).map((str) => `${str}, `)} or {reqs.pfp.allowedTypes.slice(-1)[0]}.</p>}

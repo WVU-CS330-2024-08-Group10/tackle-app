@@ -33,7 +33,18 @@ let hashedPassword = "";
 app.post("/uploadPFP", upload.single("pfp"), async (req, res) => {
 
     const file = req.file;
-    const { username } = req.body;
+    const { pfpFileType, username } = req.body;
+
+    let error = 0;
+    // check if file is of valid type (image file only)
+    if (!reqs.pfp.allowedTypes.includes(pfpFileType)) error |= reqs.error.FILE_TYPE;
+    // check if file is of valid size
+    if (file.size > reqs.pfp.maxSizeMB * 1024 * 1024) error |= reqs.error.MAX_SIZE;
+
+    if (error > 0) {
+        console.log("Error uploading pfp: pfp doesn't meet minimum requirements");
+        res.status(401).send("pfp doesn't meet minimum requirements");
+    }
 
     try {
         const pool = await sql.connect(config);
@@ -42,11 +53,12 @@ app.post("/uploadPFP", upload.single("pfp"), async (req, res) => {
         const fileBuffer = file.buffer;
 
         //Create query
-        const query = `UPDATE UserInfo SET [pfp]=@pfp WHERE Username=@username;`;
+        const query = `UPDATE UserInfo SET [pfp]=@pfp, [pfpFileType]=@pfpFileType WHERE Username=@username;`;
 
         //Execute query
         await pool.request()
                     .input('username', sql.NVarChar, username) //username
+                    .input('pfpFileType', sql.NVarChar, pfpFileType) // pfp type string
                     .input('pfp', sql.VarBinary, fileBuffer) //pfp as binary data
                     .query(query);
 
@@ -210,7 +222,6 @@ app.post("/insertUser", async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).send("Server Error: Creating account");
-
     }
 });
 

@@ -119,11 +119,15 @@ export const AuthProvider = ({ children }) => {
                 profile.darkmode = response.data.darkmode;
                 profile.nickname = response.data.nickname;
                 profile.gender = response.data.gender;
+                profile.pfpFileType = response.data.pfpFileType;
+
+                console.log(profile.pfpFileType);
+
                 //fishlist: response.data.fishlist
                 console.log("Retreived ->\nUsername: " + profile.username + "\nDarkmode: " + profile.darkmode + "\nNickname: " + profile.nickname + "\nGender: " + profile.gender);
                 
                 //Set profile picture (must convert from Binary data to a Blob and then create a Blob url)
-                const blob = new Blob([new Uint8Array(response.data.pfp)], { type: 'image/png' });
+                const blob = new Blob([ new Uint8Array(response.data.pfp.data) ], { type: `image/${profile.pfpFileType}` });
                 const blobURL = URL.createObjectURL(blob);
 
                 console.log("response: " + JSON.stringify(response.data.pfp) + "blob: " + blob + "blobURL: " + blobURL);

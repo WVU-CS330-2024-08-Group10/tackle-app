@@ -1,6 +1,8 @@
 import Profile from '../components/Profile';
 import Fishlist from '../components/Fishlist.js';
 import { useAuth } from "../components/AuthProvider";
+const reqs = require('../components/AccountReqs.json');
+const defaultPfp = require('../assets/defaultPfp.png');
 
 export default function Personal() {
     const { profile, borderStyle } = useAuth();
@@ -8,7 +10,7 @@ export default function Personal() {
     return(
         <div id="profile">
             <div id="profile-left">
-                <img id="profile-pfp" style={borderStyle} src={profile.pfpURL} alt="Your profile pic"/>
+                <img id="profile-pfp" style={borderStyle} src={reqs.pfp.allowedTypes.includes(profile.pfpFileType) ? profile.pfpURL : defaultPfp} alt="Your profile pic"/>
                 <p><b>Nickname:</b> {profile.nickname}</p>
                 <p><b>Gender:</b> {profile.gender}</p>
 
