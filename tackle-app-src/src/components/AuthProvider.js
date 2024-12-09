@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from "axios";
 import { emptyProfile } from '../components/Profile';
 const AuthContext = createContext();
@@ -9,6 +9,20 @@ const darkModeBorders = {
 const lightModeBorders = {
     borderColor: "black"
 }
+
+// include token in all axios requests
+axios.interceptors.request.use(config => {
+    const localToken = localStorage.getItem('token');
+    const sessionToken = sessionStorage.getItem('token');
+
+    if (localToken) {
+        config.headers['Authorization'] = localToken;
+    } else if (sessionToken) {
+        config.headers['Authorization'] = sessionToken;
+    }
+
+    return config;
+});
 
 // find different keys between objA and objB and returns an array of them.
 // completely unused
@@ -48,6 +62,30 @@ export const AuthProvider = ({ children }) => {
     const [navBack, setNavBack] = useState("/");
     const [borderStyle, setBorderStyle] = useState(lightModeBorders);
 
+    // attempt login with token if token available
+    useEffect(() => {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');;
+        if (token) {
+            verifyToken();
+        }
+    }, []);
+    async function verifyToken() {
+        try {
+            const response = await axios.post("http://localhost:5000/verifyToken", {});
+            if (response.status === 200) {
+                const username = response.data.username;
+                login(username);
+            }
+        } catch (error) {
+            console.error("User token login failure:", error.response?.data || error.message);
+            //Display error to user
+
+            //remove faulty tokens
+            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
+        }
+    }
+    
     const login = (username) => {
         setIsLoggedIn(true);
         triggerProfileLoad(username);
@@ -57,6 +95,10 @@ export const AuthProvider = ({ children }) => {
         setIsLoggedIn(false);
         setBorderStyle(lightModeBorders);
         setProfileDirectly({...emptyProfile});
+
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+
         let result = document.body.classList.contains("dark-mode-body");
         if(result === true){
             document.body.classList.remove("dark-mode-body");
@@ -94,7 +136,9 @@ export const AuthProvider = ({ children }) => {
             const response = await axios.post("http://localhost:5000/insertUser", {username, password, darkmode, nickname, gender, fishlist});
             if (response.status === 200) {
                 //console.log("Inserted ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender + "\nFishlist: " + JSON.stringify(fishlist));
-
+                console.log("User created!");
+                const token = response.data.token;
+                sessionStorage.setItem('token', token);
             }
         } catch (error) {
             console.error("User info insertion failure:", error.response?.data || error.message);
@@ -169,9 +213,11 @@ export const AuthProvider = ({ children }) => {
                 //console.log("Retreived ->\nUsername: " + profile.username + "\nDarkmode: " + profile.darkmode + "\nNickname: " + profile.nickname + "\nGender: " + profile.gender + "\nFishlist: " + JSON.stringify(profile.fishlist));
                 
                 //Set profile picture (must convert from Binary data to a Blob and then create a Blob url)
-                const blob = new Blob([ new Uint8Array(response.data.pfp.data) ], { type: `image/${profileLogin.pfpFileType}` });
-                const blobURL = URL.createObjectURL(blob);
-                profileLogin.pfpURL = blobURL;
+                if (response.data.pfp !== null) {
+                    const blob = new Blob([ new Uint8Array(response.data.pfp.data) ], { type: `image/${profileLogin.pfpFileType}` });
+                    const blobURL = URL.createObjectURL(blob);
+                    profileLogin.pfpURL = blobURL;
+                }
 
                 //Set light for doc body
                 let result = document.body.classList.contains("dark-mode-body");

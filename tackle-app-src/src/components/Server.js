@@ -9,6 +9,7 @@ const config = {
     server: process.env.SERVERNAME,
     database: process.env.DATABASENAME
 };
+const secret = process.env.SECRET;
 
 //Express variables
 const express = require("express");
@@ -23,6 +24,7 @@ const storage = multer.memoryStorage(); //Store file in memory as buffer
 const upload = multer({ storage: storage });
 
 //Hashing variables
+const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 let saltString = "";
@@ -35,18 +37,22 @@ const verifyToken = (req, res, next) => {
     if (!token) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
-
     try {
-        const decoded = jwt.verify(token, 'your-secret-key');
-        req.userId = decoded.userId;
+        const tokIN = jwt.verify(token, secret);
+        req.username = tokIN.username;
         next();
     } catch (error) {
         res.status(401).json({ error: 'Unauthorized' });
     }
 };
 
+// route for logging in from token
+app.post("/verifyToken", verifyToken, async (req, res) => {
+    res.status(200).json({username: req.username});
+});
+
 //Upload an image as binary data
-app.post("/uploadPFP", upload.single("pfp"), async (req, res) => {
+app.post("/uploadPFP", verifyToken, upload.single("pfp"), async (req, res) => {
 
     const file = req.file;
     const { pfpFileType, username } = req.body;
@@ -118,7 +124,7 @@ async function checkForUsername(username) {
 
 
 //Creating route to load user information
-app.post("/loadUserInfo", async (req, res) => {
+app.post("/loadUserInfo", verifyToken, async (req, res) => {
 
     const { username } = req.body;
 
@@ -144,7 +150,7 @@ app.post("/loadUserInfo", async (req, res) => {
 
 
 //Creating route to add dark/light mode preference for user account
-app.post("/updateUserInfo", async (req, res) => {
+app.post("/updateUserInfo", verifyToken, async (req, res) => {
 
     const { username, darkmode, nickname, gender, fishlist } = req.body;
 
@@ -239,7 +245,8 @@ app.post("/insertUser", async (req, res) => {
 
             //Close connection
             console.log("Account created!");
-            res.status(200).send("Account Created!");
+            const token = jwt.sign({ username }, secret);
+            res.status(200).json({ token });
             await sql.close();
         }
 
@@ -314,7 +321,8 @@ app.post("/authenticate", async (req, res) => {
             //Check given password with password in record
             if(await bcrypt.compare(password, userResult.recordset[0].Password.trim())){
                 console.log("Authenticated!");
-                res.status(200).send("Authenticated!");
+                const token = jwt.sign({ username }, secret);
+                res.status(200).json({ token });
             }
             else{
                 console.log("Authentication failed");

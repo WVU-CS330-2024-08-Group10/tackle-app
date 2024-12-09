@@ -485,7 +485,7 @@ body {
     font-size: 2em;
 }
 
-.login_box input {
+.login_box input[type='text'], .login_box input[type='password'] {
     width: 100%;
     padding: 12px;
     margin: 10px 0;
