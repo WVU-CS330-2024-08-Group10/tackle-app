@@ -73,10 +73,10 @@ export const AuthProvider = ({ children }) => {
             var darkmode = newProfile.darkmode;
             var nickname = newProfile.nickname;
             var gender = newProfile.gender;
-            //let fishlist = newProfile.fishlist;
-            const response = await axios.post("http://localhost:5000/insertUser", {username, password, darkmode, nickname, gender});
+            var fishlist = newProfile.fishlist;
+            const response = await axios.post("http://localhost:5000/insertUser", {username, password, darkmode, nickname, gender, fishlist});
             if (response.status === 200) {
-                console.log("Inserted ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender);
+                //console.log("Inserted ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender + "\nFishlist: " + JSON.stringify(fishlist));
 
             }
         } catch (error) {
@@ -95,10 +95,10 @@ export const AuthProvider = ({ children }) => {
             var darkmode = newProfile.darkmode;
             var nickname = newProfile.nickname;
             var gender = newProfile.gender;
-            //let fishlist = newProfile.fishlist;
-            const response = await axios.post("http://localhost:5000/updateUserInfo", {username, darkmode, nickname, gender});
+            var fishlist = newProfile.fishlist;
+            const response = await axios.post("http://localhost:5000/updateUserInfo", {username, darkmode, nickname, gender, fishlist});
             if (response.status === 200) {
-                console.log("Saved ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender);
+                //console.log("Saved ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender, + "\nFishlist: " + fishlist);
 
             }
         } catch (error) {
@@ -120,18 +120,13 @@ export const AuthProvider = ({ children }) => {
                 profile.nickname = response.data.nickname;
                 profile.gender = response.data.gender;
                 profile.pfpFileType = response.data.pfpFileType;
-
-                console.log(profile.pfpFileType);
-
-                //fishlist: response.data.fishlist
-                console.log("Retreived ->\nUsername: " + profile.username + "\nDarkmode: " + profile.darkmode + "\nNickname: " + profile.nickname + "\nGender: " + profile.gender);
+                profile.fishlist = JSON.parse(response.data.fishlist);
+                //console.log("Retreived ->\nUsername: " + profile.username + "\nDarkmode: " + profile.darkmode + "\nNickname: " + profile.nickname + "\nGender: " + profile.gender + "\nFishlist: " + JSON.stringify(profile.fishlist));
                 
                 //Set profile picture (must convert from Binary data to a Blob and then create a Blob url)
                 const blob = new Blob([ new Uint8Array(response.data.pfp.data) ], { type: `image/${profile.pfpFileType}` });
                 const blobURL = URL.createObjectURL(blob);
-
-                console.log("response: " + JSON.stringify(response.data.pfp) + "blob: " + blob + "blobURL: " + blobURL);
-                setProfileDirectly({...profile, pfpURL: blobURL});
+                profile.pfpURL = blobURL;
 
                 //Set light for doc body
                 let result = document.body.classList.contains("dark-mode-body");

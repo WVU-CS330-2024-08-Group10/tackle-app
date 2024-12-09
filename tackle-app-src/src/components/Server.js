@@ -130,19 +130,23 @@ app.post("/loadUserInfo", async (req, res) => {
 //Creating route to add dark/light mode preference for user account
 app.post("/updateUserInfo", async (req, res) => {
 
-    const { username, darkmode, nickname, gender } = req.body;
+    const { username, darkmode, nickname, gender, fishlist } = req.body;
 
     try {
         const pool = await sql.connect(config);
+
+        //Convert fishlist to JSON
+        const jsonFishlist = JSON.stringify(fishlist);
         
         //Create query
-        const query = `UPDATE UserInfo SET [darkmode]=@darkmode, [nickname]=@nickname, [gender]=@gender WHERE Username=@username;`;
+        const query = `UPDATE UserInfo SET [darkmode]=@darkmode, [nickname]=@nickname, [gender]=@gender, [fishlist]=@fishlist WHERE Username=@username;`;
 
         //Execute query
         await pool.request()
                         .input('darkmode', sql.Bit, darkmode) //darkmode
                         .input('nickname', sql.NVarChar, nickname) //nickname
                         .input('gender', sql.NVarChar, gender) //gender
+                        .input('fishlist', sql.NVarChar, jsonFishlist) //fishlist
                         .input('username', sql.NVarChar, username) //username
                         .query(query);
         
@@ -159,7 +163,7 @@ app.post("/updateUserInfo", async (req, res) => {
 //Creating route to insert user
 app.post("/insertUser", async (req, res) => {
 
-    const { username, password, darkmode, nickname, gender } = req.body;
+    const { username, password, darkmode, nickname, gender, fishlist } = req.body;
 
     let error = 0;
 
@@ -200,8 +204,11 @@ app.post("/insertUser", async (req, res) => {
             //Connect to the database
             const pool = await sql.connect(config);
 
+            //Convert fishlist to JSON
+            const jsonFishlist = JSON.stringify(fishlist);
+
             //Create query
-            const query = `INSERT INTO UserInfo (Username, Password, Salt, darkmode, nickname, gender) VALUES (@username, @password, @salt, @darkmode, @nickname, @gender);`;
+            const query = `INSERT INTO UserInfo (Username, Password, Salt, darkmode, nickname, gender, fishlist) VALUES (@username, @password, @salt, @darkmode, @nickname, @gender, @fishlist);`;
 
             //Execute query
             const result = await pool.request()
@@ -211,6 +218,7 @@ app.post("/insertUser", async (req, res) => {
                         .input('darkmode', sql.Bit, darkmode) //darkmode
                         .input('nickname', sql.NVarChar, nickname) //nickname
                         .input('gender', sql.NVarChar, gender) //gender
+                        .input('fishlist', sql.NVarChar, jsonFishlist) //fishlist
                         .query(query);
 
             //Close connection
