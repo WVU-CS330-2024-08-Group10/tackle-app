@@ -45,6 +45,7 @@ export const AuthProvider = ({ children }) => {
     const [pfpFile, setPfpFile] = useState(null);
     const [profile, setProfileDirectly] = useState(profileInit);
     const [lastLocation, setLastLocationDirectly] = useState("");
+    const [navBack, setNavBack] = useState("/");
     const [borderStyle, setBorderStyle] = useState(lightModeBorders);
 
     const login = (username) => {
@@ -82,7 +83,12 @@ export const AuthProvider = ({ children }) => {
         try {
             var username = newProfile.username;
             var darkmode = newProfile.darkmode;
-            var nickname = newProfile.nickname;
+            var nickname;
+            if (newProfile.nickname === "Unregistered User") {
+                nickname = username;
+            } else {
+                nickname = newProfile.nickname;
+            }
             var gender = newProfile.gender;
             var fishlist = newProfile.fishlist;
             const response = await axios.post("http://localhost:5000/insertUser", {username, password, darkmode, nickname, gender, fishlist});
@@ -151,29 +157,32 @@ export const AuthProvider = ({ children }) => {
             const response = await axios.post("http://localhost:5000/loadUserInfo", {username});
             if (response.status === 200) {
 
+                let profileLogin = {...profile};
+
                 //Get response
-                profile.username = response.data.Username;
-                profile.darkmode = response.data.darkmode;
-                profile.nickname = response.data.nickname;
-                profile.gender = response.data.gender;
-                profile.pfpFileType = response.data.pfpFileType;
-                profile.fishlist = JSON.parse(response.data.fishlist);
+                profileLogin.username = response.data.Username;
+                profileLogin.darkmode = response.data.darkmode;
+                profileLogin.nickname = response.data.nickname;
+                profileLogin.gender = response.data.gender;
+                profileLogin.pfpFileType = response.data.pfpFileType;
+                profileLogin.fishlist = JSON.parse(response.data.fishlist);
                 //console.log("Retreived ->\nUsername: " + profile.username + "\nDarkmode: " + profile.darkmode + "\nNickname: " + profile.nickname + "\nGender: " + profile.gender + "\nFishlist: " + JSON.stringify(profile.fishlist));
                 
                 //Set profile picture (must convert from Binary data to a Blob and then create a Blob url)
-                const blob = new Blob([ new Uint8Array(response.data.pfp.data) ], { type: `image/${profile.pfpFileType}` });
+                const blob = new Blob([ new Uint8Array(response.data.pfp.data) ], { type: `image/${profileLogin.pfpFileType}` });
                 const blobURL = URL.createObjectURL(blob);
-                profile.pfpURL = blobURL;
+                profileLogin.pfpURL = blobURL;
 
                 //Set light for doc body
                 let result = document.body.classList.contains("dark-mode-body");
-                if(!profile.darkmode && result === true){
+                if(!profileLogin.darkmode && result === true){
                     document.body.classList.remove("dark-mode-body");
                 }
-                else if(profile.darkmode && result === false){
+                else if(profileLogin.darkmode && result === false){
                     document.body.classList.add("dark-mode-body");
                 }
-                updateBorderStyle(profile);
+                updateBorderStyle(profileLogin);
+                setProfileDirectly(profileLogin);
             }
         } catch (error) {
             console.error("User info retrieval failure:", error.response?.data || error.message);
@@ -189,7 +198,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, profile, lastLocation, borderStyle, login, logout, setIsLoggedIn, setProfile, setProfileDirectly, triggerProfileLoad, triggerProfileCreate, setLastLocation, updateBorderStyle, setPfpFile }}>
+        <AuthContext.Provider value={{ isLoggedIn, profile, lastLocation, borderStyle, navBack, setNavBack, login, logout, setIsLoggedIn, setProfile, setProfileDirectly, triggerProfileLoad, triggerProfileCreate, setLastLocation, updateBorderStyle, setPfpFile }}>
             {children}
         </AuthContext.Provider>
     );

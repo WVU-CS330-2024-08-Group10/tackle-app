@@ -9,12 +9,16 @@ const icons = ["home", "sunny", "account_circle", "groups"];
 
 const classesDefault = Array(pages.length).fill("navbutton");
 
-export default function NavBar(){
-	const { isLoggedIn, profile, logout, setProfile } = useAuth();
-	const navigate = useNavigate();
+function getPage() {
 	let url = window.location.href.split("/");
 	let page = url[url.length - 1];
-	let selected = pages.indexOf(page);
+	return page;
+}
+
+export default function NavBar(){
+	const { isLoggedIn, profile, logout, setProfile, setNavBack } = useAuth();
+	const navigate = useNavigate();
+	let selected = pages.indexOf(getPage());
 
 	let classesInit = [...classesDefault]; // makes a copy of classesDefault
 	classesInit[selected] += " navbutton-selected";
@@ -49,6 +53,11 @@ export default function NavBar(){
 		color(0);
 	}
 
+	const loginClick = () => {
+		color(-1);
+		setNavBack("/" + getPage());
+	}
+
     return(
 		<header id="navbar-container">
 			<Link id={`logo-container`} key={`logo-container`} to={`/`} onClick={() => color(0)}><img id="logo" src={require('../assets/TackleLogo.jpg')} alt="Tackle logo"/></Link>
@@ -60,7 +69,7 @@ export default function NavBar(){
 			{isLoggedIn ? (
                 <button onClick={() => logoutAccount()} className="btnLogin-popup">Logout</button>
             ) : (
-                <Link id={`navbutton-login`} key={`navbutton-login`} to={`/Login`} onClick={() => color(-1)}><button className="btnLogin-popup">Login</button></Link>
+                <Link id={`navbutton-login`} key={`navbutton-login`} to={`/Login`} onClick={loginClick}><button className="btnLogin-popup">Login</button></Link>
             )}
 			
 			<div id="toggle-container">

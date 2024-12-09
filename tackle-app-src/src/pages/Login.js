@@ -16,7 +16,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState({...errorsInit});
     const navigate = useNavigate();
-    const { borderStyle, login } = useAuth();
+    const { borderStyle, navBack, login } = useAuth();
 
     const checkPassword = (e) => {
         let error = 0;
@@ -53,7 +53,7 @@ export default function Login() {
             if (response.status === 200) {
                 console.log("User authenticated!");
                 login(username);
-                navigate("/");
+                navigate(navBack);
             }
             else if(response.status === 401){
                 console.error("Authentication failed: Username already exists");

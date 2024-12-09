@@ -12,7 +12,7 @@ export const emptyProfile = {
     nickname: "Unregistered User",
     pfpUrl: null,
     pfpFileType: "none",
-    gender: "",
+    gender: "not set",
     darkmode: false,
     favSpots: [],
     fishlist: []
@@ -114,21 +114,6 @@ export default function Profile() {
         if (error === 0) {
             setPfpFile(file);
             setProfileEdit({...profileEdit, pfpURL: URL.createObjectURL(file), pfpFileType: fileType});
-
-            // TODO: axios request shouldn't be here, should only happen after "submit" is clicked.
-            //Sending image to Server.js
-            if (file && isLoggedIn) {
-                const formData = new FormData();
-                formData.append("pfp", file);
-                formData.append("pfpFileType", fileType);
-                formData.append("username", profile.username);
-        
-                axios.post("http://localhost:5000/uploadPFP", formData, {
-                    headers: {
-                      "Content-Type": "multipart/form-data",
-                    }
-                });
-            }
         }
         setErrors({...errors, pfp: error});
     };
