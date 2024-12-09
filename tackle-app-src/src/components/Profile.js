@@ -6,6 +6,18 @@ import { useAuth } from "../components/AuthProvider";
 const reqs = require('./AccountReqs.json');
 const defaultPfp = require('../assets/defaultPfp.png');
 
+export const emptyProfile = {
+    id: 1,
+    username: "localUser",
+    nickname: "Unregistered User",
+    pfpUrl: null,
+    pfpFileType: "none",
+    gender: "",
+    darkmode: false,
+    favSpots: [],
+    fishlist: []
+}
+
 export const genericProfile = {
     id: 1,
     username: "JeremyWade_Official",
@@ -92,6 +104,8 @@ export default function Profile() {
         const file = e.target.files[0];
         let fileType = file.type.substring(file.type.indexOf('/') + 1);
 
+        // check if logged in
+        if (!isLoggedIn) error |= reqs.error.NOT_LOGGED_IN;
         // check if file is of valid type (image file only)
         if (!reqs.pfp.allowedTypes.includes(fileType)) error |= reqs.error.FILE_TYPE;
         // check if file is of valid size
@@ -128,6 +142,7 @@ export default function Profile() {
                         <img id="profileform-pfp-display" src={reqs.pfp.allowedTypes.includes(profileEdit.pfpFileType) ? profileEdit.pfpURL : defaultPfp} alt="Uploaded profile pic"/>
                         <input id="profileform-pfp-input" name="pfp" type="file" onChange={checkPfp}></input>
                     </p>
+                    {(errors.pfp & reqs.error.NOT_LOGGED_IN) !== 0 && <p className="error">*Must be logged in to set a profile picture.</p>}
                     {(errors.pfp & reqs.error.FILE_TYPE) !== 0 && <p className="error">*File type must be {reqs.pfp.allowedTypes.slice(0,-1).map((str) => `${str}, `)} or {reqs.pfp.allowedTypes.slice(-1)[0]}.</p>}
                     {(errors.pfp & reqs.error.MAX_SIZE) !== 0 && <p className="error">*File size must be under {reqs.pfp.maxSizeMB} MB.</p>}
                 </div>

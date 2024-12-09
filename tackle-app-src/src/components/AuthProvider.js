@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import axios from "axios";
-import { genericProfile } from '../components/Profile';
+import { emptyProfile } from '../components/Profile';
 const AuthContext = createContext();
 
 const darkModeBorders = {
@@ -30,7 +30,17 @@ function findDifferentKeys(objA, objB) {
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [profile, setProfileDirectly] = useState({...genericProfile});
+
+    var profileJsonString = localStorage.getItem('profile');
+    var profileInit = null;
+    if (profileJsonString === null) {
+        profileInit = {...emptyProfile};
+        localStorage.setItem('profile', JSON.stringify(profileInit));
+    } else {
+        profileInit = JSON.parse(profileJsonString);
+    }
+
+    const [profile, setProfileDirectly] = useState(profileInit);
     const [lastLocation, setLastLocationDirectly] = useState("");
     const [borderStyle, setBorderStyle] = useState(lightModeBorders);
 
@@ -42,7 +52,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setIsLoggedIn(false);
         setBorderStyle(lightModeBorders);
-        setProfileDirectly({...genericProfile});
+        setProfileDirectly({...emptyProfile});
         let result = document.body.classList.contains("dark-mode-body");
         if(result === true){
             document.body.classList.remove("dark-mode-body");
@@ -58,9 +68,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     const setProfile = (newProfile) => {
-        if(isLoggedIn){
-            triggerProfileSave(newProfile);
-        }
+        triggerProfileSave(newProfile);
         setProfileDirectly(newProfile);
         updateBorderStyle(newProfile);
     }
@@ -87,6 +95,12 @@ export const AuthProvider = ({ children }) => {
 
     //update user account
     const triggerProfileSave = async (newProfile = profile) => {
+        if (!isLoggedIn) {
+            localStorage.setItem('profile', JSON.stringify(newProfile));
+            console.log("Not logged in, saved to local profile");
+            return;
+        }
+
         const keys = findDifferentKeys(newProfile, profile);
         console.log(keys);
 
