@@ -68,7 +68,7 @@ export default function Profile() {
     const [errors, setErrors] = useState({...errorsInit});
 
     function openProfile() {
-        setProfileEdit({...profile});
+        setProfileEdit(profile);
         setErrors({...errorsInit});
         setRenderProfileform(true);
     }
