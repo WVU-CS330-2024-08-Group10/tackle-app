@@ -406,7 +406,7 @@ body {
 }
 
 /*temporary weather box CSS*/
-#weather {
+#weatherBox {
 	margin-right: 2%;
     position: relative;
     height: 60vh;
@@ -416,6 +416,7 @@ body {
     border-color: black;
     display: inline-block;
     vertical-align: top;
+	text-align: center;
 }
 
 /* Adds CSS to the wrapping for the map, fish box, and weather box */
@@ -423,7 +424,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80vh; 
+    height: 65vh; 
 }
 
 /* Login Button */
