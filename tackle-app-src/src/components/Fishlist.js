@@ -4,9 +4,7 @@ import { useAuth } from "./AuthProvider";
 import { fishTypes } from "./Map";
 
 const emptyFish = {
-    species: {
-        name: ""
-    },
+    species: "",
     nickname: "",
     timeCaught: 0,
     bodyCaught: "",
@@ -176,7 +174,7 @@ export default function Fishlist() {
                             <div className="fishlist-fish-seperator">--</div> 
                             <div className="fishlist-fish-content">{fish.length === null ? <em>????? in</em> : `${fish.length} in`}</div> 
                         </> : <>
-                            <div className="fishlist-fish-content">{fish.species.name.trim().length !== 0 ? fish.species.name : <em>Unknown</em>}</div> 
+                            <div className="fishlist-fish-content">{fish.species.trim().length !== 0 ? fish.species : <em>Unknown</em>}</div> 
                             <div className="fishlist-fish-seperator">--</div> 
                             <div className="fishlist-fish-content">{fish.bodyCaught.trim().length !== 0 ? fish.bodyCaught : <em>Unknown</em>}</div> 
                         </>}
@@ -205,7 +203,7 @@ export default function Fishlist() {
                     <p>
                         {/* TODO: make species input dropdown of species in location */}
                         <label htmlFor="species">Species: </label>
-                        <input list="fish-species" id="fishform-species" name="species" placeholder={randomPlaceholderFish} value={fishEdit.species.name} onChange={(e) => setFishEdit({...fishEdit, species: {name: e.target.value}}) } />
+                        <input list="fish-species" id="fishform-species" name="species" placeholder={randomPlaceholderFish} value={fishEdit.species} onChange={(e) => setFishEdit({...fishEdit, species: e.target.value}) } />
                         <datalist id="fish-species">
                             {Object.keys(fishTypes).map(fish => 
                                 <option key={fish} value={fishTypes[fish]} />

@@ -6,7 +6,6 @@ const reqs = require('./AccountReqs.json');
 const defaultPfp = require('../assets/defaultPfp.png');
 
 export const emptyProfile = {
-    id: 1,
     username: "localUser",
     nickname: "Unregistered User",
     pfpUrl: null,
@@ -19,7 +18,6 @@ export const emptyProfile = {
 
 // old profile used for examples. depricated
 export const genericProfile = {
-    id: 1,
     username: "JeremyWade_Official",
     nickname: "Jeremy Wade",
     pfpURL: require('../assets/jeremyPfp.jpg'),
@@ -29,9 +27,7 @@ export const genericProfile = {
     favSpots: [],
     fishlist: [
         {
-            species: {
-                name: "Catfish"
-            },
+            species: "Catfish",
             nickname: "Big John",
             timeCaught: new Date().getTime(),
             bodyCaught: "Poca River",
@@ -41,9 +37,7 @@ export const genericProfile = {
             tackled: "Very Good Bait"
         },
         {
-            species: {
-                name: "Catfinch"
-            },
+            species: "Catfinch",
             nickname: "Little John",
             timeCaught: new Date().getTime(),
             bodyCaught: "Kanawha River",
@@ -53,9 +47,7 @@ export const genericProfile = {
             tackled: "Very Good Bait"
         },
         {
-            species: {
-                name: "A trout"
-            },
+            species: "A trout",
             nickname: "slipper",
             timeCaught: new Date().getTime(),
             bodyCaught: "Coal River",

@@ -28,6 +28,22 @@ const saltRounds = 10;
 let saltString = "";
 let hashedPassword = "";
 
+// function for verifying token
+const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization'];
+
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, 'your-secret-key');
+        req.userId = decoded.userId;
+        next();
+    } catch (error) {
+        res.status(401).json({ error: 'Unauthorized' });
+    }
+};
 
 //Upload an image as binary data
 app.post("/uploadPFP", upload.single("pfp"), async (req, res) => {
