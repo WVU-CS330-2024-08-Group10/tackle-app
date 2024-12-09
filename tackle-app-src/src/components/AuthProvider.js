@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             verifyToken();
         }
-    }, []);
+    }, []); // eslint doesn't like this, but it works and fixing just causes more headache....so why bother fixing it?
     async function verifyToken() {
         try {
             const response = await axios.post("http://localhost:5000/verifyToken", {});
