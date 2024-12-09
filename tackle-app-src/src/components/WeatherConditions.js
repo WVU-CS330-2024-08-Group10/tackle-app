@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from "./AuthProvider";
 
 //Variables
 const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -8,6 +9,8 @@ const url = `https://api.openweathermap.org/data/2.5/forecast?zip=${zip}&units=i
 const classesDefault = Array(days.length).fill("daybutton");
 
 function WeatherConditions() {
+    const { borderStyle } = useAuth();
+
     const [popupVisible, setPopupVisible] = useState(false);
     const [selectedWeather, setSelectedWeather] = useState({});
     const [classes, setClasses] = useState(classesDefault);
@@ -63,12 +66,12 @@ function WeatherConditions() {
     return (
 
         <div>
-            <div id="days-container">
+            <div style={borderStyle} id="days-container">
                 {days.map((day, index) => ( <div id={`day-${index}`} onClick={() => click(index)} className={classes[index]} key={index}>{day}</div>))}
             </div>
     
             {popupVisible &&  selectedWeather &&(
-                <div id="popup">
+                <div style={borderStyle} id="popup">
                     <h2>Weather Information for {days[selectedDay]}</h2>
                     <p>Temperature: {selectedWeather?.temp}</p>
                     <p>Feels like: {selectedWeather?.feels_like}</p>
