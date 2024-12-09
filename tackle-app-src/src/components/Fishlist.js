@@ -4,9 +4,7 @@ import { useAuth } from "./AuthProvider";
 import { fishTypes } from "./Map";
 
 const emptyFish = {
-    species: {
-        name: ""
-    },
+    species: "",
     nickname: "",
     timeCaught: 0,
     bodyCaught: "",
@@ -21,7 +19,8 @@ function dateToLocalDatetimeString(date) {
     return new Date(date.getTime() + new Date().getTimezoneOffset() * -60 * 1000).toISOString().substring(0, 16);
 }
 
-// Returns obj with property set to val IF val is a number. Otherwise, returns obj unchanged
+// Returns obj with property set to val IF val is a positive number. Otherwise, returns obj unchanged
+// Used to limit weight AND length fields to only positive numbers with only one callback function.
 function getPropIfPositiveNum(val, obj, property) {
     val = val.trim();
     let objTemp = {...obj};
@@ -86,7 +85,7 @@ export default function Fishlist() {
 
         let fishTemp = {...fishEdit};
         if (fishTemp.nickname === "") fishTemp.nickname = `Fish #${fishIndex + 1}`;
-        if (fishTemp.bodyCaught.trim().length != 0) setLastLocation(fishTemp.bodyCaught);
+        if (fishTemp.bodyCaught.trim().length !== 0) setLastLocation(fishTemp.bodyCaught);
 
         let fishlistTemp = [...profile.fishlist];
         fishlistTemp[fishIndex] = fishTemp;
@@ -109,18 +108,20 @@ export default function Fishlist() {
 
     function sortFishlist(list) {
         switch (sortBy) {
-            case 1:
+            case 1: // sort by time
                 list.sort((a, b) => a.timeCaught - b.timeCaught);
                 break;
-            case 2:
+            case 2: // sort by nickname alphabetically
                 list.sort((a, b) => 0 - a.nickname.localeCompare(b.nickname));
                 break;
-            case 3:
+            case 3: // sort by weight
                 list.sort((a, b) => a.weight - b.weight);
                 break;
-            case 4:
+            case 4: // sort by length
                 list.sort((a, b) => a.length - b.length);
                 break;
+            default: // either 0 (no sort) or some faulty value
+                // do nothing. :/
         }
         if (sortAscending) list.reverse();
         return list;
@@ -176,7 +177,7 @@ export default function Fishlist() {
                             <div className="fishlist-fish-seperator">--</div> 
                             <div className="fishlist-fish-content">{fish.length === null ? <em>????? in</em> : `${fish.length} in`}</div> 
                         </> : <>
-                            <div className="fishlist-fish-content">{fish.species.name.trim().length !== 0 ? fish.species.name : <em>Unknown</em>}</div> 
+                            <div className="fishlist-fish-content">{fish.species.trim().length !== 0 ? fish.species : <em>Unknown</em>}</div> 
                             <div className="fishlist-fish-seperator">--</div> 
                             <div className="fishlist-fish-content">{fish.bodyCaught.trim().length !== 0 ? fish.bodyCaught : <em>Unknown</em>}</div> 
                         </>}
@@ -195,17 +196,17 @@ export default function Fishlist() {
         </div>
 
         <ReactModal className={(profile.darkmode ? "modal-dark" : "modal-light") + " form-modal"} overlayClassName={profile.darkmode ? "modal-overlay-dark" : "modal-overlay-light"} isOpen={renderFishform}>
-
+                { /* eslint-disable no-useless-escape */ }
                 <h1>{isFishformEditing ? `Editing \"${profile.fishlist[fishIndex] !== undefined ? profile.fishlist[fishIndex].nickname : "Null"}\"` : "🏆 Congrats On Your New Catch! 🏆"}</h1>
+                { /* eslint-enable no-useless-escape */ }
                 <div>
                     <p>
                         <label htmlFor="nickname">Nickname: </label>
                         <input id="fishform-nickname" name="nickname" placeholder={`Fish #${fishIndex + 1}`} value={fishEdit.nickname} onChange={(e) => setFishEdit({...fishEdit, nickname: e.target.value}) } />
                     </p>
                     <p>
-                        {/* TODO: make species input dropdown of species in location */}
                         <label htmlFor="species">Species: </label>
-                        <input list="fish-species" id="fishform-species" name="species" placeholder={randomPlaceholderFish} value={fishEdit.species.name} onChange={(e) => setFishEdit({...fishEdit, species: {name: e.target.value}}) } />
+                        <input list="fish-species" id="fishform-species" name="species" placeholder={randomPlaceholderFish} value={fishEdit.species} onChange={(e) => setFishEdit({...fishEdit, species: e.target.value}) } />
                         <datalist id="fish-species">
                             {Object.keys(fishTypes).map(fish => 
                                 <option key={fish} value={fishTypes[fish]} />

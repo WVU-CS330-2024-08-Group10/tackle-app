@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
 import { Link } from 'react-router-dom';
-import axios from "axios";
 import { useAuth } from "../components/AuthProvider";
 const reqs = require('./AccountReqs.json');
 const defaultPfp = require('../assets/defaultPfp.png');
 
+export const emptyProfile = {
+    username: "localUser",
+    nickname: "Unregistered User",
+    pfpUrl: null,
+    pfpFileType: "none",
+    gender: "not set",
+    darkmode: false,
+    favSpots: [],
+    fishlist: []
+}
+
+// old profile used for examples. depricated
 export const genericProfile = {
-    id: 1,
     username: "JeremyWade_Official",
     nickname: "Jeremy Wade",
     pfpURL: require('../assets/jeremyPfp.jpg'),
@@ -17,9 +27,7 @@ export const genericProfile = {
     favSpots: [],
     fishlist: [
         {
-            species: {
-                name: "Catfish"
-            },
+            species: "Catfish",
             nickname: "Big John",
             timeCaught: new Date().getTime(),
             bodyCaught: "Poca River",
@@ -29,9 +37,7 @@ export const genericProfile = {
             tackled: "Very Good Bait"
         },
         {
-            species: {
-                name: "Catfinch"
-            },
+            species: "Catfinch",
             nickname: "Little John",
             timeCaught: new Date().getTime(),
             bodyCaught: "Kanawha River",
@@ -41,9 +47,7 @@ export const genericProfile = {
             tackled: "Very Good Bait"
         },
         {
-            species: {
-                name: "A trout"
-            },
+            species: "A trout",
             nickname: "slipper",
             timeCaught: new Date().getTime(),
             bodyCaught: "Coal River",
@@ -63,10 +67,10 @@ const errorsInit = {
 
 export default function Profile() {
 
-    const { profile, setProfile, isLoggedIn } = useAuth();
+    const { profile, setProfile, isLoggedIn, setPfpFile } = useAuth();
 
     const [renderProfileform, setRenderProfileform] = useState(false);
-    const [profileEdit, setProfileEdit] = useState(genericProfile);
+    const [profileEdit, setProfileEdit] = useState(emptyProfile);
     const [errors, setErrors] = useState({...errorsInit});
 
     function openProfile() {
@@ -92,28 +96,16 @@ export default function Profile() {
         const file = e.target.files[0];
         let fileType = file.type.substring(file.type.indexOf('/') + 1);
 
+        // check if logged in
+        if (!isLoggedIn) error |= reqs.error.NOT_LOGGED_IN;
         // check if file is of valid type (image file only)
         if (!reqs.pfp.allowedTypes.includes(fileType)) error |= reqs.error.FILE_TYPE;
         // check if file is of valid size
         if (file.size > reqs.pfp.maxSizeMB * 1024 * 1024) error |= reqs.error.MAX_SIZE;
 
         if (error === 0) {
+            setPfpFile(file);
             setProfileEdit({...profileEdit, pfpURL: URL.createObjectURL(file), pfpFileType: fileType});
-
-            // TODO: axios request shouldn't be here, should only happen after "submit" is clicked.
-            //Sending image to Server.js
-            if (file && isLoggedIn) {
-                const formData = new FormData();
-                formData.append("pfp", file);
-                formData.append("pfpFileType", fileType);
-                formData.append("username", profile.username);
-        
-                axios.post("http://localhost:5000/uploadPFP", formData, {
-                    headers: {
-                      "Content-Type": "multipart/form-data",
-                    }
-                });
-            }
         }
         setErrors({...errors, pfp: error});
     };
@@ -128,6 +120,7 @@ export default function Profile() {
                         <img id="profileform-pfp-display" src={reqs.pfp.allowedTypes.includes(profileEdit.pfpFileType) ? profileEdit.pfpURL : defaultPfp} alt="Uploaded profile pic"/>
                         <input id="profileform-pfp-input" name="pfp" type="file" onChange={checkPfp}></input>
                     </p>
+                    {(errors.pfp & reqs.error.NOT_LOGGED_IN) !== 0 && <p className="error">*Must be logged in to set a profile picture.</p>}
                     {(errors.pfp & reqs.error.FILE_TYPE) !== 0 && <p className="error">*File type must be {reqs.pfp.allowedTypes.slice(0,-1).map((str) => `${str}, `)} or {reqs.pfp.allowedTypes.slice(-1)[0]}.</p>}
                     {(errors.pfp & reqs.error.MAX_SIZE) !== 0 && <p className="error">*File size must be under {reqs.pfp.maxSizeMB} MB.</p>}
                 </div>
