@@ -1,31 +1,19 @@
-import { Link, useNavigate } from 'react-router-dom';
-import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React from 'react';
 import { useAuth } from "../components/AuthProvider";
 
 // perhaps it would be better to an array of 4 objects with this info in them? 
-const pages = ["", "Weather", "Personal", "About"];
+const pages = ["/", "/Weather", "/Personal", "/About"];
 const display = ["Home", "Weather", "Personal", "About"];
 const icons = ["home", "sunny", "account_circle", "groups"];
-
-const classesDefault = Array(pages.length).fill("navbutton");
-
-function getPage() {
-	let url = window.location.href.split("/");
-	let page = url[url.length - 1];
-	return page;
-}
 
 export default function NavBar(){
 	const { isLoggedIn, profile, logout, setProfile, setNavBack } = useAuth();
 	const navigate = useNavigate();
-	let selected = pages.indexOf(getPage());
-
-	let classesInit = [...classesDefault]; // makes a copy of classesDefault
-	classesInit[selected] += " navbutton-selected";
-	const [classes, setClasses] = useState(classesInit);
+	const location = useLocation();
 
 	function toggleMode() {
-		//0 = light, 1 = dark
+		//false = light, true = dark
 		var element = document.body;
 		if (!profile.darkmode) {
 			setProfile({...profile, darkmode: true});
@@ -36,40 +24,24 @@ export default function NavBar(){
 			element.classList.remove("dark-mode-body");
 		}
 	}
-
-	function color(num){
-		if (selected !== num) {
-			selected = num;
-	
-			let classesInit = [...classesDefault];
-			classesInit[num] += " navbutton-selected";
-			setClasses(classesInit);
-		}
-	}
 	
 	function logoutAccount() {
 		logout();
 		navigate("/");
-		color(0);
-	}
-
-	const loginClick = () => {
-		color(-1);
-		setNavBack("/" + getPage());
 	}
 
     return(
 		<header id="navbar-container">
-			<Link id={`logo-container`} key={`logo-container`} to={`/`} onClick={() => color(0)}><img id="logo" src={require('../assets/TackleLogo.jpg')} alt="Tackle logo"/></Link>
+			<Link id={"logo-container"} key={"logo-container"} to={"/"}><img id="logo" src={require('../assets/TackleLogo.jpg')} alt="Tackle logo"/></Link>
 			
 			{pages.map((page, i) => { 
-				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={classes[i]} to={`/${page}`} onClick={() => color(i)}><span className="material-icons">{icons[i]}</span>{display[i]}</Link>
+				return <Link id={`navbutton-${i}`} key={`navbutton-${i}`} className={"navbutton" + (location.pathname === page ? " navbutton-selected" : "")} to={page}><span className="material-icons">{icons[i]}</span>{display[i]}</Link>
 			})}
 
 			{isLoggedIn ? (
-                <button onClick={() => logoutAccount()} className="btnLogin-popup">Logout</button>
+                <button onClick={logoutAccount} className="btnLogin-popup">Logout</button>
             ) : (
-                <Link id={`navbutton-login`} key={`navbutton-login`} to={`/Login`} onClick={loginClick}><button className="btnLogin-popup">Login</button></Link>
+                <Link id={"navbutton-login"} key={"navbutton-login"} to={"/Login"} onClick={() => setNavBack(location.pathname)}><button className="btnLogin-popup">Login</button></Link>
             )}
 			
 			<div id="toggle-container">

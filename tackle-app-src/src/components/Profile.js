@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
 import { Link } from 'react-router-dom';
-import axios from "axios";
 import { useAuth } from "../components/AuthProvider";
 const reqs = require('./AccountReqs.json');
 const defaultPfp = require('../assets/defaultPfp.png');
@@ -18,6 +17,7 @@ export const emptyProfile = {
     fishlist: []
 }
 
+// old profile used for examples. depricated
 export const genericProfile = {
     id: 1,
     username: "JeremyWade_Official",
@@ -78,7 +78,7 @@ export default function Profile() {
     const { profile, setProfile, isLoggedIn, setPfpFile } = useAuth();
 
     const [renderProfileform, setRenderProfileform] = useState(false);
-    const [profileEdit, setProfileEdit] = useState(genericProfile);
+    const [profileEdit, setProfileEdit] = useState(emptyProfile);
     const [errors, setErrors] = useState({...errorsInit});
 
     function openProfile() {
