@@ -10,6 +10,8 @@ const lightModeBorders = {
     borderColor: "black"
 }
 
+// find different keys between objA and objB and returns an array of them.
+// completely unused
 function findDifferentKeys(objA, objB) {
     let setA = new Set(Object.values(objA));
     let setB = new Set(Object.values(objB));
@@ -40,6 +42,7 @@ export const AuthProvider = ({ children }) => {
         profileInit = JSON.parse(profileJsonString);
     }
 
+    const [pfpFile, setPfpFile] = useState(null);
     const [profile, setProfileDirectly] = useState(profileInit);
     const [lastLocation, setLastLocationDirectly] = useState("");
     const [borderStyle, setBorderStyle] = useState(lightModeBorders);
@@ -101,9 +104,6 @@ export const AuthProvider = ({ children }) => {
             return;
         }
 
-        const keys = findDifferentKeys(newProfile, profile);
-        console.log(keys);
-
         try {
             var username = newProfile.username;
             var darkmode = newProfile.darkmode;
@@ -118,6 +118,29 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error("User info update failure:", error.response?.data || error.message);
             //Display error to user
+        }
+
+        if (pfpFile !== null) { // PFP has updated
+            try {
+                let fileType = pfpFile.type.substring(pfpFile.type.indexOf('/') + 1);
+
+                //Sending image to Server.js
+                const formData = new FormData();
+                formData.append("pfp", pfpFile);
+                formData.append("pfpFileType", fileType);
+                formData.append("username", profile.username);
+        
+                await axios.post("http://localhost:5000/uploadPFP", formData, {
+                    headers: {
+                    "Content-Type": "multipart/form-data",
+                    }
+                });
+
+                setPfpFile(null);
+            } catch (error) {
+                console.error("User pfp update failure:", error.response?.data || error.message);
+                //Display error to user
+            }
         }
     }
 
@@ -166,7 +189,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, profile, lastLocation, borderStyle, login, logout, setIsLoggedIn, setProfile, setProfileDirectly, triggerProfileLoad, triggerProfileCreate, setLastLocation, updateBorderStyle }}>
+        <AuthContext.Provider value={{ isLoggedIn, profile, lastLocation, borderStyle, login, logout, setIsLoggedIn, setProfile, setProfileDirectly, triggerProfileLoad, triggerProfileCreate, setLastLocation, updateBorderStyle, setPfpFile }}>
             {children}
         </AuthContext.Provider>
     );

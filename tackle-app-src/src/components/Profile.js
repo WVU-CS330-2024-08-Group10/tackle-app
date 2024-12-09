@@ -75,7 +75,7 @@ const errorsInit = {
 
 export default function Profile() {
 
-    const { profile, setProfile, isLoggedIn } = useAuth();
+    const { profile, setProfile, isLoggedIn, setPfpFile } = useAuth();
 
     const [renderProfileform, setRenderProfileform] = useState(false);
     const [profileEdit, setProfileEdit] = useState(genericProfile);
@@ -112,6 +112,7 @@ export default function Profile() {
         if (file.size > reqs.pfp.maxSizeMB * 1024 * 1024) error |= reqs.error.MAX_SIZE;
 
         if (error === 0) {
+            setPfpFile(file);
             setProfileEdit({...profileEdit, pfpURL: URL.createObjectURL(file), pfpFileType: fileType});
 
             // TODO: axios request shouldn't be here, should only happen after "submit" is clicked.
