@@ -199,6 +199,26 @@ body {
 	text-align: center;
 }
 
+#edit_button {
+	box-sizing: border-box;
+	width: 120px;
+	height: 40px;
+	background-color: rgb(27, 195, 25);
+	color: black;
+	border-radius: 25px;
+	text-align: center;
+	font-weight: bold;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#edit-button .material-icons {
+	margin-right: 8px;
+	font-size: 20px;
+}
+
 #profile-right {
 	box-sizing: border-box;
 	padding: 20px;
@@ -464,6 +484,7 @@ body {
     /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/ 
     /* margin: 10px; */  
     font-family: 'Arial', sans-serif;
+	padding: 0;
 }
 
 .login_container .login_box {

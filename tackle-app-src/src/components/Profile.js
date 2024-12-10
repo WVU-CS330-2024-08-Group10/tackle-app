@@ -115,8 +115,7 @@ export default function Profile() {
     };
 
     return <>
-        <button onClick={openProfile}>Edit profile</button>
-
+        <p><button id="edit_button" onClick={openProfile}><i class="material-icons">settings</i>Edit Profile</button></p>
         <ReactModal className={(profile.darkmode ? "modal-dark" : "modal-light") + " form-modal"} overlayClassName={profile.darkmode ? "modal-overlay-dark" : "modal-overlay-light"} isOpen={renderProfileform}>
                 <h1>Editing Profile</h1>
                 <div>
