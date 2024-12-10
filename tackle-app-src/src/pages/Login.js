@@ -14,9 +14,10 @@ const errorsInit = {
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
     const [errors, setErrors] = useState({...errorsInit});
     const navigate = useNavigate();
-    const { borderStyle, login } = useAuth();
+    const { borderStyle, navBack, login } = useAuth();
 
     const checkPassword = (e) => {
         let error = 0;
@@ -52,8 +53,14 @@ export default function Login() {
             const response = await axios.post("http://localhost:5000/authenticate", {username, password});
             if (response.status === 200) {
                 console.log("User authenticated!");
+                const token = response.data.token;
+                if (rememberMe) {
+                    localStorage.setItem('token', token);
+                } else {
+                    sessionStorage.setItem('token', token);
+                }
                 login(username);
-                navigate("/");
+                navigate(navBack);
             }
             else if(response.status === 401){
                 console.error("Authentication failed: Username already exists");
@@ -92,8 +99,10 @@ export default function Login() {
                     <p className="info">*Password must be at most {reqs.password.maxLength} characters long.</p>
                     <p className="info">*Password must consist only of ASCII characters.</p>
                     <p className="info">*Password must contain no spaces.</p>
-                    <br />
 
+                    <input type="checkbox" id="remember-me" name="remember-me" checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} />
+                    <label htmlFor="remember-me"> Remember Me</label>
+                    <br />
                     <button type="submit">Login</button>
                 </form>
 

@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from "axios";
-import { genericProfile } from '../components/Profile';
+import { emptyProfile } from '../components/Profile';
 const AuthContext = createContext();
 
 const darkModeBorders = {
@@ -10,6 +10,22 @@ const lightModeBorders = {
     borderColor: "black"
 }
 
+// include token in all axios requests
+axios.interceptors.request.use(config => {
+    const localToken = localStorage.getItem('token');
+    const sessionToken = sessionStorage.getItem('token');
+
+    if (localToken) {
+        config.headers['Authorization'] = localToken;
+    } else if (sessionToken) {
+        config.headers['Authorization'] = sessionToken;
+    }
+
+    return config;
+});
+
+// find different keys between objA and objB and returns an array of them.
+// completely unused
 function findDifferentKeys(objA, objB) {
     let setA = new Set(Object.values(objA));
     let setB = new Set(Object.values(objB));
@@ -30,10 +46,46 @@ function findDifferentKeys(objA, objB) {
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [profile, setProfileDirectly] = useState({...genericProfile});
+
+    var profileJsonString = localStorage.getItem('profile');
+    var profileInit = null;
+    if (profileJsonString === null) {
+        profileInit = {...emptyProfile};
+        localStorage.setItem('profile', JSON.stringify(profileInit));
+    } else {
+        profileInit = JSON.parse(profileJsonString);
+    }
+
+    const [pfpFile, setPfpFile] = useState(null);
+    const [profile, setProfileDirectly] = useState(profileInit);
     const [lastLocation, setLastLocationDirectly] = useState("");
+    const [navBack, setNavBack] = useState("/");
     const [borderStyle, setBorderStyle] = useState(lightModeBorders);
 
+    // attempt login with token if token available
+    useEffect(() => {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');;
+        if (token) {
+            verifyToken();
+        }
+    }, []); // eslint doesn't like this, but it works and fixing just causes more headache....so why bother fixing it?
+    async function verifyToken() {
+        try {
+            const response = await axios.post("http://localhost:5000/verifyToken", {});
+            if (response.status === 200) {
+                const username = response.data.username;
+                login(username);
+            }
+        } catch (error) {
+            console.error("User token login failure:", error.response?.data || error.message);
+            //Display error to user
+
+            //remove faulty tokens
+            localStorage.removeItem('token');
+            sessionStorage.removeItem('token');
+        }
+    }
+    
     const login = (username) => {
         setIsLoggedIn(true);
         triggerProfileLoad(username);
@@ -42,7 +94,11 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setIsLoggedIn(false);
         setBorderStyle(lightModeBorders);
-        setProfileDirectly({...genericProfile});
+        setProfileDirectly({...emptyProfile});
+
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+
         let result = document.body.classList.contains("dark-mode-body");
         if(result === true){
             document.body.classList.remove("dark-mode-body");
@@ -58,9 +114,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     const setProfile = (newProfile) => {
-        if(isLoggedIn){
-            triggerProfileSave(newProfile);
-        }
+        triggerProfileSave(newProfile);
         setProfileDirectly(newProfile);
         updateBorderStyle(newProfile);
     }
@@ -71,13 +125,20 @@ export const AuthProvider = ({ children }) => {
         try {
             var username = newProfile.username;
             var darkmode = newProfile.darkmode;
-            var nickname = newProfile.nickname;
+            var nickname;
+            if (newProfile.nickname === "Unregistered User") {
+                nickname = username;
+            } else {
+                nickname = newProfile.nickname;
+            }
             var gender = newProfile.gender;
-            //let fishlist = newProfile.fishlist;
-            const response = await axios.post("http://localhost:5000/insertUser", {username, password, darkmode, nickname, gender});
+            var fishlist = newProfile.fishlist;
+            const response = await axios.post("http://localhost:5000/insertUser", {username, password, darkmode, nickname, gender, fishlist});
             if (response.status === 200) {
-                console.log("Inserted ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender);
-
+                //console.log("Inserted ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender + "\nFishlist: " + JSON.stringify(fishlist));
+                console.log("User created!");
+                const token = response.data.token;
+                sessionStorage.setItem('token', token);
             }
         } catch (error) {
             console.error("User info insertion failure:", error.response?.data || error.message);
@@ -87,23 +148,49 @@ export const AuthProvider = ({ children }) => {
 
     //update user account
     const triggerProfileSave = async (newProfile = profile) => {
-        const keys = findDifferentKeys(newProfile, profile);
-        console.log(keys);
+        if (!isLoggedIn) {
+            localStorage.setItem('profile', JSON.stringify(newProfile));
+            console.log("Not logged in, saved to local profile");
+            return;
+        }
 
         try {
             var username = newProfile.username;
             var darkmode = newProfile.darkmode;
             var nickname = newProfile.nickname;
             var gender = newProfile.gender;
-            //let fishlist = newProfile.fishlist;
-            const response = await axios.post("http://localhost:5000/updateUserInfo", {username, darkmode, nickname, gender});
+            var fishlist = newProfile.fishlist;
+            const response = await axios.post("http://localhost:5000/updateUserInfo", {username, darkmode, nickname, gender, fishlist});
             if (response.status === 200) {
-                console.log("Saved ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender);
+                //console.log("Saved ->\nUsername: " + username + "\nDarkmode: " + darkmode + "\nNickname: " + nickname + "\nGender: " + gender, + "\nFishlist: " + fishlist);
 
             }
         } catch (error) {
             console.error("User info update failure:", error.response?.data || error.message);
             //Display error to user
+        }
+
+        if (pfpFile !== null) { // PFP has updated
+            try {
+                let fileType = pfpFile.type.substring(pfpFile.type.indexOf('/') + 1);
+
+                //Sending image to Server.js
+                const formData = new FormData();
+                formData.append("pfp", pfpFile);
+                formData.append("pfpFileType", fileType);
+                formData.append("username", profile.username);
+        
+                await axios.post("http://localhost:5000/uploadPFP", formData, {
+                    headers: {
+                    "Content-Type": "multipart/form-data",
+                    }
+                });
+
+                setPfpFile(null);
+            } catch (error) {
+                console.error("User pfp update failure:", error.response?.data || error.message);
+                //Display error to user
+            }
         }
     }
 
@@ -113,28 +200,35 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await axios.post("http://localhost:5000/loadUserInfo", {username});
             if (response.status === 200) {
-                profile.username = response.data.Username;
-                profile.darkmode = response.data.darkmode;
-                profile.nickname = response.data.nickname;
-                profile.gender = response.data.gender;
-                //fishlist: response.data.fishlist
-                console.log("Retreived ->\nUsername: " + profile.username + "\nDarkmode: " + profile.darkmode + "\nNickname: " + profile.nickname + "\nGender: " + profile.gender);
 
+                let profileLogin = {...profile};
+
+                //Get response
+                profileLogin.username = response.data.Username;
+                profileLogin.darkmode = response.data.darkmode;
+                profileLogin.nickname = response.data.nickname;
+                profileLogin.gender = response.data.gender;
+                profileLogin.pfpFileType = response.data.pfpFileType;
+                profileLogin.fishlist = JSON.parse(response.data.fishlist);
+                //console.log("Retreived ->\nUsername: " + profile.username + "\nDarkmode: " + profile.darkmode + "\nNickname: " + profile.nickname + "\nGender: " + profile.gender + "\nFishlist: " + JSON.stringify(profile.fishlist));
+                
                 //Set profile picture (must convert from Binary data to a Blob and then create a Blob url)
-                const blob = new Blob([response.data.pfp], { type: 'image/png' });
-                const blobURL = URL.createObjectURL(blob);
-                profile.pfpURL = blobURL;
-                console.log(profile.pfpURL);
+                if (response.data.pfp !== null) {
+                    const blob = new Blob([ new Uint8Array(response.data.pfp.data) ], { type: `image/${profileLogin.pfpFileType}` });
+                    const blobURL = URL.createObjectURL(blob);
+                    profileLogin.pfpURL = blobURL;
+                }
 
                 //Set light for doc body
                 let result = document.body.classList.contains("dark-mode-body");
-                if(!profile.darkmode && result === true){
+                if(!profileLogin.darkmode && result === true){
                     document.body.classList.remove("dark-mode-body");
                 }
-                else if(profile.darkmode && result === false){
+                else if(profileLogin.darkmode && result === false){
                     document.body.classList.add("dark-mode-body");
                 }
-                updateBorderStyle(profile);
+                updateBorderStyle(profileLogin);
+                setProfileDirectly(profileLogin);
             }
         } catch (error) {
             console.error("User info retrieval failure:", error.response?.data || error.message);
@@ -150,7 +244,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, profile, lastLocation, borderStyle, login, logout, setIsLoggedIn, setProfile, setProfileDirectly, triggerProfileLoad, triggerProfileCreate, setLastLocation, updateBorderStyle }}>
+        <AuthContext.Provider value={{ isLoggedIn, profile, lastLocation, borderStyle, navBack, setNavBack, login, logout, setIsLoggedIn, setProfile, setProfileDirectly, triggerProfileLoad, triggerProfileCreate, setLastLocation, updateBorderStyle, setPfpFile }}>
             {children}
         </AuthContext.Provider>
     );

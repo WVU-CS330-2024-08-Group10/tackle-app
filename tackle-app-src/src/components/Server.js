@@ -9,6 +9,7 @@ const config = {
     server: process.env.SERVERNAME,
     database: process.env.DATABASENAME
 };
+const secret = process.env.SECRET;
 
 //Express variables
 const express = require("express");
@@ -23,17 +24,49 @@ const storage = multer.memoryStorage(); //Store file in memory as buffer
 const upload = multer({ storage: storage });
 
 //Hashing variables
+const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 let saltString = "";
 let hashedPassword = "";
 
+// function for verifying token
+const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization'];
+
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    try {
+        const tokIN = jwt.verify(token, secret);
+        req.username = tokIN.username;
+        next();
+    } catch (error) {
+        res.status(401).json({ error: 'Unauthorized' });
+    }
+};
+
+// route for logging in from token
+app.post("/verifyToken", verifyToken, async (req, res) => {
+    res.status(200).json({username: req.username});
+});
 
 //Upload an image as binary data
-app.post("/uploadPFP", upload.single("pfp"), async (req, res) => {
+app.post("/uploadPFP", verifyToken, upload.single("pfp"), async (req, res) => {
 
     const file = req.file;
-    const { username } = req.body;
+    const { pfpFileType, username } = req.body;
+
+    let error = 0;
+    // check if file is of valid type (image file only)
+    if (!reqs.pfp.allowedTypes.includes(pfpFileType)) error |= reqs.error.FILE_TYPE;
+    // check if file is of valid size
+    if (file.size > reqs.pfp.maxSizeMB * 1024 * 1024) error |= reqs.error.MAX_SIZE;
+
+    if (error > 0) {
+        console.log("Error uploading pfp: pfp doesn't meet minimum requirements");
+        res.status(401).send("pfp doesn't meet minimum requirements");
+    }
 
     try {
         const pool = await sql.connect(config);
@@ -42,11 +75,12 @@ app.post("/uploadPFP", upload.single("pfp"), async (req, res) => {
         const fileBuffer = file.buffer;
 
         //Create query
-        const query = `UPDATE UserInfo SET [pfp]=@pfp WHERE Username=@username;`;
+        const query = `UPDATE UserInfo SET [pfp]=@pfp, [pfpFileType]=@pfpFileType WHERE Username=@username;`;
 
         //Execute query
         await pool.request()
                     .input('username', sql.NVarChar, username) //username
+                    .input('pfpFileType', sql.NVarChar, pfpFileType) // pfp type string
                     .input('pfp', sql.VarBinary, fileBuffer) //pfp as binary data
                     .query(query);
 
@@ -90,7 +124,7 @@ async function checkForUsername(username) {
 
 
 //Creating route to load user information
-app.post("/loadUserInfo", async (req, res) => {
+app.post("/loadUserInfo", verifyToken, async (req, res) => {
 
     const { username } = req.body;
 
@@ -116,21 +150,25 @@ app.post("/loadUserInfo", async (req, res) => {
 
 
 //Creating route to add dark/light mode preference for user account
-app.post("/updateUserInfo", async (req, res) => {
+app.post("/updateUserInfo", verifyToken, async (req, res) => {
 
-    const { username, darkmode, nickname, gender } = req.body;
+    const { username, darkmode, nickname, gender, fishlist } = req.body;
 
     try {
         const pool = await sql.connect(config);
+
+        //Convert fishlist to JSON
+        const jsonFishlist = JSON.stringify(fishlist);
         
         //Create query
-        const query = `UPDATE UserInfo SET [darkmode]=@darkmode, [nickname]=@nickname, [gender]=@gender WHERE Username=@username;`;
+        const query = `UPDATE UserInfo SET [darkmode]=@darkmode, [nickname]=@nickname, [gender]=@gender, [fishlist]=@fishlist WHERE Username=@username;`;
 
         //Execute query
         await pool.request()
                         .input('darkmode', sql.Bit, darkmode) //darkmode
                         .input('nickname', sql.NVarChar, nickname) //nickname
                         .input('gender', sql.NVarChar, gender) //gender
+                        .input('fishlist', sql.NVarChar, jsonFishlist) //fishlist
                         .input('username', sql.NVarChar, username) //username
                         .query(query);
         
@@ -147,7 +185,7 @@ app.post("/updateUserInfo", async (req, res) => {
 //Creating route to insert user
 app.post("/insertUser", async (req, res) => {
 
-    const { username, password, darkmode, nickname, gender } = req.body;
+    const { username, password, darkmode, nickname, gender, fishlist } = req.body;
 
     let error = 0;
 
@@ -188,8 +226,11 @@ app.post("/insertUser", async (req, res) => {
             //Connect to the database
             const pool = await sql.connect(config);
 
+            //Convert fishlist to JSON
+            const jsonFishlist = JSON.stringify(fishlist);
+
             //Create query
-            const query = `INSERT INTO UserInfo (Username, Password, Salt, darkmode, nickname, gender) VALUES (@username, @password, @salt, @darkmode, @nickname, @gender);`;
+            const query = `INSERT INTO UserInfo (Username, Password, Salt, darkmode, nickname, gender, fishlist) VALUES (@username, @password, @salt, @darkmode, @nickname, @gender, @fishlist);`;
 
             //Execute query
             const result = await pool.request()
@@ -199,18 +240,19 @@ app.post("/insertUser", async (req, res) => {
                         .input('darkmode', sql.Bit, darkmode) //darkmode
                         .input('nickname', sql.NVarChar, nickname) //nickname
                         .input('gender', sql.NVarChar, gender) //gender
+                        .input('fishlist', sql.NVarChar, jsonFishlist) //fishlist
                         .query(query);
 
             //Close connection
             console.log("Account created!");
-            res.status(200).send("Account Created!");
+            const token = jwt.sign({ username }, secret);
+            res.status(200).json({ token });
             await sql.close();
         }
 
     } catch (error) {
         console.log(error);
         res.status(500).send("Server Error: Creating account");
-
     }
 });
 
@@ -279,7 +321,8 @@ app.post("/authenticate", async (req, res) => {
             //Check given password with password in record
             if(await bcrypt.compare(password, userResult.recordset[0].Password.trim())){
                 console.log("Authenticated!");
-                res.status(200).send("Authenticated!");
+                const token = jwt.sign({ username }, secret);
+                res.status(200).json({ token });
             }
             else{
                 console.log("Authentication failed");

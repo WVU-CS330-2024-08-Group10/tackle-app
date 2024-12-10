@@ -97,7 +97,7 @@ const Map = () => {
 
     return(
         <div id="mapBody">
-            <div id="weather" style={borderStyle}></div>
+            <div id="weatherBox" style={borderStyle}></div>
             <div id="map" style={borderStyle}></div>
             <div id="fishBox" style={borderStyle}>
                 <h3 id="boxHeader">Body of Water: N/A</h3>

@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from "./AuthProvider";
+import ReactDOM from 'react-dom';
 
 //Variables
 const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const apiKey = process.env.REACT_APP_APIKEY;
-const zip = `26508`; // Im thinking that at one point it can be made to  be a user input
+const zip = `26508`; 
 const url = `https://api.openweathermap.org/data/2.5/forecast?zip=${zip}&units=imperial&appid=${apiKey}`;
 const classesDefault = Array(days.length).fill("daybutton");
 
-function WeatherConditions() {
-    const { borderStyle } = useAuth();
-
-    const [popupVisible, setPopupVisible] = useState(false);
-    const [selectedWeather, setSelectedWeather] = useState({});
+function MapWeather() {
     const [classes, setClasses] = useState(classesDefault);
     const [weatherData, setWeatherData] = useState([]);
-    // i don't know why, but this has to use states. basically the same thing in NavBar can just use a normal variable...whatever
     const [selectedDay, setSelectedDay] = useState(-1); 
-
+    const [selectedWeather, setSelectedWeather] = useState(null);
+    const [selectedDayName, setSelectedDayName] = useState("");
 
         // Getting the data from the API
         useEffect(() => {
@@ -41,48 +37,41 @@ function WeatherConditions() {
     function click(index) {
         if (selectedDay !== index) {
             setSelectedDay(index);
-
-            console.log(days[index] + " clicked");
+            setSelectedDayName(days[index]);
             setSelectedWeather(weatherData[index]);
-            setPopupVisible(true);
-    
+
             // color switching stuff
             let classesInit = [...classesDefault]; // makes a copy of classesDefault
             classesInit[index] += " daybutton-selected";
             setClasses(classesInit);
-        } else {
-            closePopup();
-        }
+        } 
     }
 
-    function closePopup() {
-        setSelectedDay(-1);
-        setPopupVisible(false);
+    //Prepares the weather information to be rendered in the box when clicking days 
+    const weatherContent = selectedWeather && ( 
+        <div id="weather">
+            <h2>Weather Information for {selectedDayName}</h2>
+            <p>Temperature: {selectedWeather.temp}</p>
+            <p>Feels like: {selectedWeather.feels_like}</p>
+            <p>Windspeed: {selectedWeather.windspeed}</p>
+            <p>Sunrise: {selectedWeather.sunrise}</p>
+            <p>Sunset: {selectedWeather.sunset}</p>
+            <p>Humidity: {selectedWeather.humidity}</p>
+        </div>
+    );
 
-        // color switching stuff
-        setClasses(classesDefault);
-    }
+    const weatherBox = document.getElementById("weatherBox");
 
+    //the code below the days-container renders the React component in the weather box on the map page ONLY if the weather box exists
+    //at the time that it is ready to be rendered. 
     return (
 
         <div>
-            <div style={borderStyle} id="days-container">
+            <div id="days-container">
                 {days.map((day, index) => ( <div id={`day-${index}`} onClick={() => click(index)} className={classes[index]} key={index}>{day}</div>))}
             </div>
-    
-            {popupVisible &&  selectedWeather &&(
-                <div style={borderStyle} id="popup">
-                    <h2>Weather Information for {days[selectedDay]}</h2>
-                    <p>Temperature: {selectedWeather?.temp}</p>
-                    <p>Feels like: {selectedWeather?.feels_like}</p>
-                    <p>Windspeed: {selectedWeather?.windspeed}</p>
-                    <p>Sunrise: {selectedWeather?.sunrise}</p>
-                    <p>Sunset: {selectedWeather?.sunset}</p>
-                    <p>Humidity:  {selectedWeather?.humidity}</p>
-                    <button id="popup-exit" onClick={closePopup}>Close</button >
-                </div>
-            )}
+            {weatherBox ? ReactDOM.createPortal(weatherContent, weatherBox) : weatherContent}
         </div>
     );
 }
-export default WeatherConditions;
+export default MapWeather;
