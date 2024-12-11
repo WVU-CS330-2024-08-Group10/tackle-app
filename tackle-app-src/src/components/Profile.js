@@ -1,3 +1,11 @@
+/**
+ * Profile.js
+ * 
+ * This components provides a modal form for editing user profile information,
+ * plus various functions for modifying the profile. Also contains various default
+ * profile objects.
+ */
+
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
 import { Link } from 'react-router-dom';
@@ -20,7 +28,7 @@ export const emptyProfile = {
 export const genericProfile = {
     username: "JeremyWade_Official",
     nickname: "Jeremy Wade",
-    pfpURL: require('../assets/jeremyPfp.jpg'),
+    pfpURL: null,
     pfpFileType: "none",
     gender: "male",
     darkmode: false,
@@ -59,26 +67,46 @@ export const genericProfile = {
     ]
 };
 
+/** 
+ * number values are bitfields, where each bit corresponds to a requirement not
+ * met. What bits correspond to what requirement are defined int AccountReqs.json
+ */
 const errorsInit = {
     username: 0,
     showUsername: false,
     pfp: 0,
 };
 
+
+/**
+ * Profile component provides a modal for editing profile information.
+ * @returns {JSX.Element} Button that opens model form, plus model form.
+ */
 export default function Profile() {
 
     const { profile, setProfile, isLoggedIn, setPfpFile } = useAuth();
 
     const [renderProfileform, setRenderProfileform] = useState(false);
-    const [profileEdit, setProfileEdit] = useState(emptyProfile);
-    const [errors, setErrors] = useState({...errorsInit});
+    const [profileEdit, setProfileEdit] = useState(emptyProfile); // cached profile for editing
+    const [errors, setErrors] = useState({...errorsInit}); // object containing invalid input information
 
+    /**
+     * creates a cached copy of user profile for editing, resets
+     * errors displayed to the user, and opens the profile editing modal.
+     * @function
+     */
     function openProfile() {
         setProfileEdit(profile);
         setErrors({...errorsInit});
         setRenderProfileform(true);
     }
+
+    /**
+     * Saves cached profile edits to actual profile, and closes the form.
+     * @function
+     */
     function submitProfile() {
+        // editing username has been removed, so depricated
         if (errors.username > 0) {
             return;
         }
@@ -86,10 +114,18 @@ export default function Profile() {
         setRenderProfileform(false);
         setProfile(profileEdit);
     }
+    /**
+     * Closes form without submitting cached profile edits.
+     */
     function cancelProfile() {
         setRenderProfileform(false);
     }
 
+    /**
+     * Checks that a profile picture is valid before allowing it to be 
+     * uploaded to the user profile.
+     * @param {Event} e - Event triggered by uploading a file.
+     */
     const checkPfp = (e) => {
         let error = 0;
 
