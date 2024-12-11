@@ -1,8 +1,32 @@
+/**
+ * Profile.js
+ * 
+ * This component provides the list of all user's caught fish shown in the profile page,
+ * plus the modal form used to add and edit fish.
+ */
+
 import React, { useState } from 'react';
 import ReactModal from 'react-modal';
 import { useAuth } from "./AuthProvider";
 import { fishTypes } from "./Map";
 
+/**
+ * A fish caught by a user.
+ * @typedef {Object} FishCaught
+ * @property {string} species - The name of the species of the fish.
+ * @property {string} nickname - A nickname given to the fish.
+ * @property {number} timeCaught - Unix timestamp of when the fish was caught.
+ * @property {string} bodyCaught - The name of the body of water where the fish was caught.
+ * @property {number} weight - The weight of the fish, in lbs.
+ * @property {number} length - The length of the fish, in inches.
+ * @property {number} sex - The sex of the fish. 0 = male, 1 = female, -1 = indeterminate.
+ * @property {string} tackled - The name of the bait used to catch the fish.
+ */
+
+/**
+ * A generic empty fish, added to a user's fishlist before being edited by the user.
+ * @type {FishCaught} 
+ */
 const emptyFish = {
     species: "",
     nickname: "",
@@ -14,13 +38,26 @@ const emptyFish = {
     tackled: ""
 }
 
-// Format date object to the appropriate string for the value of an HTML local-datetime input 
+/**
+ * Takes a JS Date object and converts it to a string that can be used as the value of 
+ * an html "datetime-local" input field.
+ * 
+ * @param {Date} date - Date object to convert to string
+ * @returns String to be used as the value of a "datetime-local" input field.
+ */
 function dateToLocalDatetimeString(date) {
     return new Date(date.getTime() + new Date().getTimezoneOffset() * -60 * 1000).toISOString().substring(0, 16);
 }
 
-// Returns obj with property set to val IF val is a positive number. Otherwise, returns obj unchanged
-// Used to limit weight AND length fields to only positive numbers with only one callback function.
+/**
+ * Returns obj with property set to val IF val is a positive number. Otherwise, returns obj unchanged.
+ * 
+ * Used to limit weight and length fields to only positive numbers with only one callback function.
+ * @param {string} val - val to check before being set in obj.
+ * @param {Object} obj - Object to modify.
+ * @param {string} property - String name of the property in obj to modify.
+ * @returns obj with property set to val if val was positive number. 
+ */
 function getPropIfPositiveNum(val, obj, property) {
     val = val.trim();
     let objTemp = {...obj};
@@ -33,6 +70,10 @@ function getPropIfPositiveNum(val, obj, property) {
     return objTemp;
 }
 
+/**
+ * Fishlist component provides a user's list of fish caught and the modal form to add/edit them.
+ * @returns {JSX.Element} Fishlist element, plus fish editing modal.
+ */
 export default function Fishlist() {
 
     const { profile, setProfile, borderStyle, setLastLocation, lastLocation } = useAuth();
@@ -46,7 +87,11 @@ export default function Fishlist() {
     const [displayModified, setDisplayModified] = useState(false);
     const [randomPlaceholderFish, setRandomPlaceholderFish] = useState("Channel Catfish");
 
-
+    /**
+     * Swaps the fish at a pair of indices in the fish list if the indices are valid.
+     * @param {number} index1 - Index of first fish to swap.
+     * @param {number} index2 - Index of second fish to swap.
+     */
     function swapFish(index1, index2) {
         if (index1 < 0 || index2 < 0 || index1 > profile.fishlist.length - 1 || index2 > profile.fishlist.length - 1) return;
         let fishlistTemp = [...profile.fishlist];
@@ -58,6 +103,10 @@ export default function Fishlist() {
         setProfile({...profile, fishlist: fishlistTemp});
     }
 
+    /**
+     * Copies a fish from fishlist to cache, and opens the fishform to edit it.
+     * @param {number} index - Index of fish to edit. 
+     */
     function openFish(index) {
         setIsFishformEditing(true);
         setFishIndex(index);
@@ -67,6 +116,9 @@ export default function Fishlist() {
         setRenderFishform(true);
     }
 
+    /**
+     * Creates a new fish in cache to be added to fishlist, and opens the fishform to edit it.
+     */
     function addFish() {
         setIsFishformEditing(false);
         setFishIndex(profile.fishlist.length);
@@ -80,6 +132,10 @@ export default function Fishlist() {
         setRenderFishform(true);
     }
 
+    /**
+     * Replaces the last opened fish in fishlist with fish in cache (or adds fish in cache 
+     * it to the end if fish is being added), and closes the fishform.
+     */
     function submitFish() {
         setRenderFishform(false);
 
@@ -92,10 +148,16 @@ export default function Fishlist() {
         setProfile({...profile, fishlist: fishlistTemp});
     }
 
+    /**
+     * Closes the fishform without making any changes to the fishlist.
+     */
     function cancelFish() {
         setRenderFishform(false);
     }
 
+    /**
+     * Removes last opened fish from the fishlist.
+     */
     function removeFish() {
         setRenderFishform(false);
 
@@ -106,6 +168,20 @@ export default function Fishlist() {
         setProfile({...profile, fishlist: fishlistTemp});
     }
 
+    /**
+     * Sorts an array of fishCaught depending on what the the user has set the list to 
+     * sort by (sortBy variable).
+     * 
+     * Can sort by:
+     * 
+     *      0: nothing, show user defined ordering
+     *      1: time caught
+     *      2: nicknames, alphabetically
+     *      3: weight
+     *      4: length
+     * @param {Array.<FishCaught>} list - list of fishCaught to sort. Usually fishlist.
+     * @returns Sorted fishlist.
+     */
     function sortFishlist(list) {
         switch (sortBy) {
             case 1: // sort by time
@@ -127,6 +203,9 @@ export default function Fishlist() {
         return list;
     }
 
+    /**
+     * Applies whatever sort is selected to the fishlist.
+     */
     function applySort() {
         let profileTemp = {...profile};
         sortFishlist(profileTemp.fishlist);
@@ -134,11 +213,19 @@ export default function Fishlist() {
         setProfile(profileTemp);
         cancelSort();
     }
+
+    /**
+     * Resets sort options back to default values.
+     */
     function cancelSort() {
         setSortBy(0);
         setSortAscending(false);
     }
 
+    /**
+     * Randomize what placeholder value is shown in the species input to one of any 
+     * from the imported list of species available.
+     */
     function randomizePlaceholderFish() {
         const fishTypesArray = Object.keys(fishTypes);
         const randomFish = fishTypes[fishTypesArray[Math.floor(Math.random()*fishTypesArray.length)]]

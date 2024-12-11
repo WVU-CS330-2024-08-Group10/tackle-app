@@ -3,6 +3,18 @@ import axios from "axios";
 import { emptyProfile } from '../components/Profile';
 const AuthContext = createContext();
 
+/**
+ * @typedef {import('./Profile.js').Profile} Profile
+ */
+
+/**
+ * @typedef {Object} AuthContext
+ * @property {boolean} isLoggedIn
+ * @property {Profile} profile 
+ * @property {string} lastLocation
+ * @property {string} navBack
+ */
+
 const darkModeBorders = {
     borderColor: "white"
 }
@@ -44,10 +56,13 @@ function findDifferentKeys(objA, objB) {
     return keysArray;
 }
 
+
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     var profileJsonString = localStorage.getItem('profile');
+
+    /** @type Profile */
     var profileInit = null;
     if (profileJsonString === null) {
         profileInit = {...emptyProfile};
@@ -250,4 +265,5 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
+/** @returns {AuthContext} */
 export const useAuth = () => useContext(AuthContext);

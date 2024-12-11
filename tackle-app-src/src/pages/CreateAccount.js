@@ -3,6 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthProvider";
 const reqs = require('../components/AccountReqs.json');
 
+/**
+ * @typedef {import('../components/Profile.js').Errors} Errors
+ */
+
+/** @type {Errors} */
 const errorsInit = {
     username: 0,
     password: 0,

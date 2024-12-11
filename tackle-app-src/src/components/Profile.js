@@ -1,7 +1,7 @@
 /**
  * Profile.js
  * 
- * This components provides a modal form for editing user profile information,
+ * This component provides a modal form for editing user profile information,
  * plus various functions for modifying the profile. Also contains various default
  * profile objects.
  */
@@ -13,6 +13,27 @@ import { useAuth } from "../components/AuthProvider";
 const reqs = require('./AccountReqs.json');
 const defaultPfp = require('../assets/defaultPfp.png');
 
+/**
+ * @typedef {import('./Fishlist.js').FishCaught} FishCaught
+ */
+
+/**
+ * A user's profile.
+ * @typedef {Object} Profile
+ * @property {string} username - User's username for logging in.
+ * @property {string} nickname - User's nickname as displayed on profile page.
+ * @property {string} pfpUrl - URL for user's profile picture.
+ * @property {string} pfpFileType - Filetype of user's profile picture.
+ * @property {string} gender - User's gender.
+ * @property {boolean} darkmode - Whether or not user is in darkmode.
+ * @property {Array.<string>} favSpots - List of the names of user's favorite fishing spots. 
+ * @property {Array.<FishCaught>} fishlist - List of user's caught fish. 
+ */
+
+/** 
+ * Empty default profile given to new users.
+ * @type {Profile} 
+ */
 export const emptyProfile = {
     username: "localUser",
     nickname: "Unregistered User",
@@ -24,7 +45,11 @@ export const emptyProfile = {
     fishlist: []
 }
 
-// old profile used for examples. depricated
+/** 
+ * Old default profile for testing purposes.
+ * @type {Profile} 
+ * @deprecated
+ */
 export const genericProfile = {
     username: "JeremyWade_Official",
     nickname: "Jeremy Wade",
@@ -68,9 +93,21 @@ export const genericProfile = {
 };
 
 /** 
- * number values are bitfields, where each bit corresponds to a requirement not
- * met. What bits correspond to what requirement are defined int AccountReqs.json
+ * Object containing invalid input information. 
+ * 
+ * Uses a bitfield for each input to represent the individual requirements, 
+ * with which bit is which being defined in AccountReqs.json.
+ * @typedef {Object} Errors
+ * @property {number} username - Requirements not met for username.
+ * @property {number} password - Requirements not met for password.
+ * @property {number} passwordConfirm - Requirements not met for password confirmation.
+ * @property {number} pfp - Requirements not met for profile picture.
+ * @property {boolean} showUsername - Whether or not to display username requirements.
+ * @property {boolean} showPassword - Whether or not to display password requirements.
+ * @property {boolean} showPasswordConfirm - Whether or not to display password confirmation requirements.
  */
+
+/** @type {Errors} */
 const errorsInit = {
     username: 0,
     showUsername: false,
@@ -88,12 +125,11 @@ export default function Profile() {
 
     const [renderProfileform, setRenderProfileform] = useState(false);
     const [profileEdit, setProfileEdit] = useState(emptyProfile); // cached profile for editing
-    const [errors, setErrors] = useState({...errorsInit}); // object containing invalid input information
+    const [errors, setErrors] = useState({...errorsInit});
 
     /**
      * creates a cached copy of user profile for editing, resets
      * errors displayed to the user, and opens the profile editing modal.
-     * @function
      */
     function openProfile() {
         setProfileEdit(profile);
@@ -103,7 +139,6 @@ export default function Profile() {
 
     /**
      * Saves cached profile edits to actual profile, and closes the form.
-     * @function
      */
     function submitProfile() {
         // editing username has been removed, so depricated
@@ -125,6 +160,7 @@ export default function Profile() {
      * Checks that a profile picture is valid before allowing it to be 
      * uploaded to the user profile.
      * @param {Event} e - Event triggered by uploading a file.
+     * @function
      */
     const checkPfp = (e) => {
         let error = 0;

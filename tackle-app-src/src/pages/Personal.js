@@ -1,9 +1,19 @@
+/**
+ * Profile.js
+ * 
+ * This component provides the personal page.
+ */
+
 import Profile from '../components/Profile';
 import Fishlist from '../components/Fishlist.js';
 import { useAuth } from "../components/AuthProvider";
 const reqs = require('../components/AccountReqs.json');
 const defaultPfp = require('../assets/defaultPfp.png');
 
+/**
+ * Personal page component, including profile sidebar and fishlist main area.
+ * @returns {JSX.Element} Personal page.
+ */
 export default function Personal() {
     const { profile, borderStyle } = useAuth();
 

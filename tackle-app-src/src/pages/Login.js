@@ -5,7 +5,17 @@ import { Link } from 'react-router-dom';
 import { useAuth } from "../components/AuthProvider";
 const reqs = require('../components/AccountReqs.json');
 
+/**
+ * @typedef {import('../components/Profile.js').Errors} Errors
+ */
 
+/** 
+ * Object containing invalid input information. 
+ * 
+ * Even though requirements are not adaptively shown on login, whether 
+ * or not they are meet still affects the behavior of the submit button.
+ * @type {Errors} 
+*/
 const errorsInit = {
     password: 0,
     showPassword: false
