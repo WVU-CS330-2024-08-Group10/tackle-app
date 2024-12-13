@@ -1,3 +1,9 @@
+/**
+ * AuthProvider.js
+ * 
+ * This component provides authentication context, with methods for user authentication.
+ * Also includes various variables needed by various components, most importantly the user profile.
+ */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from "axios";
 import { emptyProfile } from '../components/Profile';
@@ -15,6 +21,7 @@ const AuthContext = createContext();
  * @property {string} navBack
  */
 
+// JSX style objects used control border colors for light/darkmode.
 const darkModeBorders = {
     borderColor: "white"
 }
@@ -22,7 +29,7 @@ const lightModeBorders = {
     borderColor: "black"
 }
 
-// include token in all axios requests
+// Specifies that all axios requests should contain the user's token, if available.
 axios.interceptors.request.use(config => {
     const localToken = localStorage.getItem('token');
     const sessionToken = sessionStorage.getItem('token');
@@ -36,8 +43,13 @@ axios.interceptors.request.use(config => {
     return config;
 });
 
-// find different keys between objA and objB and returns an array of them.
-// completely unused
+/**
+ * Finds all matching keys within a pair of similar objects that have different values,
+ * and returns an array of said keys' names as strings.
+ * @param {*} objA - First object to compare.
+ * @param {*} objB - Second object to compare.
+ * @returns {Array.<string>} An array of all keys with different values, as strings.
+ */
 function findDifferentKeys(objA, objB) {
     let setA = new Set(Object.values(objA));
     let setB = new Set(Object.values(objB));
@@ -56,7 +68,12 @@ function findDifferentKeys(objA, objB) {
     return keysArray;
 }
 
-
+/**
+ * AuthProvider component provides the authentication provider, with functions
+ * and variables that are available for any child components.
+ * @param {*} children - Child elements to wrap in AuthProvider.
+ * @returns {JSX.Element} AuthProvider element.
+ */
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 

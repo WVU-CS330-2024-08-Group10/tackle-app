@@ -1,17 +1,31 @@
+/**
+ * NavBar.js
+ * 
+ * This component provides the navigation bar seen at the top of all pages.
+ */
+
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import React from 'react';
 import { useAuth } from "../components/AuthProvider";
 
-// perhaps it would be better to an array of 4 objects with this info in them? 
+// Configure the 4 buttons at the top of the page.
 const pages = ["/", "/Weather", "/Personal", "/About"];
 const display = ["Home", "Weather", "Personal", "About"];
 const icons = ["home", "sunny", "account_circle", "groups"];
 
+/**
+ * NavBar component provides the navigation bar at the top of every page.
+ * @returns {JSX.Element} Navigation bar element.
+ */
 export default function NavBar(){
 	const { isLoggedIn, profile, logout, setProfile, setNavBack } = useAuth();
 	const navigate = useNavigate();
 	const location = useLocation();
 
+	/**
+	 * Puts the user in darkmode if currently in lightmode, and vice versa, 
+	 * setting all appropriate values to do so including the class of the document body.
+	 */
 	function toggleMode() {
 		//false = light, true = dark
 		var element = document.body;
@@ -25,6 +39,9 @@ export default function NavBar(){
 		}
 	}
 	
+	/**
+	 * Logs the user out of their account, and returns them to the homepage.
+	 */
 	function logoutAccount() {
 		logout();
 		navigate("/");
