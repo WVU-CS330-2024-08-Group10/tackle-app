@@ -14,10 +14,17 @@ const secret = process.env.SECRET;
 //Express variables
 const express = require("express");
 const multer = require("multer");
+const exp = express();
+exp.use(express.json());
+
+//CORS configuration (only allow requests from localhost:3000, only allow POST methods, allow cookies)
 const cors = require("cors");
-const app = express();
-app.use(express.json());
-app.use(cors());
+const corsOptions = {
+    origin: "http://localhost:3000",
+    methods: ["POST"],
+    credentials: true,
+  };
+exp.use(cors(corsOptions));
 
 //Set up multer for handling image uploads
 const storage = multer.memoryStorage(); //Store file in memory as buffer
@@ -30,7 +37,7 @@ const saltRounds = 10;
 let saltString = "";
 let hashedPassword = "";
 
-// function for verifying token
+//Function for verifying token
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
 
@@ -46,13 +53,13 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-// route for logging in from token
-app.post("/verifyToken", verifyToken, async (req, res) => {
+//Route for logging in from token
+exp.post("/verifyToken", verifyToken, async (req, res) => {
     res.status(200).json({username: req.username});
 });
 
-//Upload an image as binary data
-app.post("/uploadPFP", verifyToken, upload.single("pfp"), async (req, res) => {
+//Route to upload an image as binary data
+exp.post("/uploadPFP", verifyToken, upload.single("pfp"), async (req, res) => {
 
     const file = req.file;
     const { pfpFileType, username } = req.body;
@@ -123,8 +130,8 @@ async function checkForUsername(username) {
 }
 
 
-//Creating route to load user information
-app.post("/loadUserInfo", verifyToken, async (req, res) => {
+//Route to load user information
+exp.post("/loadUserInfo", verifyToken, async (req, res) => {
 
     const { username } = req.body;
 
@@ -149,8 +156,8 @@ app.post("/loadUserInfo", verifyToken, async (req, res) => {
 });
 
 
-//Creating route to add dark/light mode preference for user account
-app.post("/updateUserInfo", verifyToken, async (req, res) => {
+//Route to add dark/light mode preference for user account
+exp.post("/updateUserInfo", verifyToken, async (req, res) => {
 
     const { username, darkmode, nickname, gender, fishlist } = req.body;
 
@@ -182,8 +189,8 @@ app.post("/updateUserInfo", verifyToken, async (req, res) => {
 });
 
 
-//Creating route to insert user
-app.post("/insertUser", async (req, res) => {
+//Route to insert user
+exp.post("/insertUser", async (req, res) => {
 
     const { username, password, darkmode, nickname, gender, fishlist } = req.body;
 
@@ -257,8 +264,8 @@ app.post("/insertUser", async (req, res) => {
 });
 
 
-//Creating route to remove user account
-app.post("/removeUser", async (req, res) => {
+//Route to remove user account
+exp.post("/removeUser", async (req, res) => {
 
     const { username } = req.body;
 
@@ -292,8 +299,8 @@ app.post("/removeUser", async (req, res) => {
 });
 
 
-//Creating route to authenticate user
-app.post("/authenticate", async (req, res) => {
+//Route to authenticate user
+exp.post("/authenticate", async (req, res) => {
 
     const { username, password } = req.body;
 
@@ -337,6 +344,6 @@ app.post("/authenticate", async (req, res) => {
 
 //Start the server
 const PORT = 5000;
-app.listen(PORT, () => {
+exp.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
