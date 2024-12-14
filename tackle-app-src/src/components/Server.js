@@ -9,11 +9,13 @@ const config = {
     server: process.env.SERVERNAME,
     database: process.env.DATABASENAME
 };
+const apiKey = process.env.REACT_APP_APIKEY;
 const secret = process.env.SECRET;
 
 //Express variables
 const express = require("express");
 const multer = require("multer");
+const fetch = require("node-fetch");
 const exp = express();
 exp.use(express.json());
 
@@ -57,6 +59,18 @@ const verifyToken = (req, res, next) => {
 exp.post("/verifyToken", verifyToken, async (req, res) => {
     res.status(200).json({username: req.username});
 });
+
+//Route for getting weather data from openweathermap
+exp.post("/getWeatherData", async (req, res) => {
+
+    const zip = req.body.zip;
+    const url = `https://api.openweathermap.org/data/2.5/forecast?zip=${zip}&units=imperial&appid=${apiKey}`;
+
+    const response = await fetch(url);
+    const responsejson = await response.json()
+    res.status(200).json(responsejson);
+});
+
 
 //Route to upload an image as binary data
 exp.post("/uploadPFP", verifyToken, upload.single("pfp"), async (req, res) => {

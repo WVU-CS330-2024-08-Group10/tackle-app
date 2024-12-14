@@ -3,14 +3,12 @@ import ReactDOM from 'react-dom';
 import { useAuth } from "./AuthProvider";
 
 const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-const apiKey = process.env.REACT_APP_APIKEY;
-const zip = `26508`; 
-const url = `https://api.openweathermap.org/data/2.5/forecast?zip=${zip}&units=imperial&appid=${apiKey}`;
+const zip = "26508"; 
 
 function WeatherConditions(args) {
     const isForHomePage = typeof args.isForHomePage !== 'undefined';
 
-    const { borderStyle } = useAuth();
+    const { borderStyle, getWeatherData } = useAuth();
 
     const [weatherData, setWeatherData] = useState([]);
     const [selectedDay, setSelectedDay] = useState(-1); 
@@ -18,21 +16,19 @@ function WeatherConditions(args) {
 
     // Getting the data from the API
     useEffect(() => {
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const dailyWeather = data.list.slice(0, 9).map((forecast, index) => ({
-                    temp: `${Math.round(forecast.main.temp)}°F`,
-                    feels_like: `${forecast.main.feels_like}°F`,
-                    windspeed: `${forecast.wind.speed} mph`,
-                    sunrise: new Date(data.city.sunrise * 1000).toLocaleTimeString(),
-                    sunset: new Date(data.city.sunset * 1000).toLocaleTimeString(),
-                    humidity: `${forecast.main.humidity}%`,
-                }));
-                setWeatherData(dailyWeather);
-            })
-            .catch(error => console.error('Error fetching weather data:', error));
-    }, [url]);
+        getWeatherData(zip).then((response) => {
+            const data = response.data;
+            const dailyWeather = data.list.slice(0, 9).map((forecast, index) => ({
+                temp: `${Math.round(forecast.main.temp)}°F`,
+                feels_like: `${forecast.main.feels_like}°F`,
+                windspeed: `${forecast.wind.speed} mph`,
+                sunrise: new Date(data.city.sunrise * 1000).toLocaleTimeString(),
+                sunset: new Date(data.city.sunset * 1000).toLocaleTimeString(),
+                humidity: `${forecast.main.humidity}%`,
+            }));
+            setWeatherData(dailyWeather);
+        })
+    }, [getWeatherData]);
 
 
     function click(index) {
@@ -67,7 +63,7 @@ function WeatherConditions(args) {
     return (
 
         <div>
-            <div id="days-container">
+            <div id="days-container" style={borderStyle}>
                 {days.map((day, index) => ( <div id={`day-${index}`} onClick={() => click(index)} className={"daybutton" + (selectedDay === index ? " daybutton-selected" : "")} key={index}>{day}</div>))}
             </div>
 

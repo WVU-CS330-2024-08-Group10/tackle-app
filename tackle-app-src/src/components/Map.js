@@ -41,7 +41,8 @@ const Map = () => {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
 
-        var fishingLayer = LEsri.dynamicMapLayer({
+        // setting fishing layer
+        LEsri.dynamicMapLayer({
             url: 'https://services.wvgis.wvu.edu/arcgis/rest/services/Applications/dnrRec_fishing/MapServer',
             opacity: 0.7
         }).addTo(map);
@@ -93,7 +94,7 @@ const Map = () => {
             // Clean up map layers when component unmounts
             map.remove();
           };
-    }, []);
+    }, [setLastLocation]);
 
     return(
         <div id="mapBody">
@@ -121,7 +122,7 @@ function setRegulation(regulation, regulationBox) {
 function setStock(stock, stockBox) {
     if(stock !== undefined) {
         Object.keys(stockTypes).forEach(type => {
-            if(type == stock) {
+            if(type === stock) {
                 stockBox.innerText = "Trout Stock Status: " + stockTypes[stock];
             }
         });
@@ -139,7 +140,7 @@ function setFish(properties, urlType) {
     boxHeader.innerText = "Body of Water: N/A";
     listFish.innerHTML = "";
 
-    if(urlType == "Lake") {
+    if(urlType === "Lake") {
         boxHeader.innerText = "Body of Water: " + properties.LakeName;
         setRegulation(properties.RegType, regulationBox);
         setStock(properties.StockCode, stockBox);
@@ -154,7 +155,7 @@ function setFish(properties, urlType) {
     }
 
     Object.keys(fishTypes).forEach(fish => {
-        if(properties[fish] == 1) {
+        if(properties[fish] === 1) {
             let newFish = document.createElement("li");
             newFish.innerText = fishTypes[fish];
     

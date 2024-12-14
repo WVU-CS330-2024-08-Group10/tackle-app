@@ -93,15 +93,10 @@ export const AuthProvider = ({ children }) => {
     const [lastLocation, setLastLocationDirectly] = useState("");
     const [navBack, setNavBack] = useState("/");
     const [borderStyle, setBorderStyle] = useState(lightModeBorders);
+    const [weatherData, setWeatherData] = useState(undefined);
 
-    // attempt login with token if token available
-    useEffect(() => {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (token) {
-            verifyToken();
-        }
-    }, []); // eslint doesn't like this, but it works and fixing just causes more headache....so why bother fixing it?
-    async function verifyToken() {
+    
+    const verifyToken = async () => {
         try {
             const response = await axios.post("http://localhost:5000/verifyToken", {});
             if (response.status === 200) {
@@ -117,7 +112,24 @@ export const AuthProvider = ({ children }) => {
             sessionStorage.removeItem('token');
         }
     }
+    // attempt login with token if token available
+    useEffect(() => {
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (token) {
+            verifyToken();
+        }
+    }, []); 
     
+    const getWeatherData = async (zip) => {
+        if (!weatherData) {
+            const response = await axios.post("http://localhost:5000/getWeatherData", {zip});
+            setWeatherData(response);
+            return response;
+        } else {
+            return weatherData;
+        }
+    };
+
     const login = (username) => {
         setIsLoggedIn(true);
         triggerProfileLoad(username);
@@ -144,6 +156,7 @@ export const AuthProvider = ({ children }) => {
             setBorderStyle(lightModeBorders);
         }
     }
+
 
     const setProfile = (newProfile) => {
         triggerProfileSave(newProfile);
@@ -276,7 +289,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, profile, lastLocation, borderStyle, navBack, setNavBack, login, logout, setIsLoggedIn, setProfile, setProfileDirectly, triggerProfileLoad, triggerProfileCreate, setLastLocation, updateBorderStyle, setPfpFile }}>
+        <AuthContext.Provider value={{ isLoggedIn, profile, lastLocation, borderStyle, navBack, setNavBack, getWeatherData, login, logout, setIsLoggedIn, setProfile, setProfileDirectly, triggerProfileLoad, triggerProfileCreate, setLastLocation, updateBorderStyle, setPfpFile }}>
             {children}
         </AuthContext.Provider>
     );
