@@ -5,7 +5,7 @@
  */
 
 import Map from "../components/Map";
-import MapWeather from "../components/MapWeather.js";
+import WeatherConditions from "../components/WeatherConditions.js";
 
 /**
  * Home page element.
@@ -19,7 +19,7 @@ export default function Home(){
         <>
             <h1 className="page-header"></h1>
             <Map /> 
-            <MapWeather />
+            <WeatherConditions isForHomePage />
         </>
     );
 }

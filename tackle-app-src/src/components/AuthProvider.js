@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }) => {
 
     // attempt login with token if token available
     useEffect(() => {
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');;
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (token) {
             verifyToken();
         }
