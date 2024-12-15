@@ -4,6 +4,7 @@
  * This component provides authentication context, with methods for user authentication.
  * Also includes various variables needed by various components, most importantly the user profile.
  */
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from "axios";
 import { emptyProfile } from '../components/Profile';
@@ -11,14 +12,6 @@ const AuthContext = createContext();
 
 /**
  * @typedef {import('./Profile.js').Profile} Profile
- */
-
-/**
- * @typedef {Object} AuthContext
- * @property {boolean} isLoggedIn
- * @property {Profile} profile 
- * @property {string} lastLocation
- * @property {string} navBack
  */
 
 // JSX style objects used control border colors for light/darkmode.
@@ -95,7 +88,11 @@ export const AuthProvider = ({ children }) => {
     const [borderStyle, setBorderStyle] = useState(lightModeBorders);
     const [weatherData, setWeatherData] = useState(undefined);
 
-    
+    /**
+     * Will take token from storage and log into profile using it
+     * @function
+     * @async
+     */
     const verifyToken = async () => {
         try {
             const response = await axios.post("http://localhost:5000/verifyToken", {});
@@ -118,8 +115,17 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             verifyToken();
         }
-    }, []); 
+        updateBorderStyle(profileInit);
+    }, []);
     
+    /**
+     * Request weather data from server, or uses cached weather data if getWeatherData has already been
+     * called during session.
+     * @param {string} zip - ZIP code of location to recieve data from, as string 
+     * @returns response from openweathermap.com for weather in ZIP
+     * @function
+     * @async
+     */
     const getWeatherData = async (zip) => {
         if (!weatherData) {
             const response = await axios.post("http://localhost:5000/getWeatherData", {zip});
@@ -130,11 +136,20 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    /**
+     * Logs in to user account.
+     * @param {string} username - User for user to login as.
+     * @function
+     */
     const login = (username) => {
         setIsLoggedIn(true);
         triggerProfileLoad(username);
     };
 
+    /**
+     * Log out of user account.
+     * @function
+     */
     const logout = () => {
         setIsLoggedIn(false);
         setBorderStyle(lightModeBorders);
@@ -149,22 +164,39 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    /**
+     * Update border and document body style to match light/darkmode setting.
+     * @param {Profile} newProfile - Profile to load dark/lightmode setting from.
+     */
     const updateBorderStyle = (newProfile = profile) => {
+        var element = document.body;
         if (newProfile.darkmode) {
             setBorderStyle(darkModeBorders);
+            element.classList.add("dark-mode-body");
         } else {
             setBorderStyle(lightModeBorders);
+            element.classList.remove("dark-mode-body");
         }
     }
 
-
+    /**
+     * Sets profile variable, while also saving the new profile to the server.
+     * @param {Profile} newProfile - Profile object to set profile to.
+     * @function
+     */
     const setProfile = (newProfile) => {
         triggerProfileSave(newProfile);
         setProfileDirectly(newProfile);
         updateBorderStyle(newProfile);
     }
 
-    //create account
+    /**
+     * Adds a new user profile to database from profile object, with a specified password.
+     * @param {Profile} newProfile - Profile object to add to database.
+     * @param {string} password - Password of profile, as string.
+     * @function
+     * @async
+     */
     const triggerProfileCreate = async (newProfile, password) => {
 
         try {
@@ -191,11 +223,15 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    //update user account
+    /**
+     * Saves new profile information to database, or locally if not logged in.
+     * @param {Profile} newProfile - Profile object to save to database.
+     * @function
+     * @async
+     */
     const triggerProfileSave = async (newProfile = profile) => {
         if (!isLoggedIn) {
             localStorage.setItem('profile', JSON.stringify(newProfile));
-            console.log("Not logged in, saved to local profile");
             return;
         }
 
@@ -239,7 +275,12 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-    //load user account
+    /**
+     * Loads a user profile from database.
+     * @param {string} username - Username for profile to load from database. 
+     * @function
+     * @async
+     */
     const triggerProfileLoad = async (username) => {
 
         try {
@@ -281,6 +322,11 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    /**
+     * Sets last location variable to location, while also formatting it if improperly formatted.
+     * @param {string} location - Location to set as last location. 
+     * @function
+     */
     const setLastLocation = (location) => {
         if (location.endsWith(" (C&R)")) {
             location = location.substring(0, location.length - 6);
@@ -294,6 +340,14 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+/**
+ * @typedef {Object} AuthContext
+ * @property {boolean} isLoggedIn
+ * @property {Profile} profile 
+ * @property {string} lastLocation
+ * @property {string} navBack
+ */
 
 /** @returns {AuthContext} */
 export const useAuth = () => useContext(AuthContext);

@@ -27,7 +27,7 @@ function WeatherConditions(args) {
                 humidity: `${forecast.main.humidity}%`,
             }));
             setWeatherData(dailyWeather);
-        })
+        }).catch(error => console.error('Error fetching weather data:', error));
     }, [getWeatherData]);
 
 

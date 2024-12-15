@@ -28,14 +28,11 @@ export default function NavBar(){
 	 */
 	function toggleMode() {
 		//false = light, true = dark
-		var element = document.body;
 		if (!profile.darkmode) {
 			setProfile({...profile, darkmode: true});
-			element.classList.add("dark-mode-body");
 		}
 		else {
 			setProfile({...profile, darkmode: false});
-			element.classList.remove("dark-mode-body");
 		}
 	}
 	

@@ -1,3 +1,9 @@
+/**
+ * Server.js
+ * 
+ * Backend for website. 
+ */
+
 const reqs = require("./AccountReqs.json");
 
 //SQL Database variables
@@ -39,31 +45,47 @@ const saltRounds = 10;
 let saltString = "";
 let hashedPassword = "";
 
-//Function for verifying token
+/**
+ * Token verficiation ran before any elevated routes, will cancel route if unauthorized. 
+ * @param {Request} req - HTTP request made to server.
+ * @param {Response} res - HTTP request to be sent back by server. Returned as 401 error if token is invalid.
+ * @param {function} next - Next function to be evaluated if token was valid.
+ * @function
+ */
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization'];
 
     if (!token) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-    try {
-        const tokIN = jwt.verify(token, secret);
-        req.username = tokIN.username;
-        next();
-    } catch (error) {
         res.status(401).json({ error: 'Unauthorized' });
+    } else {
+        try {
+            const tokIN = jwt.verify(token, secret);
+            req.username = tokIN.username;
+            next();
+        } catch (error) {
+            res.status(401).json({ error: 'Unauthorized' });
+        }
     }
 };
 
-//Route for logging in from token
+/**
+ * Verifies that the given token is valid, and returns account username within it.
+ * @route POST /verifyToken
+ * @returns {JSON} Username with token, or error if token is invalid.
+ */
 exp.post("/verifyToken", verifyToken, async (req, res) => {
     res.status(200).json({username: req.username});
 });
 
-//Route for getting weather data from openweathermap
+/**
+ * Gets weather data for a given ZIP code from openweathermap.com.
+ * @route POST /getWeatherData
+ * @param {string} zip - ZIP code for location to get weather data for.
+ * @returns {JSON} Weather data for location.
+ */
 exp.post("/getWeatherData", async (req, res) => {
 
-    const zip = req.body.zip;
+    const { zip } = req.zip;
     const url = `https://api.openweathermap.org/data/2.5/forecast?zip=${zip}&units=imperial&appid=${apiKey}`;
 
     const response = await fetch(url);
@@ -72,7 +94,14 @@ exp.post("/getWeatherData", async (req, res) => {
 });
 
 
-//Route to upload an image as binary data
+/**
+ * Uploads a new profile picture to database.
+ * @route POST /uploadPFP
+ * @param {File} pfp - Picture file to save as pfp.
+ * @param {string} pfpFileType - Filetype of pfp, as string.
+ * @param {string} username - Username for account to store pfp in.
+ * @returns {JSON} Confirmation that pfp was uploaded successfully, or error otherwise.
+ */
 exp.post("/uploadPFP", verifyToken, upload.single("pfp"), async (req, res) => {
 
     const file = req.file;
@@ -115,7 +144,11 @@ exp.post("/uploadPFP", verifyToken, upload.single("pfp"), async (req, res) => {
 });
 
 
-//Function to check for username in database
+/**
+ * Checks database to see if username has been used, returning amount of occurances of username.
+ * @param {string} username - Username to check for in database.
+ * @returns True if username has been used, false otherwise.
+ */
 async function checkForUsername(username) {
 
     try {
@@ -144,7 +177,12 @@ async function checkForUsername(username) {
 }
 
 
-//Route to load user information
+/**
+ * Loads a profile from database for account.
+ * @route POST /loadUserInfo
+ * @param {string} username - Username for account to load profile from.
+ * @returns {JSON} Profile's contents, or error if profile couldn't be loaded.
+ */
 exp.post("/loadUserInfo", verifyToken, async (req, res) => {
 
     const { username } = req.body;
@@ -169,8 +207,20 @@ exp.post("/loadUserInfo", verifyToken, async (req, res) => {
     }
 });
 
+/**
+ * @typedef {import('./Fishlist.js').FishCaught} FishCaught
+ */
 
-//Route to add dark/light mode preference for user account
+/**
+ * Saves changes made to a profile to database under account.
+ * @route POST /updateUserInfo
+ * @param {string} username - Username for account to save to.
+ * @param {boolean} darkmode - Profile's dark/lightmode setting.
+ * @param {string} nickname - Profile's username.
+ * @param {string} gender - Profile's gender.
+ * @param {Array.<FishCaught>} fishlist - Profile's fishlist.
+ * @returns {JSON} Confirmation that profile was saved, or error if profile couldn't be saved.
+ */
 exp.post("/updateUserInfo", verifyToken, async (req, res) => {
 
     const { username, darkmode, nickname, gender, fishlist } = req.body;
@@ -203,7 +253,17 @@ exp.post("/updateUserInfo", verifyToken, async (req, res) => {
 });
 
 
-//Route to insert user
+/**
+ * Inserts a new account into database with profile.
+ * @route POST /insertUser
+ * @param {string} username - Username for account to insert.
+ * @param {string} password - Password for account to insert.
+ * @param {boolean} darkmode - Profile's dark/lightmode setting.
+ * @param {string} nickname - Profile's username.
+ * @param {string} gender - Profile's gender.
+ * @param {Array.<FishCaught>} fishlist - Profile's fishlist.
+ * @returns {JSON} Confirmation that account was created, or error if account couldn't be created.
+ */
 exp.post("/insertUser", async (req, res) => {
 
     const { username, password, darkmode, nickname, gender, fishlist } = req.body;
@@ -278,7 +338,12 @@ exp.post("/insertUser", async (req, res) => {
 });
 
 
-//Route to remove user account
+/**
+ * Removes an account from database.
+ * @route POST /removeUser
+ * @param {string} username - Username for account to remove.
+ * @returns {JSON} Confirmation that account was removed, or error if account couldn't be removed.
+ */
 exp.post("/removeUser", async (req, res) => {
 
     const { username } = req.body;
@@ -313,7 +378,13 @@ exp.post("/removeUser", async (req, res) => {
 });
 
 
-//Route to authenticate user
+/**
+ * Authenticates that a username and password is valid, returning token for account if so.
+ * @route POST /authenticate
+ * @param {string} username - Username for account to authenticate.
+ * @param {string} password - Password for account to authenticate.
+ * @returns {JSON} Token for account, or error if could not authenticate.
+ */
 exp.post("/authenticate", async (req, res) => {
 
     const { username, password } = req.body;
