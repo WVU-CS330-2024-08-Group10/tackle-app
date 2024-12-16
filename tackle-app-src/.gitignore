@@ -13,6 +13,7 @@ startFrontend.cmd
 
 # production
 /build
+/build.zip
 
 #Database configuration information
 .env
