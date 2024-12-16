@@ -94,7 +94,7 @@ const Map = () => {
             // Clean up map layers when component unmounts
             map.remove();
           };
-    }, [setLastLocation]);
+    }, []);
 
     return(
         <div id="mapBody">
