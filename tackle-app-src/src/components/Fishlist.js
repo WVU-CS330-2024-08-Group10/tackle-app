@@ -1,5 +1,5 @@
 /**
- * Profile.js
+ * Fishlist.js
  * 
  * This component provides the list of all user's caught fish shown in the profile page,
  * plus the modal form used to add and edit fish.
