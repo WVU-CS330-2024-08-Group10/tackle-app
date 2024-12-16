@@ -85,7 +85,7 @@ exp.post("/verifyToken", verifyToken, async (req, res) => {
  */
 exp.post("/getWeatherData", async (req, res) => {
 
-    const { zip } = req.zip;
+    const { zip } = req.body;
     const url = `https://api.openweathermap.org/data/2.5/forecast?zip=${zip}&units=imperial&appid=${apiKey}`;
 
     const response = await fetch(url);
