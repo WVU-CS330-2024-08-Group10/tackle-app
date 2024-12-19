@@ -11,8 +11,8 @@ const reqs = require('../components/AccountReqs.json');
 const defaultPfp = require('../assets/defaultPfp.png');
 
 /**
- * Personal page component, including profile sidebar and fishlist main area.
- * @returns {JSX.Element} Personal page.
+ * Personal page element, including profile sidebar and fishlist main area.
+ * @returns {JSX.Element} Personal page element.
  */
 export default function Personal() {
     const { profile, borderStyle } = useAuth();
